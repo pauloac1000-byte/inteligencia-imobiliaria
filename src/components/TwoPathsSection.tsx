@@ -5,16 +5,17 @@ interface TwoPathsSectionProps {
   onOpenModal: (intent: 'vender' | 'investir') => void
 }
 
-export const TwoPathsSection: React.FC<TwoPathsSectionProps> = ({ onOpenModal: _onOpenModal }) => {
-  const scrollToComoFunciona = (e: React.MouseEvent) => {
+export const TwoPathsSection: React.FC<TwoPathsSectionProps> = ({ onOpenModal }) => {
+  const handleVenderClick = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    const target = document.getElementById('como-funciona')
-    if (target) {
-      const yOffset = -76
-      const y = target.getBoundingClientRect().top + window.pageYOffset + yOffset
-      window.scrollTo({ top: y, behavior: 'smooth' })
-    }
+    onOpenModal('vender')
+  }
+
+  const handleInvestirClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    onOpenModal('investir')
   }
 
   const handleCardClick = (targetId: string) => {
@@ -99,7 +100,7 @@ export const TwoPathsSection: React.FC<TwoPathsSectionProps> = ({ onOpenModal: _
             <div className="mt-8 pt-4 border-t border-slate-100">
               <button
                 type="button"
-                onClick={scrollToComoFunciona}
+                onClick={handleVenderClick}
                 className="w-full inline-flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] text-white text-base font-semibold shadow-md group-hover:shadow-lg transition-all duration-200 cursor-pointer"
               >
                 <span>Quero vender</span>
@@ -161,7 +162,7 @@ export const TwoPathsSection: React.FC<TwoPathsSectionProps> = ({ onOpenModal: _
             <div className="mt-8 pt-4 border-t border-slate-100">
               <button
                 type="button"
-                onClick={scrollToComoFunciona}
+                onClick={handleInvestirClick}
                 className="w-full inline-flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-[#22D3EE] hover:bg-[#06b6d4] text-[#0B1F3A] text-base font-bold shadow-md group-hover:shadow-lg transition-all duration-200 cursor-pointer"
               >
                 <span>Quero oportunidade de investimento</span>

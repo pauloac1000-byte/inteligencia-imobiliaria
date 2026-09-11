@@ -6,14 +6,15 @@ interface HeroSectionProps {
   onOpenModal: (intent: 'vender' | 'investir') => void
 }
 
-export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenModal: _onOpenModal }) => {
-  const scrollToAnchor = (id: string) => {
-    const element = document.getElementById(id)
-    if (element) {
-      const yOffset = -76
-      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
-      window.scrollTo({ top: y, behavior: 'smooth' })
-    }
+export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenModal }) => {
+  const handleVenderClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    onOpenModal('vender')
+  }
+
+  const handleInvestirClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    onOpenModal('investir')
   }
 
   return (
@@ -67,7 +68,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenModal: _onOpenMo
               {/* CTA Primário: Quero vender */}
               <button
                 type="button"
-                onClick={() => scrollToAnchor('para-vender')}
+                onClick={handleVenderClick}
                 className="inline-flex items-center justify-center gap-2.5 px-6 py-4 rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] text-white text-base font-semibold shadow-lg hover:shadow-[#2563EB]/40 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
               >
                 <Building className="w-5 h-5" />
@@ -78,7 +79,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenModal: _onOpenMo
               {/* CTA Secundário: Quero oportunidade de investimento */}
               <button
                 type="button"
-                onClick={() => scrollToAnchor('para-investir')}
+                onClick={handleInvestirClick}
                 className="inline-flex items-center justify-center gap-2.5 px-6 py-4 rounded-xl border border-white/30 bg-white/5 hover:bg-white/10 text-white text-base font-semibold backdrop-blur-sm transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer hover:border-white/50"
               >
                 <TrendingUp className="w-5 h-5 text-[#22D3EE]" />
