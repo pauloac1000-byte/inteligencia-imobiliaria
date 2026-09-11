@@ -5,6 +5,7 @@ import { ProofStrip } from '@/components/ProofStrip'
 import { TwoPathsSection } from '@/components/TwoPathsSection'
 import { CompetitiveDifferences } from '@/components/CompetitiveDifferences'
 import { SupportingSections } from '@/components/SupportingSections'
+import { CompatibilityThermometerSection } from '@/components/CompatibilityThermometerSection'
 import { Footer } from '@/components/Footer'
 
 interface LayoutContextType {
@@ -29,8 +30,11 @@ const Index: React.FC = () => {
       {/* 2. Seção de diferenciais competitivos — grid com 4 cards (após dois caminhos, id #diferenciais) */}
       <CompetitiveDifferences />
 
-      {/* Seções de Apoio com os IDs de ancoragem: #para-vender, #para-investir, #como-funciona */}
+      {/* Seções de Apoio com os IDs de ancoragem: #para-vender, #para-investir, #como-funciona ("Simples para os dois lados" - 3 passos) */}
       <SupportingSections onOpenModal={handleOpenModal} />
+
+      {/* Seção 2: Termômetro de compatibilidade — posicionado após os passos */}
+      <CompatibilityThermometerSection onOpenModal={handleOpenModal} />
 
       {/* Rodapé: Bloco de marca + links informativos */}
       <Footer onOpenModal={handleOpenModal} />

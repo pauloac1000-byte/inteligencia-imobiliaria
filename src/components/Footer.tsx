@@ -96,6 +96,15 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
               </li>
               <li>
                 <a
+                  href="#compatibilidade"
+                  onClick={(e) => handleNavClick(e, 'compatibilidade')}
+                  className="hover:text-[#22D3EE] transition-colors inline-flex items-center gap-1"
+                >
+                  Compatibilidade
+                </a>
+              </li>
+              <li>
+                <a
                   href="#diferenciais"
                   onClick={(e) => handleNavClick(e, 'diferenciais')}
                   className="hover:text-[#22D3EE] transition-colors inline-flex items-center gap-1"

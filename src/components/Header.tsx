@@ -17,7 +17,13 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
       setScrolled(scrollY > 40)
 
       // Section spy
-      const sections = ['diferenciais', 'para-vender', 'para-investir', 'como-funciona']
+      const sections = [
+        'diferenciais',
+        'para-vender',
+        'para-investir',
+        'como-funciona',
+        'compatibilidade',
+      ]
       const scrollPosition = scrollY + 120
 
       let currentActive = ''
@@ -47,6 +53,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
     { label: 'Para vender', href: '#para-vender', id: 'para-vender' },
     { label: 'Para investir', href: '#para-investir', id: 'para-investir' },
     { label: 'Como funciona', href: '#como-funciona', id: 'como-funciona' },
+    { label: 'Compatibilidade', href: '#compatibilidade', id: 'compatibilidade' },
     { label: 'Diferenciais', href: '#diferenciais', id: 'diferenciais' },
   ]
 

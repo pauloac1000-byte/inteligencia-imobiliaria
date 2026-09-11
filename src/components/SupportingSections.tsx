@@ -162,78 +162,108 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
         </div>
       </section>
 
-      {/* SEÇÃO #como-funciona */}
+      {/* SEÇÃO #como-funciona: "Simples para os dois lados" (3 passos) */}
       <section
         id="como-funciona"
-        className="bg-gradient-to-b from-[#0B1F3A] to-[#12294A] text-white py-20 sm:py-24 px-6 border-b border-slate-800"
+        className="bg-[#0B1F3A] text-white py-20 sm:py-24 px-6 border-b border-slate-800 relative overflow-hidden"
       >
-        <div className="max-w-[1200px] mx-auto">
+        {/* Glow de fundo */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-[#2563EB]/10 blur-[120px] rounded-full pointer-events-none -z-0" />
+
+        <div className="max-w-[1200px] mx-auto relative z-10">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2563EB]/20 border border-[#2563EB]/40 text-[#22D3EE] text-xs font-semibold mb-3">
-              Mecânica da Plataforma
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#22D3EE]/10 border border-[#22D3EE]/30 text-[#22D3EE] text-xs font-semibold mb-3">
+              Processo em 3 etapas
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
-              Como funciona a nossa inteligência
+              Simples para os dois lados
             </h2>
             <p className="mt-3 text-base text-slate-300">
-              Três passos estruturados para transformar dados dispersos em conexões assertivas e
-              transações seguras.
+              Uma ponte clara e objetiva entre quem vende e quem investe, com rigor técnico em cada
+              etapa.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-            {/* Step 1 */}
-            <div className="relative p-8 rounded-2xl bg-[#08172c]/80 border border-slate-700/80 flex flex-col justify-between space-y-6">
-              <div className="flex items-center justify-between">
-                <span className="text-4xl sm:text-5xl font-extrabold text-[#2563EB]">01</span>
-                <div className="w-10 h-10 rounded-lg bg-[#2563EB]/20 text-[#22D3EE] flex items-center justify-center">
-                  <Layers className="w-5 h-5" />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-xl font-bold text-white">Cadastre seu perfil</h3>
-                <p className="text-sm text-slate-300 leading-relaxed">
-                  Você informa o que tem ou o que procura: localização, tipologia, faixa de valor,
-                  liquidez e parâmetros estratégicos da sua operação.
-                </p>
-              </div>
-              <div className="text-xs text-[#22D3EE] font-mono">Entrada de parâmetros</div>
-            </div>
+          {/* Container dos 3 passos em linha com linha conectora pontilhada */}
+          <div className="relative">
+            {/* Linha conectora pontilhada no Desktop (simbolizando a ponte entre os passos) */}
+            <div
+              className="hidden md:block absolute top-12 left-[16%] right-[16%] h-0 border-t-2 border-dashed border-[#22D3EE]/40 z-0 pointer-events-none"
+              aria-hidden="true"
+            />
 
-            {/* Step 2 */}
-            <div className="relative p-8 rounded-2xl bg-[#08172c]/80 border border-[#22D3EE]/40 flex flex-col justify-between space-y-6 shadow-lg shadow-[#22D3EE]/10">
-              <div className="flex items-center justify-between">
-                <span className="text-4xl sm:text-5xl font-extrabold text-[#22D3EE]">02</span>
-                <div className="w-10 h-10 rounded-lg bg-[#22D3EE]/20 text-[#22D3EE] flex items-center justify-center">
-                  <Cpu className="w-5 h-5" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+              {/* Passo 1 */}
+              <div className="group relative p-8 rounded-2xl bg-[#12294A]/80 border border-slate-700/80 hover:border-[#22D3EE]/60 transition-all duration-300 shadow-xl flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <span className="text-4xl sm:text-5xl font-extrabold text-[#22D3EE] font-mono tracking-tight drop-shadow-[0_0_12px_rgba(34,211,238,0.35)]">
+                      01
+                    </span>
+                    <div className="w-11 h-11 rounded-xl bg-[#22D3EE]/15 border border-[#22D3EE]/30 text-[#22D3EE] flex items-center justify-center group-hover:scale-105 transition-transform">
+                      <Layers className="w-5 h-5 stroke-[2]" />
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-2 tracking-tight">
+                    Envie seu caso
+                  </h3>
+                  <p className="text-sm text-slate-300 leading-relaxed">
+                    informe os dados do imóvel ou perfil de investimento
+                  </p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-slate-700/60 flex items-center gap-2 text-xs font-medium text-[#22D3EE]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#22D3EE] animate-pulse" />
+                  <span>Entrada de informações</span>
                 </div>
               </div>
-              <div className="space-y-2">
-                <h3 className="text-xl font-bold text-white">Nossa inteligência cruza</h3>
-                <p className="text-sm text-slate-300 leading-relaxed">
-                  Algoritmos analíticos avaliam 48 variáveis de investimento para calcular o
-                  percentual exato de compatibilidade entre as duas pontas.
-                </p>
-              </div>
-              <div className="text-xs text-[#22D3EE] font-mono">Cálculo de compatibilidade</div>
-            </div>
 
-            {/* Step 3 */}
-            <div className="relative p-8 rounded-2xl bg-[#08172c]/80 border border-slate-700/80 flex flex-col justify-between space-y-6">
-              <div className="flex items-center justify-between">
-                <span className="text-4xl sm:text-5xl font-extrabold text-[#2563EB]">03</span>
-                <div className="w-10 h-10 rounded-lg bg-[#2563EB]/20 text-[#22D3EE] flex items-center justify-center">
-                  <Network className="w-5 h-5" />
+              {/* Passo 2 */}
+              <div className="group relative p-8 rounded-2xl bg-[#12294A]/80 border border-[#22D3EE]/50 hover:border-[#22D3EE] transition-all duration-300 shadow-xl shadow-[#22D3EE]/5 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <span className="text-4xl sm:text-5xl font-extrabold text-[#22D3EE] font-mono tracking-tight drop-shadow-[0_0_12px_rgba(34,211,238,0.35)]">
+                      02
+                    </span>
+                    <div className="w-11 h-11 rounded-xl bg-[#22D3EE]/20 border border-[#22D3EE]/40 text-[#22D3EE] flex items-center justify-center group-hover:scale-105 transition-transform">
+                      <Cpu className="w-5 h-5 stroke-[2]" />
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-2 tracking-tight">
+                    Análise técnica com dados
+                  </h3>
+                  <p className="text-sm text-slate-300 leading-relaxed">
+                    corretores analisam precificação racional, liquidez e compatibilidade
+                  </p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-slate-700/60 flex items-center gap-2 text-xs font-medium text-[#22D3EE]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#22D3EE] animate-pulse" />
+                  <span>Avaliação criteriosa</span>
                 </div>
               </div>
-              <div className="space-y-2">
-                <h3 className="text-xl font-bold text-white">A conexão acontece</h3>
-                <p className="text-sm text-slate-300 leading-relaxed">
-                  Contato qualificado e direto entre quem vende e quem tem capacidade de compra, com
-                  acompanhamento de dados e transparência negocial.
-                </p>
+
+              {/* Passo 3 */}
+              <div className="group relative p-8 rounded-2xl bg-[#12294A]/80 border border-slate-700/80 hover:border-[#22D3EE]/60 transition-all duration-300 shadow-xl flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <span className="text-4xl sm:text-5xl font-extrabold text-[#22D3EE] font-mono tracking-tight drop-shadow-[0_0_12px_rgba(34,211,238,0.35)]">
+                      03
+                    </span>
+                    <div className="w-11 h-11 rounded-xl bg-[#22D3EE]/15 border border-[#22D3EE]/30 text-[#22D3EE] flex items-center justify-center group-hover:scale-105 transition-transform">
+                      <Network className="w-5 h-5 stroke-[2]" />
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-2 tracking-tight">
+                    Conexão e negociação
+                  </h3>
+                  <p className="text-sm text-slate-300 leading-relaxed">
+                    apresentação direta com condução segura até o fechamento
+                  </p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-slate-700/60 flex items-center gap-2 text-xs font-medium text-[#22D3EE]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#22D3EE] animate-pulse" />
+                  <span>Fechamento seguro</span>
+                </div>
               </div>
-              <div className="text-xs text-[#22D3EE] font-mono">Fechamento do negócio</div>
             </div>
           </div>
         </div>
