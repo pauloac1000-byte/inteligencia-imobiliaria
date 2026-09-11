@@ -6,6 +6,8 @@ import { TwoPathsSection } from '@/components/TwoPathsSection'
 import { CompetitiveDifferences } from '@/components/CompetitiveDifferences'
 import { SupportingSections } from '@/components/SupportingSections'
 import { CompatibilityThermometerSection } from '@/components/CompatibilityThermometerSection'
+import { FinalCtaSection } from '@/components/FinalCtaSection'
+import { FaqSection } from '@/components/FaqSection'
 import { Footer } from '@/components/Footer'
 
 interface LayoutContextType {
@@ -36,7 +38,13 @@ const Index: React.FC = () => {
       {/* Seção 2: Termômetro de compatibilidade — posicionado após os passos */}
       <CompatibilityThermometerSection onOpenModal={handleOpenModal} />
 
-      {/* Rodapé: Bloco de marca + links informativos */}
+      {/* 1) Seção CTA Final: Centralizada, fundo escuro azul-marinho, após o termômetro e antes do FAQ */}
+      <FinalCtaSection onOpenModal={handleOpenModal} />
+
+      {/* 2) FAQ em Acordeão: Duas abas, fundo claro off-white */}
+      <FaqSection />
+
+      {/* 3) Rodapé com credibilidade, contato e âncoras */}
       <Footer onOpenModal={handleOpenModal} />
     </div>
   )
