@@ -61,11 +61,11 @@ export const FaqSection: React.FC = () => {
   return (
     <section
       id="faq"
-      className="bg-[#F8FAFC] text-[#0B1F3A] py-16 sm:py-20 lg:py-28 px-4 sm:px-6 lg:px-8 border-b border-slate-200"
+      className="bg-[#F8FAFC] text-[#0B1F3A] py-14 sm:py-20 lg:py-28 px-3.5 sm:px-6 lg:px-8 border-b border-slate-200"
     >
       <div className="max-w-[880px] mx-auto">
         {/* Cabeçalho da seção */}
-        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
+        <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-14">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2563EB]/10 border border-[#2563EB]/20 text-[#2563EB] text-xs font-semibold mb-3 sm:mb-4">
             <HelpCircle className="w-3.5 h-3.5 text-[#22D3EE] shrink-0" />
             <span>Dúvidas Frequentes</span>
@@ -75,45 +75,45 @@ export const FaqSection: React.FC = () => {
             Perguntas frequentes
           </h2>
 
-          <p className="mt-3 text-sm sm:text-base text-[#64748B] leading-relaxed">
+          <p className="mt-2.5 sm:mt-3 text-sm sm:text-base text-slate-600 leading-relaxed">
             Transparência analítica para quem quer vender com liquidez ou investir com segurança.
           </p>
 
           {/* Abas comutadoras: "Sou proprietário" e "Sou investidor" */}
-          <div className="mt-6 sm:mt-8 flex justify-center">
+          <div className="mt-5 sm:mt-8 flex justify-center">
             <div className="w-full sm:w-auto grid grid-cols-2 sm:inline-flex p-1.5 rounded-xl bg-slate-200/80 border border-slate-300/80 shadow-inner gap-1">
               <button
                 type="button"
                 onClick={() => setActiveTab('proprietario')}
-                className={`flex items-center justify-center gap-2 px-4 sm:px-5 py-3 min-h-[44px] rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+                className={`flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-3 min-h-[46px] rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
                   activeTab === 'proprietario'
                     ? 'bg-[#0B1F3A] text-white shadow-md'
-                    : 'text-[#64748B] hover:text-[#0B1F3A]'
+                    : 'text-slate-600 hover:text-[#0B1F3A]'
                 }`}
               >
                 <Building className="w-4 h-4 text-[#22D3EE] shrink-0" />
-                <span>Sou proprietário</span>
+                <span className="whitespace-nowrap">Sou proprietário</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveTab('investidor')}
-                className={`flex items-center justify-center gap-2 px-4 sm:px-5 py-3 min-h-[44px] rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+                className={`flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-3 min-h-[46px] rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
                   activeTab === 'investidor'
                     ? 'bg-[#0B1F3A] text-white shadow-md'
-                    : 'text-[#64748B] hover:text-[#0B1F3A]'
+                    : 'text-slate-600 hover:text-[#0B1F3A]'
                 }`}
               >
                 <TrendingUp className="w-4 h-4 text-[#22D3EE] shrink-0" />
-                <span>Sou investidor</span>
+                <span className="whitespace-nowrap">Sou investidor</span>
               </button>
             </div>
           </div>
         </div>
 
         {/* Acordeão Shadcn/ui (type="single", collapsible, transição suave, detalhes em ciano) */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 lg:p-7 transition-all">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 sm:pb-4 mb-2 border-b border-slate-100 text-xs font-semibold text-[#64748B] gap-1.5">
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 sm:p-6 lg:p-7 transition-all">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 sm:pb-4 mb-2 border-b border-slate-100 text-xs font-semibold text-slate-600 gap-1.5">
             <span className="flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-[#22D3EE] shrink-0" />
               <span>
@@ -139,8 +139,10 @@ export const FaqSection: React.FC = () => {
                       <span className="leading-snug">{item.question}</span>
                     </span>
                   </AccordionTrigger>
-                  <AccordionContent className="text-sm text-[#64748B] leading-relaxed pl-5 pr-2 pt-1 pb-4">
-                    <div className="border-l-2 border-[#22D3EE]/60 pl-3.5">{item.answer}</div>
+                  <AccordionContent className="text-sm text-slate-600 leading-relaxed pl-4 sm:pl-5 pr-1 sm:pr-2 pt-1 pb-4">
+                    <div className="border-l-2 border-[#22D3EE]/60 pl-3 sm:pl-3.5">
+                      {item.answer}
+                    </div>
                   </AccordionContent>
                 </AccordionItem>
               ))}
@@ -159,8 +161,10 @@ export const FaqSection: React.FC = () => {
                       <span className="leading-snug">{item.question}</span>
                     </span>
                   </AccordionTrigger>
-                  <AccordionContent className="text-sm text-[#64748B] leading-relaxed pl-5 pr-2 pt-1 pb-4">
-                    <div className="border-l-2 border-[#22D3EE]/60 pl-3.5">{item.answer}</div>
+                  <AccordionContent className="text-sm text-slate-600 leading-relaxed pl-4 sm:pl-5 pr-1 sm:pr-2 pt-1 pb-4">
+                    <div className="border-l-2 border-[#22D3EE]/60 pl-3 sm:pl-3.5">
+                      {item.answer}
+                    </div>
                   </AccordionContent>
                 </AccordionItem>
               ))}

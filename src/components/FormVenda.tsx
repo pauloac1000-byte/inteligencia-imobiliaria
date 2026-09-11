@@ -152,7 +152,7 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
             value={nome}
             onChange={(e) => setNome(e.target.value)}
             disabled={loading}
-            className="w-full px-3.5 py-2.5 rounded-lg bg-[#12294A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white placeholder-slate-400 text-sm outline-none transition-all disabled:opacity-50"
+            className="w-full px-3.5 py-2.5 rounded-lg bg-[#12294A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white placeholder-slate-400 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
           />
         </div>
 
@@ -167,7 +167,7 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
             value={telefone}
             onChange={(e) => setTelefone(e.target.value)}
             disabled={loading}
-            className="w-full px-3.5 py-2.5 rounded-lg bg-[#12294A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white placeholder-slate-400 text-sm outline-none transition-all disabled:opacity-50"
+            className="w-full px-3.5 py-2.5 rounded-lg bg-[#12294A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white placeholder-slate-400 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
           />
         </div>
       </div>
@@ -185,7 +185,7 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
-            className="w-full px-3.5 py-2.5 rounded-lg bg-[#12294A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white placeholder-slate-400 text-sm outline-none transition-all disabled:opacity-50"
+            className="w-full px-3.5 py-2.5 rounded-lg bg-[#12294A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white placeholder-slate-400 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
           />
         </div>
 
@@ -199,7 +199,7 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
               value={tipoImovel}
               onChange={(e) => setTipoImovel(e.target.value)}
               disabled={loading}
-              className="w-full px-3.5 py-2.5 rounded-lg bg-[#12294A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white text-sm outline-none transition-all appearance-none cursor-pointer disabled:opacity-50"
+              className="w-full px-3.5 py-2.5 rounded-lg bg-[#12294A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white text-base sm:text-sm outline-none transition-all appearance-none cursor-pointer disabled:opacity-50 min-h-[44px]"
             >
               <option value="apartamento">Apartamento</option>
               <option value="casa">Casa</option>
@@ -226,7 +226,7 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
             value={cidade}
             onChange={(e) => setCidade(e.target.value)}
             disabled={loading}
-            className="w-full px-3.5 py-2.5 rounded-lg bg-[#12294A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white placeholder-slate-400 text-sm outline-none transition-all disabled:opacity-50"
+            className="w-full px-3.5 py-2.5 rounded-lg bg-[#12294A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white placeholder-slate-400 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
           />
         </div>
 
@@ -240,7 +240,7 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
             value={valorEstimado}
             onChange={(e) => setValorEstimado(e.target.value)}
             disabled={loading}
-            className="w-full px-3.5 py-2.5 rounded-lg bg-[#12294A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white placeholder-slate-400 text-sm outline-none transition-all disabled:opacity-50"
+            className="w-full px-3.5 py-2.5 rounded-lg bg-[#12294A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white placeholder-slate-400 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
           />
         </div>
       </div>

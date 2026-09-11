@@ -165,7 +165,7 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
             value={nome}
             onChange={(e) => setNome(e.target.value)}
             disabled={loading}
-            className="w-full px-3.5 py-2.5 rounded-lg bg-[#12294A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white placeholder-slate-400 text-sm outline-none transition-all disabled:opacity-50"
+            className="w-full px-3.5 py-2.5 rounded-lg bg-[#12294A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white placeholder-slate-400 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
           />
         </div>
 
@@ -180,7 +180,7 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
             value={telefone}
             onChange={(e) => setTelefone(e.target.value)}
             disabled={loading}
-            className="w-full px-3.5 py-2.5 rounded-lg bg-[#12294A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white placeholder-slate-400 text-sm outline-none transition-all disabled:opacity-50"
+            className="w-full px-3.5 py-2.5 rounded-lg bg-[#12294A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white placeholder-slate-400 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
           />
         </div>
       </div>
@@ -198,7 +198,7 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
-            className="w-full px-3.5 py-2.5 rounded-lg bg-[#12294A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white placeholder-slate-400 text-sm outline-none transition-all disabled:opacity-50"
+            className="w-full px-3.5 py-2.5 rounded-lg bg-[#12294A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white placeholder-slate-400 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
           />
         </div>
 
@@ -212,7 +212,7 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
               value={perfil}
               onChange={(e) => setPerfil(e.target.value)}
               disabled={loading}
-              className="w-full px-3.5 py-2.5 rounded-lg bg-[#12294A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white text-sm outline-none transition-all appearance-none cursor-pointer disabled:opacity-50"
+              className="w-full px-3.5 py-2.5 rounded-lg bg-[#12294A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white text-base sm:text-sm outline-none transition-all appearance-none cursor-pointer disabled:opacity-50 min-h-[44px]"
             >
               {OPCOES_PERFIL.map((op) => (
                 <option key={op.value} value={op.value}>
@@ -239,7 +239,7 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
               value={faixaValor}
               onChange={(e) => setFaixaValor(e.target.value)}
               disabled={loading}
-              className="w-full px-3.5 py-2.5 rounded-lg bg-[#12294A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white text-sm outline-none transition-all appearance-none cursor-pointer disabled:opacity-50"
+              className="w-full px-3.5 py-2.5 rounded-lg bg-[#12294A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white text-base sm:text-sm outline-none transition-all appearance-none cursor-pointer disabled:opacity-50 min-h-[44px]"
             >
               <option value="Até R$ 500 mil">Até R$ 500 mil</option>
               <option value="R$ 500 mil a R$ 1 milhão">R$ 500 mil a R$ 1 milhão</option>
@@ -264,7 +264,7 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
             value={cidadesInteresse}
             onChange={(e) => setCidadesInteresse(e.target.value)}
             disabled={loading}
-            className="w-full px-3.5 py-2.5 rounded-lg bg-[#12294A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white placeholder-slate-400 text-sm outline-none transition-all disabled:opacity-50"
+            className="w-full px-3.5 py-2.5 rounded-lg bg-[#12294A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white placeholder-slate-400 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
           />
         </div>
       </div>

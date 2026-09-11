@@ -82,18 +82,18 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
           : 'bg-transparent border-b border-transparent'
       }`}
     >
-      <div className="w-full max-w-[1200px] mx-auto px-6 flex items-center justify-between">
+      <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 flex items-center justify-between">
         {/* Logo "Imóveis Inteligentes" */}
         <a
           href="#"
           onClick={handleLogoClick}
-          className="group flex items-center gap-3 text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#22D3EE] rounded-lg py-1 px-1"
+          className="group flex items-center gap-2.5 sm:gap-3 text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#22D3EE] rounded-lg py-1 px-1 -ml-1"
           aria-label="Imóveis Inteligentes - Início"
         >
           {/* Custom SVG Icon: House with Data Connected Node */}
-          <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-[#12294A] to-[#0B1F3A] border border-[#2563EB]/40 shadow-sm group-hover:border-[#22D3EE] transition-colors">
+          <div className="relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#12294A] to-[#0B1F3A] border border-[#2563EB]/40 shadow-sm group-hover:border-[#22D3EE] transition-colors shrink-0">
             <svg
-              className="w-5 h-5 text-[#22D3EE]"
+              className="w-4 h-4 sm:w-5 sm:h-5 text-[#22D3EE]"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -112,8 +112,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#22D3EE] rounded-full ring-2 ring-[#0B1F3A] animate-pulse" />
           </div>
 
-          <div className="flex flex-col">
-            <span className="font-bold text-lg sm:text-xl tracking-tight text-white flex items-center gap-1">
+          <div className="flex flex-col min-w-0">
+            <span className="font-bold text-base sm:text-xl tracking-tight text-white flex items-center gap-1 whitespace-nowrap">
               Imóveis
               <span className="text-[#22D3EE] font-bold">Inteligentes</span>
             </span>
@@ -174,21 +174,21 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="md:hidden fixed inset-0 top-[72px] z-40 bg-black/70 backdrop-blur-sm animate-fade-in">
-          <div className="absolute right-0 top-0 bottom-0 w-[280px] bg-[#0B1F3A] border-l border-[#12294A] p-6 flex flex-col justify-between shadow-2xl animate-slide-left">
-            <div className="space-y-6">
+          <div className="absolute right-0 top-0 bottom-0 w-[min(300px,85vw)] bg-[#0B1F3A] border-l border-[#12294A] p-6 flex flex-col justify-between shadow-2xl overflow-y-auto animate-fade-in">
+            <div className="space-y-5">
               <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 pb-2 border-b border-slate-700">
                 Navegação
               </div>
-              <nav className="flex flex-col space-y-4">
+              <nav className="flex flex-col space-y-1">
                 {navItems.map((item) => (
                   <a
                     key={item.href}
                     href={item.href}
                     onClick={(e) => handleNavClick(e, item.href)}
-                    className={`text-base font-medium transition-colors py-2 border-b border-slate-800 ${
+                    className={`text-base font-medium transition-colors py-3 px-2 rounded-lg border-b border-slate-800/80 min-h-[44px] flex items-center ${
                       activeSection === item.id
-                        ? 'text-[#22D3EE] font-semibold'
-                        : 'text-slate-200 hover:text-[#22D3EE]'
+                        ? 'text-[#22D3EE] font-semibold bg-white/5'
+                        : 'text-slate-200 hover:text-[#22D3EE] active:bg-white/5'
                     }`}
                   >
                     {item.label}
@@ -197,20 +197,20 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
               </nav>
             </div>
 
-            <div className="pt-6 border-t border-slate-800 space-y-3">
+            <div className="pt-6 border-t border-slate-800 space-y-3 mt-6">
               <button
                 type="button"
                 onClick={() => {
                   setMobileMenuOpen(false)
                   onOpenModal()
                 }}
-                className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 min-h-[48px] rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] active:bg-[#1e40af] text-white font-semibold text-sm shadow-md"
+                className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 min-h-[48px] rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] active:bg-[#1e40af] text-white font-semibold text-sm shadow-md cursor-pointer"
               >
                 <span>Começar agora</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
               <div className="text-[11px] text-center text-slate-400">
-                Imóveis Inteligentes • 2025
+                Imóveis Inteligentes • {new Date().getFullYear()}
               </div>
             </div>
           </div>

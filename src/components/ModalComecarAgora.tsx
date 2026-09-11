@@ -38,13 +38,13 @@ export const ModalComecarAgora: React.FC<ModalComecarAgoraProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[calc(100%-2rem)] sm:max-w-[560px] max-h-[90vh] overflow-y-auto bg-[#0B1F3A] border border-[#2563EB]/40 text-white shadow-2xl backdrop-blur-md p-5 sm:p-8 rounded-2xl">
-        <DialogHeader className="text-left space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2563EB]/20 border border-[#2563EB]/40 text-[#22D3EE] text-xs font-semibold w-fit">
+      <DialogContent className="w-[calc(100%-1.5rem)] sm:max-w-[560px] max-h-[92vh] overflow-y-auto bg-[#0B1F3A] border border-[#2563EB]/40 text-white shadow-2xl backdrop-blur-md p-4 sm:p-8 rounded-2xl">
+        <DialogHeader className="text-left space-y-2 pr-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2563EB]/20 border border-[#2563EB]/40 text-[#22D3EE] text-[11px] sm:text-xs font-semibold w-fit">
             <span className="w-1.5 h-1.5 rounded-full bg-[#22D3EE] animate-pulse shrink-0" />
             Conexão orientada a dados no Supabase
           </div>
-          <DialogTitle className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+          <DialogTitle className="text-lg sm:text-2xl font-bold tracking-tight text-white leading-snug">
             {intencao === 'vender'
               ? 'Quero vender meu imóvel'
               : 'Quero oportunidade de investimento'}

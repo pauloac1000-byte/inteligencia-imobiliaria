@@ -43,23 +43,23 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenModal }) => {
           {/* Left Column (60% ~ 7 cols in desktop) */}
           <div className="lg:col-span-7 flex flex-col items-start text-left space-y-5 sm:space-y-7 animate-fade-in-up">
             {/* Pill Tag */}
-            <div className="inline-flex items-center gap-2 sm:gap-2.5 px-3 sm:px-3.5 py-1.5 rounded-full bg-[#12294A]/90 border border-[#2563EB]/40 text-[#22D3EE] text-[11px] sm:text-xs font-semibold backdrop-blur-sm shadow-sm max-w-full">
+            <div className="inline-flex items-center gap-2 sm:gap-2.5 px-3 sm:px-3.5 py-1.5 rounded-full bg-[#12294A]/90 border border-[#2563EB]/40 text-[#22D3EE] text-[10px] sm:text-xs font-semibold backdrop-blur-sm shadow-sm max-w-full">
               <span className="w-2 h-2 rounded-full bg-[#22D3EE] animate-ping shrink-0" />
-              <span className="truncate sm:whitespace-normal">
+              <span className="leading-tight">
                 Plataforma de Inteligência e Compatibilidade Imobiliária
               </span>
             </div>
 
             {/* Headline EXATA: Primeira frase branca, segunda em azul elétrico */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-bold tracking-tight leading-[1.14] sm:leading-[1.12]">
+            <h1 className="text-[28px] xs:text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-bold tracking-tight leading-[1.15] sm:leading-[1.12] break-words">
               <span className="text-white">Seu imóvel encontra o comprador certo. </span>
-              <span className="text-[#2563EB] drop-shadow-sm block sm:inline">
+              <span className="text-[#2563EB] drop-shadow-sm block sm:inline mt-1 sm:mt-0">
                 Você encontra o negócio certo.
               </span>
             </h1>
 
             {/* Subheadline EXATA */}
-            <p className="text-base sm:text-lg lg:text-xl text-slate-300 font-normal leading-relaxed max-w-2xl">
+            <p className="text-sm sm:text-lg lg:text-xl text-slate-300 font-normal leading-relaxed max-w-2xl">
               Nossa mecânica de dados cruza perfil do imóvel com objetivo de compra de milhares de
               investidores. A compatibilidade precisa guia a ponte entre você e a oportunidade
               certa.
@@ -90,26 +90,28 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenModal }) => {
             </div>
 
             {/* Trust Proof Points below CTAs */}
-            <div className="pt-4 sm:pt-5 border-t border-slate-700/60 w-full grid grid-cols-3 gap-3 sm:gap-4 text-slate-400">
-              <div className="space-y-0.5">
-                <div className="text-white font-bold text-lg sm:text-xl lg:text-2xl font-mono">
+            <div className="pt-4 sm:pt-5 border-t border-slate-700/60 w-full grid grid-cols-3 gap-2 sm:gap-4 text-slate-400">
+              <div className="space-y-0.5 min-w-0">
+                <div className="text-white font-bold text-base sm:text-xl lg:text-2xl font-mono">
                   48
                 </div>
-                <div className="text-[11px] sm:text-xs text-slate-300 sm:text-slate-400 leading-snug">
+                <div className="text-[10px] sm:text-xs text-slate-300 sm:text-slate-400 leading-snug break-words">
                   Variáveis de análise
                 </div>
               </div>
-              <div className="space-y-0.5">
-                <div className="text-white font-bold text-lg sm:text-xl lg:text-2xl font-mono">
+              <div className="space-y-0.5 min-w-0">
+                <div className="text-white font-bold text-base sm:text-xl lg:text-2xl font-mono">
                   100%
                 </div>
-                <div className="text-[11px] sm:text-xs text-slate-300 sm:text-slate-400 leading-snug">
+                <div className="text-[10px] sm:text-xs text-slate-300 sm:text-slate-400 leading-snug break-words">
                   Dados verificados
                 </div>
               </div>
-              <div className="space-y-0.5">
-                <div className="text-white font-bold text-lg sm:text-xl lg:text-2xl">Direto</div>
-                <div className="text-[11px] sm:text-xs text-slate-300 sm:text-slate-400 leading-snug">
+              <div className="space-y-0.5 min-w-0">
+                <div className="text-white font-bold text-base sm:text-xl lg:text-2xl break-words">
+                  Direto
+                </div>
+                <div className="text-[10px] sm:text-xs text-slate-300 sm:text-slate-400 leading-snug break-words">
                   Sem ruído de portais
                 </div>
               </div>
