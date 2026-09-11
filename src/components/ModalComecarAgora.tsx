@@ -38,18 +38,18 @@ export const ModalComecarAgora: React.FC<ModalComecarAgoraProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[560px] max-h-[92vh] overflow-y-auto bg-[#0B1F3A] border border-[#2563EB]/40 text-white shadow-2xl backdrop-blur-md p-6 sm:p-8">
+      <DialogContent className="w-[calc(100%-2rem)] sm:max-w-[560px] max-h-[90vh] overflow-y-auto bg-[#0B1F3A] border border-[#2563EB]/40 text-white shadow-2xl backdrop-blur-md p-5 sm:p-8 rounded-2xl">
         <DialogHeader className="text-left space-y-2">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2563EB]/20 border border-[#2563EB]/40 text-[#22D3EE] text-xs font-semibold w-fit">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#22D3EE] animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#22D3EE] animate-pulse shrink-0" />
             Conexão orientada a dados no Supabase
           </div>
-          <DialogTitle className="text-2xl font-bold tracking-tight text-white">
+          <DialogTitle className="text-xl sm:text-2xl font-bold tracking-tight text-white">
             {intencao === 'vender'
               ? 'Quero vender meu imóvel'
               : 'Quero oportunidade de investimento'}
           </DialogTitle>
-          <DialogDescription className="text-slate-300 text-sm">
+          <DialogDescription className="text-slate-300 text-xs sm:text-sm leading-relaxed">
             {intencao === 'vender'
               ? 'Cadastre as informações do seu imóvel para conectá-lo a compradores e investidores com liquidez imediata.'
               : 'Defina sua tese de alocação de capital e receba oportunidades filtradas antes de chegarem aos portais abertos.'}
@@ -61,11 +61,11 @@ export const ModalComecarAgora: React.FC<ModalComecarAgoraProps> = ({
           <label className="text-xs font-semibold uppercase tracking-wider text-slate-300 block mb-2">
             Escolha seu objetivo:
           </label>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
             <button
               type="button"
               onClick={() => setIntencao('vender')}
-              className={`flex items-center gap-2.5 p-3 rounded-lg border text-left transition-all cursor-pointer ${
+              className={`flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 min-h-[48px] rounded-xl border text-left transition-all cursor-pointer ${
                 intencao === 'vender'
                   ? 'border-[#2563EB] bg-[#2563EB]/25 text-white shadow-sm ring-1 ring-[#2563EB]'
                   : 'border-slate-700 bg-[#12294A]/60 text-slate-300 hover:border-slate-600'
@@ -76,14 +76,16 @@ export const ModalComecarAgora: React.FC<ModalComecarAgoraProps> = ({
               </div>
               <div className="flex flex-col min-w-0">
                 <span className="text-xs font-bold truncate">Quero vender</span>
-                <span className="text-[11px] text-slate-400 truncate">Tenho um imóvel</span>
+                <span className="text-[10px] sm:text-[11px] text-slate-400 truncate">
+                  Tenho um imóvel
+                </span>
               </div>
             </button>
 
             <button
               type="button"
               onClick={() => setIntencao('investir')}
-              className={`flex items-center gap-2.5 p-3 rounded-lg border text-left transition-all cursor-pointer ${
+              className={`flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 min-h-[48px] rounded-xl border text-left transition-all cursor-pointer ${
                 intencao === 'investir'
                   ? 'border-[#22D3EE] bg-[#22D3EE]/20 text-white shadow-sm ring-1 ring-[#22D3EE]'
                   : 'border-slate-700 bg-[#12294A]/60 text-slate-300 hover:border-slate-600'
@@ -94,7 +96,9 @@ export const ModalComecarAgora: React.FC<ModalComecarAgoraProps> = ({
               </div>
               <div className="flex flex-col min-w-0">
                 <span className="text-xs font-bold truncate">Investimento</span>
-                <span className="text-[11px] text-slate-400 truncate">Busco retorno/renda</span>
+                <span className="text-[10px] sm:text-[11px] text-slate-400 truncate">
+                  Busco retorno/renda
+                </span>
               </div>
             </button>
           </div>

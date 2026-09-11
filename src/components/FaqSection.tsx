@@ -61,50 +61,50 @@ export const FaqSection: React.FC = () => {
   return (
     <section
       id="faq"
-      className="bg-[#F8FAFC] text-[#0B1F3A] py-20 sm:py-28 px-6 border-b border-slate-200"
+      className="bg-[#F8FAFC] text-[#0B1F3A] py-16 sm:py-20 lg:py-28 px-4 sm:px-6 lg:px-8 border-b border-slate-200"
     >
       <div className="max-w-[880px] mx-auto">
         {/* Cabeçalho da seção */}
-        <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2563EB]/10 border border-[#2563EB]/20 text-[#2563EB] text-xs font-semibold mb-4">
-            <HelpCircle className="w-3.5 h-3.5 text-[#22D3EE]" />
+        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2563EB]/10 border border-[#2563EB]/20 text-[#2563EB] text-xs font-semibold mb-3 sm:mb-4">
+            <HelpCircle className="w-3.5 h-3.5 text-[#22D3EE] shrink-0" />
             <span>Dúvidas Frequentes</span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-bold tracking-tight text-[#0B1F3A] leading-tight">
+          <h2 className="text-2xl sm:text-3xl lg:text-[42px] font-bold tracking-tight text-[#0B1F3A] leading-tight">
             Perguntas frequentes
           </h2>
 
-          <p className="mt-3 text-base text-[#64748B] leading-relaxed">
+          <p className="mt-3 text-sm sm:text-base text-[#64748B] leading-relaxed">
             Transparência analítica para quem quer vender com liquidez ou investir com segurança.
           </p>
 
           {/* Abas comutadoras: "Sou proprietário" e "Sou investidor" */}
-          <div className="mt-8 flex justify-center">
-            <div className="inline-flex p-1.5 rounded-xl bg-slate-200/80 border border-slate-300/80 shadow-inner">
+          <div className="mt-6 sm:mt-8 flex justify-center">
+            <div className="w-full sm:w-auto grid grid-cols-2 sm:inline-flex p-1.5 rounded-xl bg-slate-200/80 border border-slate-300/80 shadow-inner gap-1">
               <button
                 type="button"
                 onClick={() => setActiveTab('proprietario')}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer ${
+                className={`flex items-center justify-center gap-2 px-4 sm:px-5 py-3 min-h-[44px] rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
                   activeTab === 'proprietario'
                     ? 'bg-[#0B1F3A] text-white shadow-md'
                     : 'text-[#64748B] hover:text-[#0B1F3A]'
                 }`}
               >
-                <Building className="w-4 h-4 text-[#22D3EE]" />
+                <Building className="w-4 h-4 text-[#22D3EE] shrink-0" />
                 <span>Sou proprietário</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveTab('investidor')}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer ${
+                className={`flex items-center justify-center gap-2 px-4 sm:px-5 py-3 min-h-[44px] rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
                   activeTab === 'investidor'
                     ? 'bg-[#0B1F3A] text-white shadow-md'
                     : 'text-[#64748B] hover:text-[#0B1F3A]'
                 }`}
               >
-                <TrendingUp className="w-4 h-4 text-[#22D3EE]" />
+                <TrendingUp className="w-4 h-4 text-[#22D3EE] shrink-0" />
                 <span>Sou investidor</span>
               </button>
             </div>
@@ -112,13 +112,15 @@ export const FaqSection: React.FC = () => {
         </div>
 
         {/* Acordeão Shadcn/ui (type="single", collapsible, transição suave, detalhes em ciano) */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 transition-all">
-          <div className="flex items-center justify-between pb-4 mb-2 border-b border-slate-100 text-xs font-semibold text-[#64748B]">
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 lg:p-7 transition-all">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 sm:pb-4 mb-2 border-b border-slate-100 text-xs font-semibold text-[#64748B] gap-1.5">
             <span className="flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-[#22D3EE]" />
-              {activeTab === 'proprietario'
-                ? 'Critérios e processos para venda patrimonial'
-                : 'Critérios e tese para alocação de capital'}
+              <Sparkles className="w-3.5 h-3.5 text-[#22D3EE] shrink-0" />
+              <span>
+                {activeTab === 'proprietario'
+                  ? 'Critérios e processos para venda patrimonial'
+                  : 'Critérios e tese para alocação de capital'}
+              </span>
             </span>
             <span className="text-[11px] font-mono text-[#2563EB]">1 item aberto por vez</span>
           </div>
@@ -131,14 +133,14 @@ export const FaqSection: React.FC = () => {
                   value={item.id}
                   className="border-b border-slate-100 last:border-0 py-1"
                 >
-                  <AccordionTrigger className="text-left text-sm sm:text-base font-semibold text-[#0B1F3A] hover:text-[#2563EB] hover:no-underline py-4 transition-colors group">
-                    <span className="flex items-center gap-3">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#22D3EE] group-hover:scale-125 transition-transform" />
-                      <span>{item.question}</span>
+                  <AccordionTrigger className="text-left text-sm sm:text-base font-semibold text-[#0B1F3A] hover:text-[#2563EB] hover:no-underline py-3.5 sm:py-4 transition-colors group">
+                    <span className="flex items-start sm:items-center gap-2.5 sm:gap-3 pr-2">
+                      <span className="w-2 h-2 rounded-full bg-[#22D3EE] group-hover:scale-125 transition-transform mt-1.5 sm:mt-0 shrink-0" />
+                      <span className="leading-snug">{item.question}</span>
                     </span>
                   </AccordionTrigger>
                   <AccordionContent className="text-sm text-[#64748B] leading-relaxed pl-5 pr-2 pt-1 pb-4">
-                    <div className="border-l-2 border-[#22D3EE]/60 pl-3">{item.answer}</div>
+                    <div className="border-l-2 border-[#22D3EE]/60 pl-3.5">{item.answer}</div>
                   </AccordionContent>
                 </AccordionItem>
               ))}
@@ -151,14 +153,14 @@ export const FaqSection: React.FC = () => {
                   value={item.id}
                   className="border-b border-slate-100 last:border-0 py-1"
                 >
-                  <AccordionTrigger className="text-left text-sm sm:text-base font-semibold text-[#0B1F3A] hover:text-[#2563EB] hover:no-underline py-4 transition-colors group">
-                    <span className="flex items-center gap-3">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#22D3EE] group-hover:scale-125 transition-transform" />
-                      <span>{item.question}</span>
+                  <AccordionTrigger className="text-left text-sm sm:text-base font-semibold text-[#0B1F3A] hover:text-[#2563EB] hover:no-underline py-3.5 sm:py-4 transition-colors group">
+                    <span className="flex items-start sm:items-center gap-2.5 sm:gap-3 pr-2">
+                      <span className="w-2 h-2 rounded-full bg-[#22D3EE] group-hover:scale-125 transition-transform mt-1.5 sm:mt-0 shrink-0" />
+                      <span className="leading-snug">{item.question}</span>
                     </span>
                   </AccordionTrigger>
                   <AccordionContent className="text-sm text-[#64748B] leading-relaxed pl-5 pr-2 pt-1 pb-4">
-                    <div className="border-l-2 border-[#22D3EE]/60 pl-3">{item.answer}</div>
+                    <div className="border-l-2 border-[#22D3EE]/60 pl-3.5">{item.answer}</div>
                   </AccordionContent>
                 </AccordionItem>
               ))}

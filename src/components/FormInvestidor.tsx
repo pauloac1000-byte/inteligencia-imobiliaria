@@ -274,18 +274,18 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
         <button
           type="submit"
           disabled={loading}
-          className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-lg bg-[#22D3EE] hover:bg-[#06b6d4] text-[#0B1F3A] font-bold text-sm shadow-lg hover:shadow-[#22D3EE]/30 transition-all transform active:scale-[0.99] disabled:opacity-60 cursor-pointer"
+          className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 min-h-[48px] rounded-xl bg-[#22D3EE] hover:bg-[#06b6d4] active:bg-[#0891b2] text-[#0B1F3A] font-bold text-sm shadow-lg hover:shadow-[#22D3EE]/30 transition-all transform active:scale-[0.99] disabled:opacity-60 cursor-pointer"
         >
           {loading ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin text-[#0B1F3A]" />
+              <Loader2 className="w-4 h-4 animate-spin text-[#0B1F3A] shrink-0" />
               <span>Gravando dados no Supabase...</span>
             </>
           ) : (
             <>
-              <TrendingUp className="w-4 h-4" />
+              <TrendingUp className="w-4 h-4 shrink-0" />
               <span>Buscar oportunidades de investimento</span>
-              <ArrowRight className="w-4 h-4 ml-1" />
+              <ArrowRight className="w-4 h-4 ml-1 shrink-0" />
             </>
           )}
         </button>

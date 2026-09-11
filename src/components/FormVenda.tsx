@@ -265,18 +265,18 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
         <button
           type="submit"
           disabled={loading}
-          className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-lg bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold text-sm shadow-lg hover:shadow-[#2563EB]/40 transition-all transform active:scale-[0.99] disabled:opacity-60 cursor-pointer"
+          className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 min-h-[48px] rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] active:bg-[#1e40af] text-white font-semibold text-sm shadow-lg hover:shadow-[#2563EB]/40 transition-all transform active:scale-[0.99] disabled:opacity-60 cursor-pointer"
         >
           {loading ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin text-white" />
+              <Loader2 className="w-4 h-4 animate-spin text-white shrink-0" />
               <span>Gravando dados no Supabase...</span>
             </>
           ) : (
             <>
-              <Building2 className="w-4 h-4" />
+              <Building2 className="w-4 h-4 shrink-0" />
               <span>Cadastrar imóvel para venda</span>
-              <ArrowRight className="w-4 h-4 ml-1" />
+              <ArrowRight className="w-4 h-4 ml-1 shrink-0" />
             </>
           )}
         </button>

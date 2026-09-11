@@ -22,14 +22,14 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
   }
 
   return (
-    <footer className="bg-[#061224] text-white pt-16 pb-12 px-6 border-t border-slate-800/80">
-      <div className="max-w-[1200px] mx-auto space-y-12">
+    <footer className="bg-[#061224] text-white pt-14 sm:pt-16 pb-12 px-4 sm:px-6 lg:px-8 border-t border-slate-800/80">
+      <div className="max-w-[1200px] mx-auto space-y-10 sm:space-y-12">
         {/* Grid Principal do Rodapé */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12">
           {/* Marca + Tagline do Projeto */}
           <div className="md:col-span-4 space-y-4">
             <a href="#" onClick={scrollToTop} className="flex items-center gap-3 group w-fit">
-              <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-[#12294A] to-[#0B1F3A] border border-[#2563EB]/40 group-hover:border-[#22D3EE] transition-colors">
+              <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-[#12294A] to-[#0B1F3A] border border-[#2563EB]/40 group-hover:border-[#22D3EE] transition-colors shrink-0">
                 <svg
                   className="w-5 h-5 text-[#22D3EE]"
                   viewBox="0 0 24 24"
@@ -60,7 +60,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
               certa.
             </p>
 
-            <div className="pt-2 flex items-center gap-2 text-xs text-slate-400">
+            <div className="pt-1 flex items-center gap-2 text-xs text-slate-400">
               <ShieldCheck className="w-4 h-4 text-[#22D3EE] shrink-0" />
               <span>Operações fundamentadas em dados • Brasil</span>
             </div>
@@ -71,14 +71,14 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
             <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-300">
               Navegação
             </h4>
-            <ul className="space-y-2.5 text-sm text-slate-400">
+            <ul className="space-y-2 text-sm text-slate-400">
               <li>
                 <a
                   href="#para-vender"
                   onClick={(e) => handleNavClick(e, 'para-vender')}
-                  className="hover:text-[#22D3EE] transition-colors inline-flex items-center gap-1.5"
+                  className="hover:text-[#22D3EE] transition-colors inline-flex items-center gap-2 py-1"
                 >
-                  <span className="w-1 h-1 rounded-full bg-[#22D3EE]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#22D3EE] shrink-0" />
                   <span>Para vender</span>
                 </a>
               </li>
@@ -86,9 +86,9 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
                 <a
                   href="#para-investir"
                   onClick={(e) => handleNavClick(e, 'para-investir')}
-                  className="hover:text-[#22D3EE] transition-colors inline-flex items-center gap-1.5"
+                  className="hover:text-[#22D3EE] transition-colors inline-flex items-center gap-2 py-1"
                 >
-                  <span className="w-1 h-1 rounded-full bg-[#22D3EE]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#22D3EE] shrink-0" />
                   <span>Para investir</span>
                 </a>
               </li>
@@ -96,9 +96,9 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
                 <a
                   href="#como-funciona"
                   onClick={(e) => handleNavClick(e, 'como-funciona')}
-                  className="hover:text-[#22D3EE] transition-colors inline-flex items-center gap-1.5"
+                  className="hover:text-[#22D3EE] transition-colors inline-flex items-center gap-2 py-1"
                 >
-                  <span className="w-1 h-1 rounded-full bg-[#22D3EE]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#22D3EE] shrink-0" />
                   <span>Como funciona</span>
                 </a>
               </li>
@@ -106,9 +106,9 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
                 <a
                   href="#diferenciais"
                   onClick={(e) => handleNavClick(e, 'diferenciais')}
-                  className="hover:text-[#22D3EE] transition-colors inline-flex items-center gap-1.5"
+                  className="hover:text-[#22D3EE] transition-colors inline-flex items-center gap-2 py-1"
                 >
-                  <span className="w-1 h-1 rounded-full bg-[#22D3EE]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#22D3EE] shrink-0" />
                   <span>Diferenciais</span>
                 </a>
               </li>
@@ -116,9 +116,9 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
                 <a
                   href="#compatibilidade"
                   onClick={(e) => handleNavClick(e, 'compatibilidade')}
-                  className="hover:text-[#22D3EE] transition-colors inline-flex items-center gap-1.5"
+                  className="hover:text-[#22D3EE] transition-colors inline-flex items-center gap-2 py-1"
                 >
-                  <span className="w-1 h-1 rounded-full bg-[#22D3EE]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#22D3EE] shrink-0" />
                   <span>Compatibilidade</span>
                 </a>
               </li>
@@ -126,9 +126,9 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
                 <a
                   href="#faq"
                   onClick={(e) => handleNavClick(e, 'faq')}
-                  className="hover:text-[#22D3EE] transition-colors inline-flex items-center gap-1.5"
+                  className="hover:text-[#22D3EE] transition-colors inline-flex items-center gap-2 py-1"
                 >
-                  <span className="w-1 h-1 rounded-full bg-[#22D3EE]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#22D3EE] shrink-0" />
                   <span>Perguntas frequentes</span>
                 </a>
               </li>
@@ -167,32 +167,36 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
             <button
               type="button"
               onClick={() => onOpenModal()}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#2563EB] hover:bg-[#1d4ed8] text-white text-xs font-semibold transition-all shadow-md cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 min-h-[44px] rounded-lg bg-[#2563EB] hover:bg-[#1d4ed8] active:bg-[#1e40af] text-white text-xs sm:text-sm font-semibold transition-all shadow-md cursor-pointer"
             >
               <span>Falar com especialista em dados</span>
-              <ArrowUpRight className="w-3.5 h-3.5" />
+              <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />
             </button>
 
             {/* Links informativos (privacidade, termos, contato) mantidos */}
-            <div className="pt-2 flex flex-wrap items-center gap-4 text-xs text-slate-400">
-              <span className="hover:text-white cursor-pointer transition-colors">Privacidade</span>
+            <div className="pt-2 flex flex-wrap items-center gap-3 sm:gap-4 text-xs text-slate-400">
+              <span className="hover:text-white cursor-pointer transition-colors py-1">
+                Privacidade
+              </span>
               <span>•</span>
-              <span className="hover:text-white cursor-pointer transition-colors">
+              <span className="hover:text-white cursor-pointer transition-colors py-1">
                 Termos de Uso
               </span>
               <span>•</span>
-              <span className="hover:text-white cursor-pointer transition-colors">Compliance</span>
+              <span className="hover:text-white cursor-pointer transition-colors py-1">
+                Compliance
+              </span>
             </div>
           </div>
         </div>
 
         {/* Barra Inferior com Copyright Dinâmico */}
-        <div className="pt-8 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+        <div className="pt-6 sm:pt-8 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 text-center sm:text-left">
           <div>
             © {new Date().getFullYear()} Imóveis Inteligentes. Todos os direitos reservados.
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#22D3EE]" />
+            <span className="w-2 h-2 rounded-full bg-[#22D3EE] shrink-0" />
             <span>Compatibilidade calculada com 48 variáveis analíticas</span>
           </div>
         </div>

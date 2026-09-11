@@ -153,17 +153,17 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
           <button
             type="button"
             onClick={() => onOpenModal()}
-            className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#2563EB] hover:bg-[#1d4ed8] text-white text-sm font-semibold shadow-md hover:shadow-lg hover:shadow-[#2563EB]/30 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+            className="hidden sm:inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] active:bg-[#1e40af] text-white text-sm font-semibold shadow-md hover:shadow-lg hover:shadow-[#2563EB]/30 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
           >
             <span>Começar agora</span>
             <ArrowRight className="w-4 h-4" />
           </button>
 
-          {/* Mobile Hamburger toggle */}
+          {/* Mobile Hamburger toggle com toque confortável 44x44 */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-[#22D3EE]"
+            className="md:hidden p-2.5 min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-xl text-slate-300 hover:text-white hover:bg-white/10 active:bg-white/15 transition-colors focus:outline-none focus:ring-2 focus:ring-[#22D3EE]"
             aria-label={mobileMenuOpen ? 'Fechar menu' : 'Abrir menu'}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -204,7 +204,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
                   setMobileMenuOpen(false)
                   onOpenModal()
                 }}
-                className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-lg bg-[#2563EB] text-white font-semibold text-sm shadow-md"
+                className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 min-h-[48px] rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] active:bg-[#1e40af] text-white font-semibold text-sm shadow-md"
               >
                 <span>Começar agora</span>
                 <ArrowRight className="w-4 h-4" />
