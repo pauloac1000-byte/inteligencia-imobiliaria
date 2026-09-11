@@ -17,22 +17,24 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
       setScrolled(scrollY > 40)
 
       // Section spy
-      const sections = ['para-vender', 'para-investir', 'como-funciona', 'diferenciais']
+      const sections = ['diferenciais', 'para-vender', 'para-investir', 'como-funciona']
       const scrollPosition = scrollY + 120
 
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const id = sections[i]
+      let currentActive = ''
+      for (const id of sections) {
         const element = document.getElementById(id)
         if (element) {
           const top = element.offsetTop
           if (scrollPosition >= top) {
-            setActiveSection(id)
-            return
+            currentActive = id
           }
         }
       }
+
       if (scrollY < 200) {
         setActiveSection('')
+      } else {
+        setActiveSection(currentActive)
       }
     }
 
