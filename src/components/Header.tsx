@@ -78,7 +78,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
     <header
       className={`fixed top-0 left-0 right-0 z-50 h-[72px] transition-all duration-300 flex items-center ${
         scrolled
-          ? 'bg-[#0B1F3A]/90 backdrop-blur-md border-b border-[#12294A] shadow-lg shadow-black/20'
+          ? 'bg-[#0F172A]/90 backdrop-blur-md border-b border-[#0B1F3A] shadow-lg shadow-black/20'
           : 'bg-transparent border-b border-transparent'
       }`}
     >
@@ -91,7 +91,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
           aria-label="Imóveis Inteligentes - Início"
         >
           {/* Custom SVG Icon: House with Data Connected Node */}
-          <div className="relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#12294A] to-[#0B1F3A] border border-[#2563EB]/40 shadow-sm group-hover:border-[#22D3EE] transition-colors shrink-0">
+          <div className="relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#0B1F3A] to-[#0F172A] border border-[#1D4ED8]/40 shadow-sm group-hover:border-[#22D3EE] transition-colors shrink-0">
             <svg
               className="w-4 h-4 sm:w-5 sm:h-5 text-[#22D3EE]"
               viewBox="0 0 24 24"
@@ -109,7 +109,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
               <path d="M14 12h3" />
             </svg>
             {/* Glowing data point node */}
-            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#22D3EE] rounded-full ring-2 ring-[#0B1F3A] animate-pulse" />
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#22D3EE] rounded-full ring-2 ring-[#0F172A] animate-pulse" />
           </div>
 
           <div className="flex flex-col min-w-0">
@@ -153,7 +153,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
           <button
             type="button"
             onClick={() => onOpenModal()}
-            className="hidden sm:inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] active:bg-[#1e40af] text-white text-sm font-semibold shadow-md hover:shadow-lg hover:shadow-[#2563EB]/30 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+            className="hidden sm:inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] rounded-xl bg-[#1D4ED8] hover:bg-[#1e40af] active:bg-[#172554] text-white text-sm font-semibold shadow-md hover:shadow-lg hover:shadow-[#1D4ED8]/30 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
           >
             <span>Começar agora</span>
             <ArrowRight className="w-4 h-4" />
@@ -174,7 +174,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="md:hidden fixed inset-0 top-[72px] z-40 bg-black/70 backdrop-blur-sm animate-fade-in">
-          <div className="absolute right-0 top-0 bottom-0 w-[min(300px,85vw)] bg-[#0B1F3A] border-l border-[#12294A] p-6 flex flex-col justify-between shadow-2xl overflow-y-auto animate-fade-in">
+          <div className="absolute right-0 top-0 bottom-0 w-[min(300px,85vw)] bg-[#0F172A] border-l border-[#0B1F3A] p-6 flex flex-col justify-between shadow-2xl overflow-y-auto animate-fade-in">
             <div className="space-y-5">
               <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 pb-2 border-b border-slate-700">
                 Navegação
@@ -204,7 +204,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
                   setMobileMenuOpen(false)
                   onOpenModal()
                 }}
-                className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 min-h-[48px] rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] active:bg-[#1e40af] text-white font-semibold text-sm shadow-md cursor-pointer"
+                className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 min-h-[48px] rounded-xl bg-[#1D4ED8] hover:bg-[#1e40af] active:bg-[#172554] text-white font-semibold text-sm shadow-md cursor-pointer"
               >
                 <span>Começar agora</span>
                 <ArrowRight className="w-4 h-4" />

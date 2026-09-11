@@ -119,10 +119,10 @@ export const CompatibilityThermometerSection: React.FC<CompatibilityThermometerS
   return (
     <section
       id="compatibilidade"
-      className="bg-[#0B1F3A] text-white py-14 sm:py-20 lg:py-28 px-3.5 sm:px-6 lg:px-8 border-b border-slate-800 relative overflow-hidden"
+      className="bg-[#0F172A] text-white py-14 sm:py-20 lg:py-28 px-3.5 sm:px-6 lg:px-8 border-b border-slate-800 relative overflow-hidden"
     >
       {/* Luz ambiente azul-marinho e ciano de fundo */}
-      <div className="absolute top-1/4 left-1/4 w-[320px] sm:w-[500px] h-[320px] sm:h-[500px] bg-[#2563EB]/15 blur-[140px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 w-[320px] sm:w-[500px] h-[320px] sm:h-[500px] bg-[#1D4ED8]/15 blur-[140px] rounded-full pointer-events-none" />
       <div className="absolute bottom-10 right-1/4 w-[280px] sm:w-[400px] h-[280px] sm:h-[400px] bg-[#22D3EE]/10 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="max-w-[1200px] mx-auto relative z-10">
@@ -146,7 +146,7 @@ export const CompatibilityThermometerSection: React.FC<CompatibilityThermometerS
 
           {/* SELO OBRIGATÓRIO: "conduzido por corretores credenciados" */}
           <div className="mt-4 sm:mt-6 flex justify-center">
-            <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-[#12294A] border border-[#22D3EE]/40 shadow-lg shadow-[#0B1F3A] max-w-full">
+            <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-[#0B1F3A] border border-[#22D3EE]/40 shadow-lg shadow-[#0F172A] max-w-full">
               <ShieldCheck className="w-4 h-4 text-[#22D3EE] shrink-0" />
               <span className="text-[11px] sm:text-sm font-semibold tracking-wide text-slate-200">
                 conduzido por corretores credenciados
@@ -161,7 +161,7 @@ export const CompatibilityThermometerSection: React.FC<CompatibilityThermometerS
           <div className="text-[11px] sm:text-xs uppercase tracking-wider font-semibold text-slate-400 text-center mb-2.5 sm:mb-3">
             Selecione uma simulação em tempo real
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 p-1.5 bg-[#12294A]/80 border border-slate-700/80 rounded-2xl backdrop-blur-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 p-1.5 bg-[#0B1F3A]/90 border border-slate-700/80 rounded-2xl backdrop-blur-sm">
             {CASE_STUDIES.map((c, idx) => {
               const isSelected = selectedCaseIndex === idx
               const Icon = c.category === 'Residencial' ? Home : Building2
@@ -172,7 +172,7 @@ export const CompatibilityThermometerSection: React.FC<CompatibilityThermometerS
                   onClick={() => setSelectedCaseIndex(idx)}
                   className={`flex items-center justify-between p-3 sm:p-3.5 rounded-xl text-left transition-all cursor-pointer min-h-[48px] ${
                     isSelected
-                      ? 'bg-[#2563EB] text-white shadow-lg shadow-[#2563EB]/30 border border-[#22D3EE]/50'
+                      ? 'bg-[#1D4ED8] text-white shadow-lg shadow-[#1D4ED8]/30 border border-[#22D3EE]/50'
                       : 'bg-transparent text-slate-300 hover:text-white hover:bg-white/5 border border-transparent'
                   }`}
                 >
@@ -218,14 +218,14 @@ export const CompatibilityThermometerSection: React.FC<CompatibilityThermometerS
         </div>
 
         {/* Bloco Central: Termômetro Vertical Animado + Análise Detalhada dos Critérios */}
-        <div className="bg-[#12294A]/70 border border-slate-700/80 rounded-2xl sm:rounded-3xl p-4 sm:p-8 lg:p-10 backdrop-blur-md shadow-2xl">
+        <div className="bg-[#0B1F3A]/80 border border-slate-700/80 rounded-2xl sm:rounded-3xl p-4 sm:p-8 lg:p-10 backdrop-blur-md shadow-2xl">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-12 items-center">
-            {/* Coluna 1: Termômetro Vertical com gradiente #0B1F3A → #2563EB → #22D3EE */}
+            {/* Coluna 1: Termômetro Vertical com gradiente #0B1F3A → #1D4ED8 → #22D3EE */}
             <div className="lg:col-span-5 flex flex-col items-center justify-center py-2 sm:py-4">
               {/* Badge Dinâmico com percentual do caso ativo */}
               <div className="mb-4 sm:mb-6 relative w-full max-w-[280px] sm:max-w-none flex justify-center">
                 <div className="absolute -inset-1 rounded-2xl bg-[#22D3EE]/25 blur-md animate-pulse" />
-                <div className="relative flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-2xl bg-[#0B1F3A] border-2 border-[#22D3EE] shadow-xl w-full sm:w-auto">
+                <div className="relative flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-2xl bg-[#0F172A] border-2 border-[#22D3EE] shadow-xl w-full sm:w-auto">
                   <span className="relative flex h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#22D3EE] opacity-75" />
                     <span className="relative inline-flex rounded-full h-3 w-3 sm:h-3.5 sm:w-3.5 bg-[#22D3EE]" />
@@ -268,7 +268,7 @@ export const CompatibilityThermometerSection: React.FC<CompatibilityThermometerS
                 </div>
 
                 {/* Estrutura de Vidro do Termômetro */}
-                <div className="relative w-20 sm:w-28 h-[270px] sm:h-[360px] bg-[#0B1F3A]/90 border-2 border-slate-600/80 rounded-full p-2 sm:p-2.5 flex flex-col justify-end shadow-2xl">
+                <div className="relative w-20 sm:w-28 h-[270px] sm:h-[360px] bg-[#0F172A]/90 border-2 border-slate-600/80 rounded-full p-2 sm:p-2.5 flex flex-col justify-end shadow-2xl">
                   {/* Linhas de grade interna tracejadas */}
                   <div className="absolute inset-y-6 left-2 sm:left-3 right-2 sm:right-3 flex flex-col justify-between pointer-events-none z-10">
                     <div className="border-b border-dashed border-white/10" />
@@ -280,9 +280,9 @@ export const CompatibilityThermometerSection: React.FC<CompatibilityThermometerS
                   {/* Canal interno do líquido */}
                   <div className="relative w-full h-full bg-[#08172c] rounded-full overflow-hidden flex flex-col justify-end border border-white/10">
                     {/* Coluna líquida vertical animada */}
-                    {/* Gradiente solicitado: #0B1F3A → #2563EB → #22D3EE */}
+                    {/* Gradiente solicitado: #0B1F3A → #1D4ED8 → #22D3EE */}
                     <div
-                      className="w-full relative transition-all duration-75 ease-out rounded-b-full bg-gradient-to-t from-[#0B1F3A] via-[#2563EB] to-[#22D3EE]"
+                      className="w-full relative transition-all duration-75 ease-out rounded-b-full bg-gradient-to-t from-[#0B1F3A] via-[#1D4ED8] to-[#22D3EE]"
                       style={{
                         height: `${currentPercent}%`,
                       }}
@@ -296,8 +296,8 @@ export const CompatibilityThermometerSection: React.FC<CompatibilityThermometerS
                   </div>
 
                   {/* Bulbo inferior do termômetro */}
-                  <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 w-15 sm:w-20 h-15 sm:h-20 bg-gradient-to-br from-[#12294A] to-[#0B1F3A] border-2 border-slate-600 rounded-full flex items-center justify-center shadow-xl">
-                    <div className="w-10 sm:w-13 h-10 sm:h-13 rounded-full bg-gradient-to-tr from-[#2563EB] to-[#22D3EE] p-0.5 flex items-center justify-center shadow-inner">
+                  <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 w-15 sm:w-20 h-15 sm:h-20 bg-gradient-to-br from-[#0B1F3A] to-[#0F172A] border-2 border-slate-600 rounded-full flex items-center justify-center shadow-xl">
+                    <div className="w-10 sm:w-13 h-10 sm:h-13 rounded-full bg-gradient-to-tr from-[#1D4ED8] to-[#22D3EE] p-0.5 flex items-center justify-center shadow-inner">
                       <TrendingUp className="w-5 sm:w-6 h-5 sm:h-6 text-white" />
                     </div>
                   </div>
@@ -330,7 +330,7 @@ export const CompatibilityThermometerSection: React.FC<CompatibilityThermometerS
 
               <div className="mt-8 text-center px-2">
                 <span className="text-[10px] sm:text-xs font-mono text-[#22D3EE] bg-[#22D3EE]/10 px-3 py-1 rounded-full border border-[#22D3EE]/30 inline-block">
-                  Gradiente analítico: 0B1F3A → 2563EB → 22D3EE
+                  Gradiente analítico: 0B1F3A → 1D4ED8 → 22D3EE
                 </span>
               </div>
             </div>
@@ -370,7 +370,7 @@ export const CompatibilityThermometerSection: React.FC<CompatibilityThermometerS
                         key={crit}
                         className={`p-3 sm:p-3.5 rounded-xl border transition-all duration-300 flex items-start gap-2.5 sm:gap-3 ${
                           isCompatible
-                            ? 'bg-[#12294A] border-[#22D3EE]/60 text-white shadow-sm'
+                            ? 'bg-[#0B1F3A] border-[#22D3EE]/60 text-white shadow-sm'
                             : 'bg-[#08172c]/40 border-slate-700/50 text-slate-400'
                         }`}
                       >
@@ -399,7 +399,7 @@ export const CompatibilityThermometerSection: React.FC<CompatibilityThermometerS
                 {currentCase.metrics.map((m) => (
                   <div
                     key={m.label}
-                    className="p-3 sm:p-3.5 rounded-xl bg-[#0B1F3A]/70 border border-slate-700/80"
+                    className="p-3 sm:p-3.5 rounded-xl bg-[#0F172A]/70 border border-slate-700/80"
                   >
                     <div className="text-[10px] sm:text-[11px] text-slate-400 uppercase tracking-wider font-medium">
                       {m.label}
@@ -417,7 +417,7 @@ export const CompatibilityThermometerSection: React.FC<CompatibilityThermometerS
                   <button
                     type="button"
                     onClick={() => onOpenModal('vender')}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 min-h-[48px] rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] active:bg-[#1e40af] text-white text-xs sm:text-sm font-semibold transition-all shadow-md cursor-pointer"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 min-h-[48px] rounded-xl bg-[#1D4ED8] hover:bg-[#1e40af] active:bg-[#172554] text-white text-xs sm:text-sm font-semibold transition-all shadow-md cursor-pointer"
                   >
                     <span>Medir compatibilidade do meu imóvel</span>
                     <ArrowRight className="w-4 h-4 shrink-0" />

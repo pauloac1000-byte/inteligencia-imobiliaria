@@ -23,12 +23,12 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
       {/* SEÇÃO #para-vender */}
       <section
         id="para-vender"
-        className="bg-[#0B1F3A] text-white py-14 sm:py-20 lg:py-24 px-3.5 sm:px-6 lg:px-8 border-b border-slate-800"
+        className="bg-[#0F172A] text-white py-14 sm:py-20 lg:py-24 px-3.5 sm:px-6 lg:px-8 border-b border-slate-800"
       >
         <div className="max-w-[1200px] mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 sm:gap-6 mb-8 sm:mb-14 lg:mb-16">
             <div className="max-w-2xl space-y-2.5 sm:space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2563EB]/20 border border-[#2563EB]/40 text-[#22D3EE] text-xs font-semibold">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1D4ED8]/20 border border-[#1D4ED8]/40 text-[#22D3EE] text-xs font-semibold">
                 Para quem quer vender
               </div>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white leading-tight">
@@ -43,7 +43,7 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
             <button
               type="button"
               onClick={() => onOpenModal('vender')}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[48px] rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] active:bg-[#1e40af] text-white text-sm font-semibold transition-all shrink-0 cursor-pointer shadow-md"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[48px] rounded-xl bg-[#1D4ED8] hover:bg-[#1e40af] active:bg-[#172554] text-white text-sm font-semibold transition-all shrink-0 cursor-pointer shadow-md"
             >
               <span>Cadastrar imóvel</span>
               <ArrowRight className="w-4 h-4 shrink-0" />
@@ -52,8 +52,8 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
             {/* Benefício 1 */}
-            <div className="p-4.5 sm:p-6 lg:p-7 rounded-2xl bg-[#12294A] border border-slate-700/80 space-y-3 sm:space-y-4 hover:border-[#2563EB]/50 transition-colors shadow-sm">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#2563EB]/20 text-[#22D3EE] flex items-center justify-center shrink-0">
+            <div className="p-4.5 sm:p-6 lg:p-7 rounded-2xl bg-[#0B1F3A] border border-slate-700/80 space-y-3 sm:space-y-4 hover:border-[#1D4ED8]/50 transition-colors shadow-sm">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#1D4ED8]/20 text-[#22D3EE] flex items-center justify-center shrink-0">
                 <Clock className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
@@ -67,8 +67,8 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
             </div>
 
             {/* Benefício 2 */}
-            <div className="p-4.5 sm:p-6 lg:p-7 rounded-2xl bg-[#12294A] border border-slate-700/80 space-y-3 sm:space-y-4 hover:border-[#2563EB]/50 transition-colors shadow-sm">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#2563EB]/20 text-[#22D3EE] flex items-center justify-center shrink-0">
+            <div className="p-4.5 sm:p-6 lg:p-7 rounded-2xl bg-[#0B1F3A] border border-slate-700/80 space-y-3 sm:space-y-4 hover:border-[#1D4ED8]/50 transition-colors shadow-sm">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#1D4ED8]/20 text-[#22D3EE] flex items-center justify-center shrink-0">
                 <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
@@ -82,8 +82,8 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
             </div>
 
             {/* Benefício 3 */}
-            <div className="p-4.5 sm:p-6 lg:p-7 rounded-2xl bg-[#12294A] border border-slate-700/80 space-y-3 sm:space-y-4 hover:border-[#2563EB]/50 transition-colors shadow-sm">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#2563EB]/20 text-[#22D3EE] flex items-center justify-center shrink-0">
+            <div className="p-4.5 sm:p-6 lg:p-7 rounded-2xl bg-[#0B1F3A] border border-slate-700/80 space-y-3 sm:space-y-4 hover:border-[#1D4ED8]/50 transition-colors shadow-sm">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#1D4ED8]/20 text-[#22D3EE] flex items-center justify-center shrink-0">
                 <UserCheck className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
@@ -101,7 +101,7 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
       {/* SEÇÃO #para-investir */}
       <section
         id="para-investir"
-        className="bg-[#F8FAFC] text-[#0B1F3A] py-14 sm:py-20 lg:py-24 px-3.5 sm:px-6 lg:px-8 border-b border-slate-200"
+        className="bg-[#F8FAFC] text-[#0F172A] py-14 sm:py-20 lg:py-24 px-3.5 sm:px-6 lg:px-8 border-b border-slate-200"
       >
         <div className="max-w-[1200px] mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 sm:gap-6 mb-8 sm:mb-14 lg:mb-16">
@@ -109,10 +109,10 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#22D3EE]/20 border border-[#22D3EE]/40 text-[#0891b2] text-xs font-semibold">
                 Para quem quer investir
               </div>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#0B1F3A] leading-tight">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#0F172A] leading-tight">
                 Acesse oportunidades antes de virarem commodity nos portais
               </h2>
-              <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+              <p className="text-[#475569] text-sm sm:text-base leading-relaxed">
                 Originação direta e inteligência orientada a dados para você tomar decisões de
                 alocação imobiliária com rentabilidade superior e risco calibrado.
               </p>
@@ -121,10 +121,10 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
             <button
               type="button"
               onClick={() => onOpenModal('investir')}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[48px] rounded-xl bg-[#22D3EE] hover:bg-[#06b6d4] active:bg-[#0891b2] text-[#0B1F3A] text-sm font-bold transition-all shrink-0 cursor-pointer shadow-md"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[48px] rounded-xl bg-[#22D3EE] hover:bg-[#06b6d4] active:bg-[#0891b2] text-[#0F172A] text-sm font-bold transition-all shrink-0 cursor-pointer shadow-md"
             >
               <span>Definir tese de investimento</span>
-              <ArrowRight className="w-4 h-4 shrink-0 text-[#0B1F3A]" />
+              <ArrowRight className="w-4 h-4 shrink-0 text-[#0F172A]" />
             </button>
           </div>
 
@@ -134,10 +134,10 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
               <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#22D3EE]/15 text-[#0891b2] flex items-center justify-center shrink-0">
                 <Eye className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-[#0B1F3A] tracking-tight">
+              <h3 className="text-lg sm:text-xl font-bold text-[#0F172A] tracking-tight">
                 Antecipação a oportunidades
               </h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <p className="text-sm text-[#475569] leading-relaxed">
                 Receba ativos imobiliários antes que cheguem a anúncios públicos. Você negocia na
                 fonte com condições exclusivas e sem concorrência inflacionada.
               </p>
@@ -148,10 +148,10 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
               <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#22D3EE]/15 text-[#0891b2] flex items-center justify-center shrink-0">
                 <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-[#0B1F3A] tracking-tight">
+              <h3 className="text-lg sm:text-xl font-bold text-[#0F172A] tracking-tight">
                 Dados analíticos para decisão
               </h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <p className="text-sm text-[#475569] leading-relaxed">
                 Tome decisões baseadas em números reais: projeção de valorização de região,
                 histórico de metro quadrado, liquidez projetada e yield comparativo.
               </p>
@@ -162,10 +162,10 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
               <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#22D3EE]/15 text-[#0891b2] flex items-center justify-center shrink-0">
                 <FileCheck2 className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-[#0B1F3A] tracking-tight">
+              <h3 className="text-lg sm:text-xl font-bold text-[#0F172A] tracking-tight">
                 Segurança jurídica completa
               </h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <p className="text-sm text-[#475569] leading-relaxed">
                 Imóveis com documentação pré-auditada (certidões, ônus e histórico registral) para
                 garantir fechamento ágil e blindagem do seu patrimônio.
               </p>
@@ -177,10 +177,10 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
       {/* SEÇÃO #como-funciona: "Simples para os dois lados" (3 passos) */}
       <section
         id="como-funciona"
-        className="bg-[#0B1F3A] text-white py-14 sm:py-20 lg:py-24 px-3.5 sm:px-6 lg:px-8 border-b border-slate-800 relative overflow-hidden"
+        className="bg-[#0F172A] text-white py-14 sm:py-20 lg:py-24 px-3.5 sm:px-6 lg:px-8 border-b border-slate-800 relative overflow-hidden"
       >
         {/* Glow de fundo */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[600px] h-[300px] bg-[#2563EB]/10 blur-[120px] rounded-full pointer-events-none -z-0" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[600px] h-[300px] bg-[#1D4ED8]/10 blur-[120px] rounded-full pointer-events-none -z-0" />
 
         <div className="max-w-[1200px] mx-auto relative z-10">
           <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-16">
@@ -206,7 +206,7 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-8 relative z-10">
               {/* Passo 1 */}
-              <div className="group relative p-5 sm:p-7 lg:p-8 rounded-2xl bg-[#12294A]/80 border border-slate-700/80 hover:border-[#22D3EE]/60 transition-all duration-300 shadow-xl flex flex-col justify-between">
+              <div className="group relative p-5 sm:p-7 lg:p-8 rounded-2xl bg-[#0B1F3A]/85 border border-slate-700/80 hover:border-[#22D3EE]/60 transition-all duration-300 shadow-xl flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-4 sm:mb-6">
                     <span className="text-3xl sm:text-5xl font-extrabold text-[#22D3EE] font-mono tracking-tight drop-shadow-[0_0_12px_rgba(34,211,238,0.35)]">
@@ -230,7 +230,7 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
               </div>
 
               {/* Passo 2 */}
-              <div className="group relative p-5 sm:p-7 lg:p-8 rounded-2xl bg-[#12294A]/80 border border-[#22D3EE]/50 hover:border-[#22D3EE] transition-all duration-300 shadow-xl shadow-[#22D3EE]/5 flex flex-col justify-between">
+              <div className="group relative p-5 sm:p-7 lg:p-8 rounded-2xl bg-[#0B1F3A]/85 border border-[#22D3EE]/50 hover:border-[#22D3EE] transition-all duration-300 shadow-xl shadow-[#22D3EE]/5 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-4 sm:mb-6">
                     <span className="text-3xl sm:text-5xl font-extrabold text-[#22D3EE] font-mono tracking-tight drop-shadow-[0_0_12px_rgba(34,211,238,0.35)]">
@@ -254,7 +254,7 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
               </div>
 
               {/* Passo 3 */}
-              <div className="group relative p-5 sm:p-7 lg:p-8 rounded-2xl bg-[#12294A]/80 border border-slate-700/80 hover:border-[#22D3EE]/60 transition-all duration-300 shadow-xl flex flex-col justify-between">
+              <div className="group relative p-5 sm:p-7 lg:p-8 rounded-2xl bg-[#0B1F3A]/85 border border-slate-700/80 hover:border-[#22D3EE]/60 transition-all duration-300 shadow-xl flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-4 sm:mb-6">
                     <span className="text-3xl sm:text-5xl font-extrabold text-[#22D3EE] font-mono tracking-tight drop-shadow-[0_0_12px_rgba(34,211,238,0.35)]">

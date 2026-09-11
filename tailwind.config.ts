@@ -31,16 +31,29 @@ export default {
         display: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
       colors: {
-        navy: {
+        azulNoite: {
+          DEFAULT: '#0F172A',
+          deep: '#0B132B',
+        },
+        azulMarinho: {
           DEFAULT: '#0B1F3A',
+          surface: '#0E2442',
+        },
+        azulCorporate: {
+          DEFAULT: '#1D4ED8',
+          hover: '#1e40af',
+          light: '#2563eb',
+        },
+        navy: {
+          DEFAULT: '#0F172A',
           deep: '#0B1F3A',
-          surface: '#12294A',
-          dark: '#08172c',
+          surface: '#0E2442',
+          dark: '#0B132B',
         },
         electric: {
-          DEFAULT: '#2563EB',
-          hover: '#1d4ed8',
-          light: '#3b82f6',
+          DEFAULT: '#1D4ED8',
+          hover: '#1e40af',
+          light: '#2563eb',
         },
         cyanCustom: {
           DEFAULT: '#22D3EE',
@@ -48,7 +61,8 @@ export default {
           glow: 'rgba(34, 211, 238, 0.4)',
         },
         offwhite: '#F8FAFC',
-        slateText: '#64748B',
+        slateText: '#475569',
+        cinzaArdosia: '#475569',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',

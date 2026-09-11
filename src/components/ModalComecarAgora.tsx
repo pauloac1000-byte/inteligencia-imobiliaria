@@ -38,9 +38,9 @@ export const ModalComecarAgora: React.FC<ModalComecarAgoraProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[calc(100%-1.5rem)] sm:max-w-[560px] max-h-[92vh] overflow-y-auto bg-[#0B1F3A] border border-[#2563EB]/40 text-white shadow-2xl backdrop-blur-md p-4 sm:p-8 rounded-2xl">
+      <DialogContent className="w-[calc(100%-1.5rem)] sm:max-w-[560px] max-h-[92vh] overflow-y-auto bg-[#0F172A] border border-[#1D4ED8]/40 text-white shadow-2xl backdrop-blur-md p-4 sm:p-8 rounded-2xl">
         <DialogHeader className="text-left space-y-2 pr-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2563EB]/20 border border-[#2563EB]/40 text-[#22D3EE] text-[11px] sm:text-xs font-semibold w-fit">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1D4ED8]/20 border border-[#1D4ED8]/40 text-[#22D3EE] text-[11px] sm:text-xs font-semibold w-fit">
             <span className="w-1.5 h-1.5 rounded-full bg-[#22D3EE] animate-pulse shrink-0" />
             Conexão orientada a dados no Supabase
           </div>
@@ -67,12 +67,12 @@ export const ModalComecarAgora: React.FC<ModalComecarAgoraProps> = ({
               onClick={() => setIntencao('vender')}
               className={`flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 min-h-[48px] rounded-xl border text-left transition-all cursor-pointer ${
                 intencao === 'vender'
-                  ? 'border-[#2563EB] bg-[#2563EB]/25 text-white shadow-sm ring-1 ring-[#2563EB]'
-                  : 'border-slate-700 bg-[#12294A]/60 text-slate-300 hover:border-slate-600'
+                  ? 'border-[#1D4ED8] bg-[#1D4ED8]/25 text-white shadow-sm ring-1 ring-[#1D4ED8]'
+                  : 'border-slate-700 bg-[#0B1F3A]/60 text-slate-300 hover:border-slate-600'
               }`}
             >
-              <div className="w-8 h-8 rounded-lg bg-[#2563EB]/20 flex items-center justify-center shrink-0">
-                <Building className="w-4 h-4 text-[#2563EB]" />
+              <div className="w-8 h-8 rounded-lg bg-[#1D4ED8]/20 flex items-center justify-center shrink-0">
+                <Building className="w-4 h-4 text-[#1D4ED8]" />
               </div>
               <div className="flex flex-col min-w-0">
                 <span className="text-xs font-bold truncate">Quero vender</span>
@@ -88,7 +88,7 @@ export const ModalComecarAgora: React.FC<ModalComecarAgoraProps> = ({
               className={`flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 min-h-[48px] rounded-xl border text-left transition-all cursor-pointer ${
                 intencao === 'investir'
                   ? 'border-[#22D3EE] bg-[#22D3EE]/20 text-white shadow-sm ring-1 ring-[#22D3EE]'
-                  : 'border-slate-700 bg-[#12294A]/60 text-slate-300 hover:border-slate-600'
+                  : 'border-slate-700 bg-[#0B1F3A]/60 text-slate-300 hover:border-slate-600'
               }`}
             >
               <div className="w-8 h-8 rounded-lg bg-[#22D3EE]/20 flex items-center justify-center shrink-0">

@@ -22,7 +22,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
   }
 
   return (
-    <footer className="bg-[#061224] text-white pt-12 sm:pt-16 pb-12 px-3.5 sm:px-6 lg:px-8 border-t border-slate-800/80">
+    <footer className="bg-[#0B132B] text-white pt-12 sm:pt-16 pb-12 px-3.5 sm:px-6 lg:px-8 border-t border-slate-800/80">
       <div className="max-w-[1200px] mx-auto space-y-10 sm:space-y-12">
         {/* Grid Principal do Rodapé */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12">
@@ -33,7 +33,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
               onClick={scrollToTop}
               className="flex items-center gap-2.5 sm:gap-3 group w-fit"
             >
-              <div className="relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#12294A] to-[#0B1F3A] border border-[#2563EB]/40 group-hover:border-[#22D3EE] transition-colors shrink-0">
+              <div className="relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#0B1F3A] to-[#0F172A] border border-[#1D4ED8]/40 group-hover:border-[#22D3EE] transition-colors shrink-0">
                 <svg
                   className="w-4 h-4 sm:w-5 sm:h-5 text-[#22D3EE]"
                   viewBox="0 0 24 24"
@@ -48,7 +48,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
                   <path d="M11 16l3-4" />
                   <path d="M14 12h3" />
                 </svg>
-                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#22D3EE] rounded-full ring-2 ring-[#061224]" />
+                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#22D3EE] rounded-full ring-2 ring-[#0B132B]" />
               </div>
               <span className="font-bold text-lg sm:text-xl tracking-tight text-white">
                 Imóveis <span className="text-[#22D3EE]">Inteligentes</span>
@@ -148,7 +148,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
             </h4>
 
             {/* Informações de Contato Oficiais (campos ainda não definidos como [A DEFINIR]) */}
-            <div className="space-y-2.5 text-xs text-slate-300 bg-[#0B1F3A]/70 border border-slate-800 p-3.5 sm:p-4 rounded-xl">
+            <div className="space-y-2.5 text-xs text-slate-300 bg-[#0B1F3A] border border-slate-800 p-3.5 sm:p-4 rounded-xl">
               <div className="flex items-center gap-2.5">
                 <FileBadge className="w-4 h-4 text-[#22D3EE] shrink-0" />
                 <span className="text-slate-400">CRECI:</span>
@@ -173,7 +173,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
             <button
               type="button"
               onClick={() => onOpenModal()}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 min-h-[44px] rounded-lg bg-[#2563EB] hover:bg-[#1d4ed8] active:bg-[#1e40af] text-white text-xs sm:text-sm font-semibold transition-all shadow-md cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 min-h-[44px] rounded-lg bg-[#1D4ED8] hover:bg-[#1e40af] active:bg-[#172554] text-white text-xs sm:text-sm font-semibold transition-all shadow-md cursor-pointer"
             >
               <span>Falar com especialista em dados</span>
               <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />

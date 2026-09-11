@@ -35,13 +35,13 @@ export const TwoPathsSection: React.FC<TwoPathsSectionProps> = ({ onOpenModal })
       <div className="max-w-[1200px] mx-auto">
         {/* Section Heading */}
         <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-14 lg:mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-200/90 text-[#0B1F3A] text-xs font-semibold mb-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-200/90 text-[#0F172A] text-xs font-semibold mb-3">
             Caminhos de Decisão
           </div>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0B1F3A] tracking-tight">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0F172A] tracking-tight">
             Um só objetivo. Dois caminhos possíveis.
           </h2>
-          <p className="mt-2.5 sm:mt-3 text-sm sm:text-base text-slate-600 leading-relaxed">
+          <p className="mt-2.5 sm:mt-3 text-sm sm:text-base text-[#475569] leading-relaxed">
             Seja para liquidar seu patrimônio pelo valor real ou para alocar capital com
             inteligência analítica, conectamos seu objetivo à ponta certa.
           </p>
@@ -54,20 +54,20 @@ export const TwoPathsSection: React.FC<TwoPathsSectionProps> = ({ onOpenModal })
             onClick={() => handleCardClick('para-vender')}
             className="group relative bg-white rounded-2xl shadow-sm hover:shadow-2xl border border-slate-200/90 p-4 sm:p-7 lg:p-8 flex flex-col justify-between transition-all duration-300 ease-out hover:-translate-y-1.5 cursor-pointer overflow-hidden"
           >
-            {/* Top 4px border: Azul elétrico */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-[#2563EB]" />
+            {/* Top 4px border: Azul Corporate */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-[#1D4ED8]" />
 
             <div className="space-y-4 sm:space-y-6">
               {/* Card Header */}
               <div className="flex items-center gap-3 sm:gap-4">
-                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#2563EB]/10 border border-[#2563EB]/20 flex items-center justify-center text-[#2563EB] group-hover:scale-105 transition-transform duration-300 shrink-0">
+                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#1D4ED8]/10 border border-[#1D4ED8]/20 flex items-center justify-center text-[#1D4ED8] group-hover:scale-105 transition-transform duration-300 shrink-0">
                   <Building className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
                 </div>
                 <div className="min-w-0">
-                  <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[#2563EB] block">
+                  <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[#1D4ED8] block">
                     Para proprietários
                   </span>
-                  <h3 className="text-lg sm:text-2xl font-bold text-[#0B1F3A] tracking-tight truncate">
+                  <h3 className="text-lg sm:text-2xl font-bold text-[#0F172A] tracking-tight truncate">
                     Quero vender
                   </h3>
                 </div>
@@ -79,7 +79,7 @@ export const TwoPathsSection: React.FC<TwoPathsSectionProps> = ({ onOpenModal })
                   <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                   <span>A realidade do mercado</span>
                 </div>
-                <p className="text-sm sm:text-[15px] text-slate-600 leading-relaxed">
+                <p className="text-sm sm:text-[15px] text-[#475569] leading-relaxed">
                   Seu imóvel parado custa caro. Cada dia sem venda é desvalorização e prejuízo
                   silencioso.
                 </p>
@@ -87,11 +87,11 @@ export const TwoPathsSection: React.FC<TwoPathsSectionProps> = ({ onOpenModal })
 
               {/* Ganho (Frase literal) */}
               <div className="p-3.5 sm:p-4.5 rounded-xl bg-blue-50/70 border border-blue-100 space-y-1.5">
-                <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#2563EB]">
+                <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#1D4ED8]">
                   <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
                   <span>O que entregamos</span>
                 </div>
-                <p className="text-sm sm:text-[15px] text-[#0B1F3A] font-semibold leading-relaxed">
+                <p className="text-sm sm:text-[15px] text-[#0F172A] font-semibold leading-relaxed">
                   Venda no prazo certo, sem desvalorizar, para o comprador que realmente tem
                   interesse real no seu perfil de imóvel.
                 </p>
@@ -103,7 +103,7 @@ export const TwoPathsSection: React.FC<TwoPathsSectionProps> = ({ onOpenModal })
               <button
                 type="button"
                 onClick={handleVenderClick}
-                className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 sm:px-5 min-h-[48px] rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] active:bg-[#1e40af] text-white text-sm sm:text-base font-semibold shadow-md group-hover:shadow-lg transition-all duration-200 cursor-pointer"
+                className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 sm:px-5 min-h-[48px] rounded-xl bg-[#1D4ED8] hover:bg-[#1e40af] active:bg-[#172554] text-white text-sm sm:text-base font-semibold shadow-md group-hover:shadow-lg transition-all duration-200 cursor-pointer"
               >
                 <span>Quero vender</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
@@ -129,7 +129,7 @@ export const TwoPathsSection: React.FC<TwoPathsSectionProps> = ({ onOpenModal })
                   <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[#0891b2] block">
                     Para investidores
                   </span>
-                  <h3 className="text-lg sm:text-2xl font-bold text-[#0B1F3A] tracking-tight leading-tight">
+                  <h3 className="text-lg sm:text-2xl font-bold text-[#0F172A] tracking-tight leading-tight">
                     Quero oportunidade de investimento
                   </h3>
                 </div>
@@ -141,7 +141,7 @@ export const TwoPathsSection: React.FC<TwoPathsSectionProps> = ({ onOpenModal })
                   <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                   <span>O obstáculo atual</span>
                 </div>
-                <p className="text-sm sm:text-[15px] text-slate-600 leading-relaxed">
+                <p className="text-sm sm:text-[15px] text-[#475569] leading-relaxed">
                   As melhores oportunidades não chegam aos portais. Você perde negócios antes mesmo
                   de vê-los.
                 </p>
@@ -153,7 +153,7 @@ export const TwoPathsSection: React.FC<TwoPathsSectionProps> = ({ onOpenModal })
                   <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
                   <span>Sua vantagem competitiva</span>
                 </div>
-                <p className="text-sm sm:text-[15px] text-[#0B1F3A] font-semibold leading-relaxed">
+                <p className="text-sm sm:text-[15px] text-[#0F172A] font-semibold leading-relaxed">
                   Chegue antes de todo mundo e negocie com segurança, com dados claros e conexão
                   direta com quem vende.
                 </p>
@@ -165,10 +165,10 @@ export const TwoPathsSection: React.FC<TwoPathsSectionProps> = ({ onOpenModal })
               <button
                 type="button"
                 onClick={handleInvestirClick}
-                className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 sm:px-5 min-h-[48px] rounded-xl bg-[#22D3EE] hover:bg-[#06b6d4] active:bg-[#0891b2] text-[#0B1F3A] text-sm sm:text-base font-bold shadow-md group-hover:shadow-lg transition-all duration-200 cursor-pointer leading-snug text-center"
+                className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 sm:px-5 min-h-[48px] rounded-xl bg-[#22D3EE] hover:bg-[#06b6d4] active:bg-[#0891b2] text-[#0F172A] text-sm sm:text-base font-bold shadow-md group-hover:shadow-lg transition-all duration-200 cursor-pointer leading-snug text-center"
               >
                 <span>Quero oportunidade de investimento</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-[#0B1F3A] shrink-0" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-[#0F172A] shrink-0" />
               </button>
             </div>
           </div>
