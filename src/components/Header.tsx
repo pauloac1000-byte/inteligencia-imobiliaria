@@ -105,7 +105,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
             {/* 2. FRASE: INTELIGÊNCIA IMOBILIÁRIA em CAIXA ALTA, única ocorrência na página */}
             <div className="w-full text-center mt-0.5 sm:mt-1">
               <span className="block font-sans font-bold uppercase text-[9.5px] xs:text-[10px] sm:text-[11px] md:text-[12px] lg:text-[12.5px] tracking-[0.24em] xs:tracking-[0.26em] sm:tracking-[0.28em] md:tracking-[0.3em] text-[#22C7E0] whitespace-nowrap drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
-                INTELIGÊNCIA IMOBILIÁRIA
+                <br />
               </span>
             </div>
 
