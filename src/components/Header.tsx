@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Menu, X, ArrowRight } from 'lucide-react'
-import korbixLogo from '@/assets/5-contorno-e238f.png'
 
 interface HeaderProps {
   onOpenModal: (intent?: 'vender' | 'investir') => void
@@ -15,7 +14,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY
-      setScrolled(scrollY > 40)
+      setScrolled(scrollY > 20)
 
       // Section spy
       const sections = [
@@ -25,7 +24,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
         'como-funciona',
         'compatibilidade',
       ]
-      const scrollPosition = scrollY + 130
+      const scrollPosition = scrollY + 90
 
       let currentActive = ''
       for (const id of sections) {
@@ -38,7 +37,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
         }
       }
 
-      if (scrollY < 200) {
+      if (scrollY < 120) {
         setActiveSection('')
       } else {
         setActiveSection(currentActive)
@@ -65,65 +64,24 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
     const element = document.getElementById(targetId)
     if (element) {
       const isDesktop = window.innerWidth >= 1024
-      const yOffset = isDesktop ? -140 : -115
+      const yOffset = isDesktop ? -80 : -72
       const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
       window.scrollTo({ top: y, behavior: 'smooth' })
     }
   }
-  const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault()
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 h-[104px] sm:h-[116px] md:h-[124px] lg:h-[132px] transition-all duration-300 flex items-center ${
+      className={`fixed top-0 left-0 right-0 z-50 h-[72px] sm:h-[76px] lg:h-[80px] transition-all duration-300 flex items-center ${
         scrolled
-          ? 'bg-[#070B14]/95 backdrop-blur-md border-b border-[#081226] shadow-2xl shadow-black/60'
+          ? 'bg-[#070B14]/95 backdrop-blur-md border-b border-[#081226] shadow-xl shadow-black/50'
           : 'bg-[#070B14]/85 backdrop-blur-sm border-b border-[#081226]/40'
       }`}
     >
-      <div className="w-full max-w-[1240px] mx-auto px-3 sm:px-6 h-full flex items-center justify-between gap-3 sm:gap-6">
-        {/* Bloco Completo da Marca: Logo KORBIX + Frase + Linha de Termos */}
-        <a
-          href="#"
-          onClick={handleLogoClick}
-          className="group flex flex-col items-center justify-center h-full py-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#22C7E0] rounded-lg transition-opacity hover:opacity-95 shrink-0 select-none text-left"
-          aria-label="KORBIX - Inteligência Imobiliária - Início"
-        >
-          <div className="relative flex flex-col items-center justify-center w-full max-w-[200px] xs:max-w-[230px] sm:max-w-[260px] md:max-w-[285px] lg:max-w-[310px]">
-            {/* 1. LOGO: Ocupa o MÁXIMO de espaço mantendo proporções, sem corte, sem distorção nem compressão */}
-            <div className="w-full flex items-center justify-center">
-              <img
-                src={korbixLogo}
-                alt="KORBIX"
-                className="w-auto max-w-full h-[58px] xs:h-[66px] sm:h-[72px] md:h-[78px] lg:h-[84px] object-contain drop-shadow-[0_0_22px_rgba(34,199,224,0.22)] transform group-hover:scale-[1.01] transition-transform duration-200"
-                loading="eager"
-              />
-            </div>
-
-            {/* 2. FRASE: INTELIGÊNCIA IMOBILIÁRIA em CAIXA ALTA, única ocorrência na página */}
-            <div className="w-full text-center mt-0.5 sm:mt-1">
-              <span className="block font-sans font-bold uppercase text-[9.5px] xs:text-[10px] sm:text-[11px] md:text-[12px] lg:text-[12.5px] tracking-[0.24em] xs:tracking-[0.26em] sm:tracking-[0.28em] md:tracking-[0.3em] text-[#22C7E0] whitespace-nowrap drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
-                <br />
-              </span>
-            </div>
-
-            {/* 3. LINHA DE TERMOS: ANÁLISE ESTRATÉGIA OPORTUNIDADES RESULTADOS em linha horizontal única */}
-            <div className="w-full text-center mt-0.5">
-              <p className="font-sans font-medium uppercase text-[6px] xs:text-[6.8px] sm:text-[7.6px] md:text-[8.2px] lg:text-[8.8px] tracking-[0.14em] xs:tracking-[0.16em] sm:tracking-[0.18em] text-slate-300 group-hover:text-white transition-colors whitespace-nowrap drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)] flex items-center justify-center gap-1.5 sm:gap-2">
-                <span>ANÁLISE</span>
-                <span>ESTRATÉGIA</span>
-                <span>OPORTUNIDADES</span>
-                <span>RESULTADOS</span>
-              </p>
-            </div>
-          </div>
-        </a>
-
-        {/* Central Navigation (Desktop) */}
+      <div className="w-full max-w-[1240px] mx-auto px-4 sm:px-6 h-full flex items-center justify-between lg:justify-between gap-4">
+        {/* Central Navigation (Desktop) - alinhada ou centralizada */}
         <nav
-          className="hidden lg:flex items-center gap-5 xl:gap-7"
+          className="hidden lg:flex items-center gap-6 xl:gap-8"
           aria-label="Navegação principal"
         >
           {navItems.map((item) => {
@@ -149,8 +107,11 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
           })}
         </nav>
 
+        {/* Espaçador flex no mobile para manter os controles alinhados à direita quando não há logo */}
+        <div className="lg:hidden flex-1" />
+
         {/* CTA Right Button (Desktop) & Mobile Hamburger */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 shrink-0">
           <button
             type="button"
             onClick={() => onOpenModal()}
@@ -174,7 +135,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 top-[104px] sm:top-[116px] md:top-[124px] z-40 bg-black/80 backdrop-blur-sm animate-fade-in">
+        <div className="lg:hidden fixed inset-0 top-[72px] sm:top-[76px] lg:top-[80px] z-40 bg-black/80 backdrop-blur-sm animate-fade-in">
           <div className="absolute right-0 top-0 bottom-0 w-[min(300px,85vw)] bg-[#070B14] border-l border-[#081226] p-6 flex flex-col justify-between shadow-2xl overflow-y-auto animate-fade-in">
             <div className="space-y-5">
               <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 pb-2 border-b border-slate-800">
