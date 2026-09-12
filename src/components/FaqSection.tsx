@@ -49,98 +49,97 @@ const FAQ_INVESTIDOR: FaqItem[] = [
   },
   {
     id: 'inv-seguranca',
-    question: 'Como é garantida a segurança jurídica da negociação?',
+    question: 'Qual a segurança jurídica das transações estruturadas pela plataforma?',
     answer:
-      'Toda transação conta com auditoria documental prévia conduzida por corretores credenciados: certidões de ônus reais, regularidade fiscal dos proprietários e histórico registral completo. A plataforma atua como uma ponte técnica que assegura conformidade e blindagem patrimonial para ambos os lados.',
+      'Toda transação conta com auditoria documental rigorosa: levantamento de certidões forenses, regularidade fiscal, análise de matrículas, ônus reais e histórico da titularidade. O processo é integralmente conduzido e respaldado por corretores credenciados perante os órgãos reguladores competentes.',
   },
 ]
 
 export const FaqSection: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'proprietario' | 'investidor'>('proprietario')
+  const [tab, setTab] = useState<'venda' | 'investimento'>('venda')
 
   return (
     <section
       id="faq"
-      className="bg-[#F8FAFC] text-[#0F172A] py-14 sm:py-20 lg:py-28 px-3.5 sm:px-6 lg:px-8 border-b border-slate-200"
+      className="bg-[#081226] text-white py-14 sm:py-20 lg:py-28 px-3.5 sm:px-6 lg:px-8 border-b border-slate-900"
     >
       <div className="max-w-[880px] mx-auto">
         {/* Cabeçalho da seção */}
         <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1D4ED8]/10 border border-[#1D4ED8]/20 text-[#1D4ED8] text-xs font-semibold mb-3 sm:mb-4">
-            <HelpCircle className="w-3.5 h-3.5 text-[#22D3EE] shrink-0" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A3A75]/35 border border-[#1A3A75]/60 text-[#22C7E0] text-xs font-semibold mb-3 sm:mb-4 shadow-[0_0_10px_rgba(34,199,224,0.15)]">
+            <HelpCircle className="w-3.5 h-3.5 text-[#22C7E0] shrink-0" />
             <span>Dúvidas Frequentes</span>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl lg:text-[42px] font-bold tracking-tight text-[#0F172A] leading-tight">
+          <h2 className="text-2xl sm:text-3xl lg:text-[42px] font-bold tracking-tight text-white leading-tight">
             Perguntas frequentes
           </h2>
 
-          <p className="mt-2.5 sm:mt-3 text-sm sm:text-base text-[#475569] leading-relaxed">
+          <p className="mt-2.5 sm:mt-3 text-sm sm:text-base text-slate-300 leading-relaxed">
             Transparência analítica para quem quer vender com liquidez ou investir com segurança.
           </p>
 
           {/* Abas comutadoras: "Sou proprietário" e "Sou investidor" */}
           <div className="mt-5 sm:mt-8 flex justify-center">
-            <div className="w-full sm:w-auto grid grid-cols-2 sm:inline-flex p-1.5 rounded-xl bg-slate-200/80 border border-slate-300/80 shadow-inner gap-1">
+            <div className="w-full sm:w-auto grid grid-cols-2 sm:inline-flex p-1.5 rounded-xl bg-[#070B14] border border-slate-800 shadow-inner gap-1">
               <button
                 type="button"
-                onClick={() => setActiveTab('proprietario')}
+                onClick={() => setTab('venda')}
                 className={`flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-3 min-h-[46px] rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
-                  activeTab === 'proprietario'
-                    ? 'bg-[#0F172A] text-white shadow-md'
-                    : 'text-[#475569] hover:text-[#0F172A]'
+                  tab === 'venda'
+                    ? 'bg-[#1A3A75] text-white shadow-md'
+                    : 'text-slate-400 hover:text-white'
                 }`}
               >
-                <Building className="w-4 h-4 text-[#22D3EE] shrink-0" />
+                <Building className="w-4 h-4 text-[#22C7E0] shrink-0" />
                 <span className="whitespace-nowrap">Sou proprietário</span>
               </button>
-
               <button
                 type="button"
-                onClick={() => setActiveTab('investidor')}
+                onClick={() => setTab('investimento')}
                 className={`flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-3 min-h-[46px] rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
-                  activeTab === 'investidor'
-                    ? 'bg-[#0F172A] text-white shadow-md'
-                    : 'text-[#475569] hover:text-[#0F172A]'
+                  tab === 'investimento'
+                    ? 'bg-[#1A3A75] text-white shadow-md'
+                    : 'text-slate-400 hover:text-white'
                 }`}
               >
-                <TrendingUp className="w-4 h-4 text-[#22D3EE] shrink-0" />
+                <TrendingUp className="w-4 h-4 text-[#22C7E0] shrink-0" />
                 <span className="whitespace-nowrap">Sou investidor</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Acordeão Shadcn/ui (type="single", collapsible, transição suave, detalhes em ciano) */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 sm:p-6 lg:p-7 transition-all">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 sm:pb-4 mb-2 border-b border-slate-100 text-xs font-semibold text-[#475569] gap-1.5">
+        {/* Accordion das perguntas com design refinado Tech-Midnight */}
+        <div className="bg-[#070B14] rounded-2xl border border-slate-800 shadow-2xl p-3.5 sm:p-6 lg:p-7 transition-all">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 sm:pb-4 mb-2 border-b border-slate-800/80 text-xs font-semibold text-slate-300 gap-1.5">
             <span className="flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-[#22D3EE] shrink-0" />
+              <Sparkles className="w-3.5 h-3.5 text-[#22C7E0] shrink-0" />
               <span>
-                {activeTab === 'proprietario'
-                  ? 'Critérios e processos para venda patrimonial'
-                  : 'Critérios e tese para alocação de capital'}
+                {tab === 'venda'
+                  ? 'Perguntas selecionadas para proprietários'
+                  : 'Perguntas selecionadas para investidores'}
               </span>
             </span>
-            <span className="text-[11px] font-mono text-[#1D4ED8]">1 item aberto por vez</span>
+            <span className="text-[11px] font-mono text-[#22C7E0]">1 item aberto por vez</span>
           </div>
 
-          {activeTab === 'proprietario' ? (
+          {tab === 'venda' ? (
             <Accordion type="single" collapsible className="w-full">
               {FAQ_PROPRIETARIO.map((item) => (
                 <AccordionItem
                   key={item.id}
                   value={item.id}
-                  className="border-b border-slate-100 last:border-0 py-1"
+                  className="border-b border-slate-800/80 last:border-0 py-1"
                 >
-                  <AccordionTrigger className="text-left text-sm sm:text-base font-semibold text-[#0F172A] hover:text-[#1D4ED8] hover:no-underline py-3.5 sm:py-4 transition-colors group">
+                  <AccordionTrigger className="text-left text-sm sm:text-base font-semibold text-white hover:text-[#22C7E0] hover:no-underline py-3.5 sm:py-4 transition-colors group">
                     <span className="flex items-start sm:items-center gap-2.5 sm:gap-3 pr-2">
-                      <span className="w-2 h-2 rounded-full bg-[#22D3EE] group-hover:scale-125 transition-transform mt-1.5 sm:mt-0 shrink-0" />
+                      <span className="w-2 h-2 rounded-full bg-[#22C7E0] shadow-[0_0_6px_#22C7E0] group-hover:scale-125 transition-transform mt-1.5 sm:mt-0 shrink-0" />
                       <span className="leading-snug">{item.question}</span>
                     </span>
                   </AccordionTrigger>
-                  <AccordionContent className="text-sm text-[#475569] leading-relaxed pl-4 sm:pl-5 pr-1 sm:pr-2 pt-1 pb-4">
-                    <div className="border-l-2 border-[#22D3EE]/60 pl-3 sm:pl-3.5">
+                  <AccordionContent className="text-sm text-slate-300 leading-relaxed pl-4 sm:pl-5 pr-1 sm:pr-2 pt-1 pb-4">
+                    <div className="border-l-2 border-[#22C7E0]/60 pl-3 sm:pl-3.5">
                       {item.answer}
                     </div>
                   </AccordionContent>
@@ -153,16 +152,16 @@ export const FaqSection: React.FC = () => {
                 <AccordionItem
                   key={item.id}
                   value={item.id}
-                  className="border-b border-slate-100 last:border-0 py-1"
+                  className="border-b border-slate-800/80 last:border-0 py-1"
                 >
-                  <AccordionTrigger className="text-left text-sm sm:text-base font-semibold text-[#0F172A] hover:text-[#1D4ED8] hover:no-underline py-3.5 sm:py-4 transition-colors group">
+                  <AccordionTrigger className="text-left text-sm sm:text-base font-semibold text-white hover:text-[#22C7E0] hover:no-underline py-3.5 sm:py-4 transition-colors group">
                     <span className="flex items-start sm:items-center gap-2.5 sm:gap-3 pr-2">
-                      <span className="w-2 h-2 rounded-full bg-[#22D3EE] group-hover:scale-125 transition-transform mt-1.5 sm:mt-0 shrink-0" />
+                      <span className="w-2 h-2 rounded-full bg-[#22C7E0] shadow-[0_0_6px_#22C7E0] group-hover:scale-125 transition-transform mt-1.5 sm:mt-0 shrink-0" />
                       <span className="leading-snug">{item.question}</span>
                     </span>
                   </AccordionTrigger>
-                  <AccordionContent className="text-sm text-[#475569] leading-relaxed pl-4 sm:pl-5 pr-1 sm:pr-2 pt-1 pb-4">
-                    <div className="border-l-2 border-[#22D3EE]/60 pl-3 sm:pl-3.5">
+                  <AccordionContent className="text-sm text-slate-300 leading-relaxed pl-4 sm:pl-5 pr-1 sm:pr-2 pt-1 pb-4">
+                    <div className="border-l-2 border-[#22C7E0]/60 pl-3 sm:pl-3.5">
                       {item.answer}
                     </div>
                   </AccordionContent>
