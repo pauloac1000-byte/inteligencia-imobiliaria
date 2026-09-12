@@ -25,7 +25,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
         'como-funciona',
         'compatibilidade',
       ]
-      const scrollPosition = scrollY + 120
+      const scrollPosition = scrollY + 130
 
       let currentActive = ''
       for (const id of sections) {
@@ -64,7 +64,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
     const targetId = href.replace('#', '')
     const element = document.getElementById(targetId)
     if (element) {
-      const yOffset = -105
+      const yOffset = -125
       const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
       window.scrollTo({ top: y, behavior: 'smooth' })
     }
@@ -77,30 +77,40 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 h-[88px] sm:h-[96px] md:h-[104px] transition-all duration-300 flex items-center ${
+      className={`fixed top-0 left-0 right-0 z-50 h-[96px] sm:h-[112px] md:h-[120px] transition-all duration-300 flex items-center ${
         scrolled
           ? 'bg-[#070B14]/95 backdrop-blur-md border-b border-[#081226] shadow-2xl shadow-black/60'
           : 'bg-transparent border-b border-transparent'
       }`}
     >
-      <div className="w-full max-w-[1200px] mx-auto px-3 sm:px-6 h-full flex items-center justify-between gap-2 sm:gap-4">
-        {/* Logo KORBIX - Inteligência Imobiliária (ocupa toda a altura disponível do header) */}
+      <div className="w-full max-w-[1200px] mx-auto px-3 sm:px-6 h-full flex items-center justify-between gap-3 sm:gap-6">
+        {/* Logo KORBIX - Inteligência Imobiliária (ocupa integralmente a área circunscrita) */}
         <a
           href="#"
           onClick={handleLogoClick}
-          className="group flex items-center h-full py-1.5 sm:py-2 text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#22C7E0] rounded-lg transition-opacity hover:opacity-90 shrink min-w-0"
+          className="group flex items-center h-full py-1 text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#22C7E0] rounded-lg transition-opacity hover:opacity-95 shrink min-w-0"
           aria-label="KORBIX - Inteligência Imobiliária - Início"
         >
-          <img
-            src={korbixLogo}
-            alt="KORBIX - Inteligência Imobiliária"
-            className="h-full w-auto max-h-[76px] sm:max-h-[84px] md:max-h-[92px] max-w-[260px] xs:max-w-[300px] sm:max-w-[360px] md:max-w-[420px] object-contain rounded-md"
-            loading="eager"
-          />
+          <div className="relative flex flex-col items-center justify-center h-full">
+            {/* Logo PNG KORBIX ampliado preenchendo a altura útil do header */}
+            <img
+              src={korbixLogo}
+              alt="KORBIX - Inteligência Imobiliária"
+              className="h-[84px] sm:h-[98px] md:h-[106px] w-auto max-w-[240px] xs:max-w-[270px] sm:max-w-[320px] md:max-w-[350px] object-contain drop-shadow-[0_0_20px_rgba(34,199,224,0.18)]"
+              loading="eager"
+            />
+            {/* Assinatura INTELIGÊNCIA IMOBILIÁRIA de alto contraste e legibilidade imediata */}
+            <span className="hidden sm:block text-[9px] md:text-[10px] font-bold tracking-[0.24em] md:tracking-[0.28em] text-[#22C7E0] uppercase font-sans select-none -mt-3.5 md:-mt-4 pl-0.5 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+              INTELIGÊNCIA IMOBILIÁRIA
+            </span>
+          </div>
         </a>
 
         {/* Central Navigation (Desktop) */}
-        <nav className="hidden md:flex items-center gap-8" aria-label="Navegação principal">
+        <nav
+          className="hidden md:flex items-center gap-6 lg:gap-8"
+          aria-label="Navegação principal"
+        >
           {navItems.map((item) => {
             const isActive = activeSection === item.id
             return (
@@ -149,7 +159,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 top-[88px] sm:top-[96px] z-40 bg-black/80 backdrop-blur-sm animate-fade-in">
+        <div className="md:hidden fixed inset-0 top-[96px] sm:top-[112px] z-40 bg-black/80 backdrop-blur-sm animate-fade-in">
+          {' '}
           <div className="absolute right-0 top-0 bottom-0 w-[min(300px,85vw)] bg-[#070B14] border-l border-[#081226] p-6 flex flex-col justify-between shadow-2xl overflow-y-auto animate-fade-in">
             <div className="space-y-5">
               <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 pb-2 border-b border-slate-800">
