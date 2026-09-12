@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Menu, X, ArrowRight } from 'lucide-react'
+import korbixLogo from '@/assets/5-contorno-e238f.png'
 
 interface HeaderProps {
   onOpenModal: (intent?: 'vender' | 'investir') => void
@@ -83,44 +84,19 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
       }`}
     >
       <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 flex items-center justify-between">
-        {/* Logo "Imóveis Inteligentes" */}
+        {/* Logo KORBIX - Inteligência Imobiliária */}
         <a
           href="#"
           onClick={handleLogoClick}
-          className="group flex items-center gap-2.5 sm:gap-3 text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#22C7E0] rounded-lg py-1 px-1 -ml-1"
-          aria-label="Imóveis Inteligentes - Início"
+          className="group flex items-center text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#22C7E0] rounded-lg p-0.5 -ml-1 transition-opacity hover:opacity-90 shrink-0"
+          aria-label="KORBIX - Inteligência Imobiliária - Início"
         >
-          {/* Custom SVG Icon: House with Data Connected Node */}
-          <div className="relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#081226] to-[#070B14] border border-[#1A3A75]/60 shadow-sm group-hover:border-[#22C7E0] transition-colors shrink-0">
-            <svg
-              className="w-4 h-4 sm:w-5 sm:h-5 text-[#22C7E0]"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              {/* House outline */}
-              <path d="M3 10.5L12 3l9 7.5V20a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 20V10.5z" />
-              {/* Data line inside house */}
-              <path d="M7 16h4" />
-              <path d="M11 16l3-4" />
-              <path d="M14 12h3" />
-            </svg>
-            {/* Glowing data point node */}
-            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#22C7E0] rounded-full ring-2 ring-[#070B14] shadow-[0_0_8px_#22C7E0] animate-pulse" />
-          </div>
-
-          <div className="flex flex-col min-w-0">
-            <span className="font-bold text-base sm:text-xl tracking-tight text-white flex items-center gap-1 whitespace-nowrap">
-              Imóveis
-              <span className="text-[#22C7E0] font-bold">Inteligentes</span>
-            </span>
-            <span className="hidden sm:block text-[10px] tracking-wider uppercase text-slate-400 font-medium -mt-1">
-              Inteligência imobiliária
-            </span>
-          </div>
+          <img
+            src={korbixLogo}
+            alt="KORBIX - Inteligência Imobiliária"
+            className="h-9 sm:h-11 w-auto max-w-[170px] sm:max-w-[210px] object-contain rounded-md"
+            loading="eager"
+          />
         </a>
 
         {/* Central Navigation (Desktop) */}

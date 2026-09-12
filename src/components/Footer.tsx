@@ -1,5 +1,6 @@
 import React from 'react'
 import { ArrowUpRight, ShieldCheck, Mail, Phone, FileBadge } from 'lucide-react'
+import korbixLogo from '@/assets/5-contorno-e238f.png'
 
 interface FooterProps {
   onOpenModal: (intent?: 'vender' | 'investir') => void
@@ -31,34 +32,16 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
             <a
               href="#"
               onClick={scrollToTop}
-              className="flex items-center gap-2.5 sm:gap-3 group w-fit"
+              className="flex items-center group w-fit focus:outline-none focus-visible:ring-2 focus-visible:ring-[#22C7E0] rounded-lg p-0.5 transition-opacity hover:opacity-90"
+              aria-label="KORBIX - Inteligência Imobiliária - Voltar ao topo"
             >
-              <div className="relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#081226] to-[#070B14] border border-[#1A3A75]/60 group-hover:border-[#22C7E0] transition-colors shrink-0">
-                <svg
-                  className="w-4 h-4 sm:w-5 sm:h-5 text-[#22C7E0]"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M3 10.5L12 3l9 7.5V20a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 20V10.5z" />
-                  <path d="M7 16h4" />
-                  <path d="M11 16l3-4" />
-                  <path d="M14 12h3" />
-                </svg>
-                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#22C7E0] rounded-full ring-2 ring-[#070B14] shadow-[0_0_8px_#22C7E0]" />
-              </div>
-              <span className="font-bold text-lg sm:text-xl tracking-tight text-white">
-                Imóveis <span className="text-[#22C7E0]">Inteligentes</span>
-              </span>
+              <img
+                src={korbixLogo}
+                alt="KORBIX - Inteligência Imobiliária"
+                className="h-10 sm:h-12 w-auto max-w-[200px] sm:max-w-[230px] object-contain rounded-md"
+                loading="lazy"
+              />
             </a>
-
-            {/* Tagline do projeto */}
-            <p className="text-xs sm:text-sm text-slate-300 font-medium">
-              Inteligência imobiliária
-            </p>
 
             <p className="text-xs text-slate-400 max-w-sm leading-relaxed">
               Nossa mecânica de dados cruza perfil do imóvel com objetivo de compra de milhares de
