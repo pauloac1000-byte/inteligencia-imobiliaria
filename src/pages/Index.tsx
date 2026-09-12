@@ -26,7 +26,7 @@ const Index: React.FC = () => {
       {/* 1. Faixa horizontal de prova — logo abaixo do hero */}
       <ProofStrip />
 
-      {/* Seção "Dois Caminhos": Fundo off-white, cards com Dor e Ganho literais */}
+      {/* Seção "Dois Caminhos": Tech-Midnight (#081226), cards com Dor e Ganho literais */}
       <TwoPathsSection onOpenModal={handleOpenModal} />
 
       {/* 2. Seção de diferenciais competitivos — grid com 4 cards (após dois caminhos, id #diferenciais) */}
@@ -38,10 +38,10 @@ const Index: React.FC = () => {
       {/* Seção 2: Termômetro de compatibilidade — posicionado após os passos */}
       <CompatibilityThermometerSection onOpenModal={handleOpenModal} />
 
-      {/* 1) Seção CTA Final: Centralizada, fundo escuro azul-marinho, após o termômetro e antes do FAQ */}
+      {/* 1) Seção CTA Final: Centralizada, fundo escuro azul-marinho (#081226), após o termômetro e antes do FAQ */}
       <FinalCtaSection onOpenModal={handleOpenModal} />
 
-      {/* 2) FAQ em Acordeão: Duas abas, fundo claro off-white */}
+      {/* 2) FAQ em Acordeão: Duas abas, Tech-Midnight (#081226 e cards #070B14) */}
       <FaqSection />
 
       {/* 3) Rodapé com credibilidade, contato e âncoras */}

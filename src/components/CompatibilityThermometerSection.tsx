@@ -319,7 +319,7 @@ export const CompatibilityThermometerSection: React.FC<CompatibilityThermometerS
                     <span className="w-1 sm:w-2 h-[1px] bg-slate-600" />
                     <span>Parcial</span>
                   </div>
-                  <div className="flex items-center gap-1 sm:gap-1.5 text-slate-500">
+                  <div className="flex items-center gap-1 sm:gap-1.5 text-slate-400">
                     <span className="w-1.5 sm:w-3 h-[1px] bg-slate-600" />
                     <span>Base</span>
                   </div>
@@ -423,8 +423,9 @@ export const CompatibilityThermometerSection: React.FC<CompatibilityThermometerS
                   <button
                     type="button"
                     onClick={() => onOpenModal('investir')}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 min-h-[48px] rounded-xl bg-transparent hover:bg-white/10 active:bg-white/15 text-[#22C7E0] border border-[#1A3A75] text-xs sm:text-sm font-semibold transition-all cursor-pointer"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 min-h-[48px] rounded-xl border border-[#1A3A75] bg-[#070B14] hover:bg-[#1A3A75]/35 active:bg-[#1A3A75]/50 text-white hover:text-white text-xs sm:text-sm font-semibold transition-all cursor-pointer hover:border-[#22C7E0]/60 shadow-lg shadow-black/40"
                   >
+                    <TrendingUp className="w-4 h-4 text-[#22C7E0] shrink-0" />
                     <span>Configurar tese de investimento</span>
                   </button>
                 </div>

@@ -47,21 +47,21 @@ export const FinalCtaSection: React.FC<FinalCtaSectionProps> = ({ onOpenModal })
         <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-[52px] font-bold tracking-tight leading-[1.15] text-white">
           Pronto para cruzar a ponte?
         </h2>
-        {/* Subtítulo EXATO com o mesmo tratamento visual do hero: uma frase em branco e a outra em azul corporate */}
+        {/* Subtítulo EXATO: primeira frase branca e a segunda em ciano com glow suave estilo luzes da cidade */}
         <p className="mt-3 sm:mt-6 text-base sm:text-2xl lg:text-[26px] font-semibold tracking-tight leading-snug max-w-3xl">
           <span className="text-white">Seu imóvel encontra o comprador certo. </span>
-          <span className="text-[#1D4ED8] drop-shadow-sm block sm:inline mt-1 sm:mt-0">
+          <span className="text-[#22C7E0] drop-shadow-[0_0_16px_rgba(34,199,224,0.35)] block sm:inline mt-1 sm:mt-0">
             Você encontra o negócio certo.
           </span>
         </p>
         {/* Nota EXATA */}
         <div className="mt-3 sm:mt-4 inline-flex items-center gap-2 text-xs sm:text-sm md:text-base font-medium text-slate-300">
-          <ShieldCheck className="w-4 h-4 text-[#22D3EE] shrink-0" />
+          <ShieldCheck className="w-4 h-4 text-[#22C7E0] shrink-0" />
           <span>Negocie com segurança!</span>
         </div>
         {/* Os dois CTAs já existentes e funcionais (empilhados no mobile, min-h 48px) */}
         <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3.5 sm:gap-4 w-full sm:w-auto">
-          {/* CTA Primário: Quero vender (azul corporate #1A3A75) */}
+          {/* CTA Primário: Quero vender (azul corporate #1A3A75, hover profundo #142E5E, sombra interna sutil) */}
           <button
             type="button"
             onClick={handleVenderClick}
@@ -83,7 +83,7 @@ export const FinalCtaSection: React.FC<FinalCtaSectionProps> = ({ onOpenModal })
           </button>
         </div>
         {/* Mini barra de segurança / dados com detalhes em ciano */}
-        <div className="mt-7 sm:mt-10 pt-5 sm:pt-6 border-t border-slate-800/80 w-full max-w-xl flex flex-wrap items-center justify-center gap-3.5 sm:gap-6 text-xs text-slate-400">
+        <div className="mt-7 sm:mt-10 pt-5 sm:pt-6 border-t border-slate-800/80 w-full max-w-xl flex flex-wrap items-center justify-center gap-3.5 sm:gap-6 text-xs text-slate-300">
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-[#22C7E0] shrink-0" />
             <span>Segurança jurídica</span>
@@ -96,7 +96,7 @@ export const FinalCtaSection: React.FC<FinalCtaSectionProps> = ({ onOpenModal })
             <span className="w-1.5 h-1.5 rounded-full bg-[#22C7E0] shadow-[0_0_6px_#22C7E0]" />
             <span>Atendimento humano</span>
           </div>
-        </div>{' '}
+        </div>
       </div>
     </section>
   )
