@@ -109,15 +109,12 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
               </span>
             </div>
 
-            {/* 3. LINHA DE TERMOS: ANÁLISE · ESTRATÉGIA · OPORTUNIDADES · RESULTADOS em linha horizontal única */}
+            {/* 3. LINHA DE TERMOS: ANÁLISE ESTRATÉGIA OPORTUNIDADES RESULTADOS em linha horizontal única */}
             <div className="w-full text-center mt-0.5">
-              <p className="font-sans font-medium uppercase text-[6px] xs:text-[6.8px] sm:text-[7.6px] md:text-[8.2px] lg:text-[8.8px] tracking-[0.14em] xs:tracking-[0.16em] sm:tracking-[0.18em] text-slate-300 group-hover:text-white transition-colors whitespace-nowrap drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]">
+              <p className="font-sans font-medium uppercase text-[6px] xs:text-[6.8px] sm:text-[7.6px] md:text-[8.2px] lg:text-[8.8px] tracking-[0.14em] xs:tracking-[0.16em] sm:tracking-[0.18em] text-slate-300 group-hover:text-white transition-colors whitespace-nowrap drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)] flex items-center justify-center gap-1.5 sm:gap-2">
                 <span>ANÁLISE</span>
-                <span className="mx-1 sm:mx-1.5 text-[#22C7E0] font-bold">·</span>
                 <span>ESTRATÉGIA</span>
-                <span className="mx-1 sm:mx-1.5 text-[#22C7E0] font-bold">·</span>
                 <span>OPORTUNIDADES</span>
-                <span className="mx-1 sm:mx-1.5 text-[#22C7E0] font-bold">·</span>
                 <span>RESULTADOS</span>
               </p>
             </div>
