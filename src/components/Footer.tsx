@@ -16,7 +16,8 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
     e.preventDefault()
     const element = document.getElementById(targetId)
     if (element) {
-      const yOffset = -125
+      const isDesktop = window.innerWidth >= 1024
+      const yOffset = isDesktop ? -140 : -115
       const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
       window.scrollTo({ top: y, behavior: 'smooth' })
     }
@@ -33,18 +34,15 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
               href="#"
               onClick={scrollToTop}
               className="flex items-center group w-fit focus:outline-none focus-visible:ring-2 focus-visible:ring-[#22C7E0] rounded-lg p-0.5 transition-opacity hover:opacity-95"
-              aria-label="KORBIX - Inteligência Imobiliária - Voltar ao topo"
+              aria-label="KORBIX - Voltar ao topo"
             >
-              <div className="relative flex flex-col items-center">
+              <div className="relative flex items-center">
                 <img
                   src={korbixLogo}
-                  alt="KORBIX - Inteligência Imobiliária"
-                  className="h-20 sm:h-24 md:h-28 w-auto max-w-[280px] sm:max-w-[340px] md:max-w-[380px] object-contain drop-shadow-[0_0_16px_rgba(34,199,224,0.15)]"
+                  alt="KORBIX"
+                  className="h-16 sm:h-20 md:h-24 w-auto max-w-[240px] sm:max-w-[280px] md:max-w-[320px] object-contain drop-shadow-[0_0_16px_rgba(34,199,224,0.15)]"
                   loading="lazy"
                 />
-                <span className="text-[9px] sm:text-[10px] font-bold tracking-[0.24em] sm:tracking-[0.28em] text-[#22C7E0] uppercase font-sans select-none -mt-3 sm:-mt-4 pl-0.5 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
-                  INTELIGÊNCIA IMOBILIÁRIA
-                </span>
               </div>
             </a>
 

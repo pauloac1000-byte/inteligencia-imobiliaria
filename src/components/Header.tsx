@@ -64,12 +64,12 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
     const targetId = href.replace('#', '')
     const element = document.getElementById(targetId)
     if (element) {
-      const yOffset = -125
+      const isDesktop = window.innerWidth >= 1024
+      const yOffset = isDesktop ? -140 : -115
       const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
       window.scrollTo({ top: y, behavior: 'smooth' })
     }
   }
-
   const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -77,38 +77,56 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 h-[96px] sm:h-[112px] md:h-[120px] transition-all duration-300 flex items-center ${
+      className={`fixed top-0 left-0 right-0 z-50 h-[104px] sm:h-[116px] md:h-[124px] lg:h-[132px] transition-all duration-300 flex items-center ${
         scrolled
           ? 'bg-[#070B14]/95 backdrop-blur-md border-b border-[#081226] shadow-2xl shadow-black/60'
-          : 'bg-transparent border-b border-transparent'
+          : 'bg-[#070B14]/85 backdrop-blur-sm border-b border-[#081226]/40'
       }`}
     >
-      <div className="w-full max-w-[1200px] mx-auto px-3 sm:px-6 h-full flex items-center justify-between gap-3 sm:gap-6">
-        {/* Logo KORBIX - Inteligência Imobiliária (ocupa integralmente a área circunscrita) */}
+      <div className="w-full max-w-[1240px] mx-auto px-3 sm:px-6 h-full flex items-center justify-between gap-3 sm:gap-6">
+        {/* Bloco Completo da Marca: Logo KORBIX + Frase + Linha de Termos */}
         <a
           href="#"
           onClick={handleLogoClick}
-          className="group flex items-center h-full py-1 text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#22C7E0] rounded-lg transition-opacity hover:opacity-95 shrink min-w-0"
+          className="group flex flex-col items-center justify-center h-full py-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#22C7E0] rounded-lg transition-opacity hover:opacity-95 shrink-0 select-none text-left"
           aria-label="KORBIX - Inteligência Imobiliária - Início"
         >
-          <div className="relative flex flex-col items-center justify-center h-full">
-            {/* Logo PNG KORBIX ampliado preenchendo a altura útil do header */}
-            <img
-              src={korbixLogo}
-              alt="KORBIX - Inteligência Imobiliária"
-              className="h-[84px] sm:h-[98px] md:h-[106px] w-auto max-w-[240px] xs:max-w-[270px] sm:max-w-[320px] md:max-w-[350px] object-contain drop-shadow-[0_0_20px_rgba(34,199,224,0.18)]"
-              loading="eager"
-            />
-            {/* Assinatura INTELIGÊNCIA IMOBILIÁRIA de alto contraste e legibilidade imediata */}
-            <span className="hidden sm:block text-[9px] md:text-[10px] font-bold tracking-[0.24em] md:tracking-[0.28em] text-[#22C7E0] uppercase font-sans select-none -mt-3.5 md:-mt-4 pl-0.5 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
-              INTELIGÊNCIA IMOBILIÁRIA
-            </span>
+          <div className="relative flex flex-col items-center justify-center w-full max-w-[200px] xs:max-w-[230px] sm:max-w-[260px] md:max-w-[285px] lg:max-w-[310px]">
+            {/* 1. LOGO: Ocupa o MÁXIMO de espaço mantendo proporções, sem corte, sem distorção nem compressão */}
+            <div className="w-full flex items-center justify-center">
+              <img
+                src={korbixLogo}
+                alt="KORBIX"
+                className="w-auto max-w-full h-[58px] xs:h-[66px] sm:h-[72px] md:h-[78px] lg:h-[84px] object-contain drop-shadow-[0_0_22px_rgba(34,199,224,0.22)] transform group-hover:scale-[1.01] transition-transform duration-200"
+                loading="eager"
+              />
+            </div>
+
+            {/* 2. FRASE: INTELIGÊNCIA IMOBILIÁRIA em CAIXA ALTA, única ocorrência na página */}
+            <div className="w-full text-center mt-0.5 sm:mt-1">
+              <span className="block font-sans font-bold uppercase text-[9.5px] xs:text-[10px] sm:text-[11px] md:text-[12px] lg:text-[12.5px] tracking-[0.24em] xs:tracking-[0.26em] sm:tracking-[0.28em] md:tracking-[0.3em] text-[#22C7E0] whitespace-nowrap drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+                INTELIGÊNCIA IMOBILIÁRIA
+              </span>
+            </div>
+
+            {/* 3. LINHA DE TERMOS: ANÁLISE · ESTRATÉGIA · OPORTUNIDADES · RESULTADOS em linha horizontal única */}
+            <div className="w-full text-center mt-0.5">
+              <p className="font-sans font-medium uppercase text-[6px] xs:text-[6.8px] sm:text-[7.6px] md:text-[8.2px] lg:text-[8.8px] tracking-[0.14em] xs:tracking-[0.16em] sm:tracking-[0.18em] text-slate-300 group-hover:text-white transition-colors whitespace-nowrap drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]">
+                <span>ANÁLISE</span>
+                <span className="mx-1 sm:mx-1.5 text-[#22C7E0] font-bold">·</span>
+                <span>ESTRATÉGIA</span>
+                <span className="mx-1 sm:mx-1.5 text-[#22C7E0] font-bold">·</span>
+                <span>OPORTUNIDADES</span>
+                <span className="mx-1 sm:mx-1.5 text-[#22C7E0] font-bold">·</span>
+                <span>RESULTADOS</span>
+              </p>
+            </div>
           </div>
         </a>
 
         {/* Central Navigation (Desktop) */}
         <nav
-          className="hidden md:flex items-center gap-6 lg:gap-8"
+          className="hidden lg:flex items-center gap-5 xl:gap-7"
           aria-label="Navegação principal"
         >
           {navItems.map((item) => {
@@ -149,7 +167,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2.5 min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-xl text-slate-300 hover:text-white hover:bg-white/10 active:bg-white/15 transition-colors focus:outline-none focus:ring-2 focus:ring-[#22C7E0]"
+            className="lg:hidden p-2.5 min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-xl text-slate-300 hover:text-white hover:bg-white/10 active:bg-white/15 transition-colors focus:outline-none focus:ring-2 focus:ring-[#22C7E0]"
             aria-label={mobileMenuOpen ? 'Fechar menu' : 'Abrir menu'}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -159,8 +177,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 top-[96px] sm:top-[112px] z-40 bg-black/80 backdrop-blur-sm animate-fade-in">
-          {' '}
+        <div className="lg:hidden fixed inset-0 top-[104px] sm:top-[116px] md:top-[124px] z-40 bg-black/80 backdrop-blur-sm animate-fade-in">
           <div className="absolute right-0 top-0 bottom-0 w-[min(300px,85vw)] bg-[#070B14] border-l border-[#081226] p-6 flex flex-col justify-between shadow-2xl overflow-y-auto animate-fade-in">
             <div className="space-y-5">
               <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 pb-2 border-b border-slate-800">
