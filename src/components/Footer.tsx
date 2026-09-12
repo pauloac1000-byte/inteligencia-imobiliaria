@@ -30,21 +30,43 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12">
           {/* Marca + Tagline do Projeto */}
           <div className="md:col-span-4 space-y-3.5 sm:space-y-4">
-            <a
-              href="#"
-              onClick={scrollToTop}
-              className="flex items-center group w-fit focus:outline-none focus-visible:ring-2 focus-visible:ring-[#22C7E0] rounded-lg p-0.5 transition-opacity hover:opacity-95"
-              aria-label="KORBIX - Voltar ao topo"
-            >
-              <div className="relative flex items-center">
-                <img
-                  src={korbixLogo}
-                  alt="KORBIX"
-                  className="h-16 sm:h-20 md:h-24 w-auto max-w-[240px] sm:max-w-[280px] md:max-w-[320px] object-contain drop-shadow-[0_0_16px_rgba(34,199,224,0.15)]"
-                  loading="lazy"
-                />
+            <div className="space-y-2">
+              <a
+                href="#"
+                onClick={scrollToTop}
+                className="flex items-center group w-fit focus:outline-none focus-visible:ring-2 focus-visible:ring-[#22C7E0] rounded-lg p-0.5 transition-opacity hover:opacity-95"
+                aria-label="KORBIX - Voltar ao topo"
+              >
+                <div className="relative flex items-center">
+                  <img
+                    src={korbixLogo}
+                    alt="KORBIX"
+                    className="h-16 sm:h-20 md:h-24 w-auto max-w-[240px] sm:max-w-[280px] md:max-w-[320px] object-contain drop-shadow-[0_0_16px_rgba(34,199,224,0.15)]"
+                    loading="lazy"
+                  />
+                </div>
+              </a>
+
+              {/* Linha de termos de posicionamento da marca */}
+              <div
+                className="flex flex-wrap items-center gap-x-1.5 sm:gap-x-2 gap-y-1 text-[10px] sm:text-[11px] md:text-xs font-semibold tracking-wider text-slate-300 uppercase select-none"
+                aria-label="Análise, Estratégia, Oportunidades, Resultados"
+              >
+                <span className="whitespace-nowrap">ANÁLISE</span>
+                <span className="text-[#22C7E0] font-bold" aria-hidden="true">
+                  ·
+                </span>
+                <span className="whitespace-nowrap">ESTRATÉGIA</span>
+                <span className="text-[#22C7E0] font-bold" aria-hidden="true">
+                  ·
+                </span>
+                <span className="whitespace-nowrap">OPORTUNIDADES</span>
+                <span className="text-[#22C7E0] font-bold" aria-hidden="true">
+                  ·
+                </span>
+                <span className="whitespace-nowrap">RESULTADOS</span>
               </div>
-            </a>
+            </div>
 
             <p className="text-xs text-slate-400 max-w-sm leading-relaxed">
               Nossa mecânica de dados cruza perfil do imóvel com objetivo de compra de milhares de
