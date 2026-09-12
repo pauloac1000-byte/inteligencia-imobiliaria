@@ -10,6 +10,10 @@ import {
   Network,
   Cpu,
   Layers,
+  BarChart3,
+  Compass,
+  Sparkles,
+  Award,
   ArrowRight,
 } from 'lucide-react'
 
@@ -191,6 +195,72 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
               Uma ponte clara e objetiva entre quem vende e quem investe, com rigor técnico em cada
               etapa.
             </p>
+          </div>
+
+          {/* Sequência de 4 blocos: 01 ANÁLISE, 02 ESTRATÉGIA, 03 OPORTUNIDADES, 04 RESULTADOS */}
+          {/* Apenas número grande (24-28px, peso 700) + palavra em caixa alta (18-20px, peso 600), sem descrição */}
+          <div className="mb-12 sm:mb-16">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7 lg:gap-8">
+              {/* Bloco 01 ANÁLISE */}
+              <div className="p-5 sm:p-6 rounded-2xl bg-[#081226] border border-slate-800 hover:border-[#22C7E0]/50 transition-all duration-300 shadow-xl flex items-center justify-between gap-4 group">
+                <div className="flex items-baseline gap-3">
+                  <span className="text-[26px] font-bold text-[#22C7E0] tracking-tight font-mono drop-shadow-[0_0_10px_rgba(34,199,224,0.25)]">
+                    01
+                  </span>
+                  <span className="text-lg sm:text-[19px] font-semibold text-white tracking-wide uppercase">
+                    ANÁLISE
+                  </span>
+                </div>
+                <div className="w-9 h-9 rounded-lg bg-[#070B14] border border-[#22C7E0]/20 text-[#22C7E0] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-[0_0_8px_rgba(34,199,224,0.12)]">
+                  <BarChart3 className="w-4.5 h-4.5 stroke-[2]" />
+                </div>
+              </div>
+
+              {/* Bloco 02 ESTRATÉGIA */}
+              <div className="p-5 sm:p-6 rounded-2xl bg-[#081226] border border-slate-800 hover:border-[#22C7E0]/50 transition-all duration-300 shadow-xl flex items-center justify-between gap-4 group">
+                <div className="flex items-baseline gap-3">
+                  <span className="text-[26px] font-bold text-[#22C7E0] tracking-tight font-mono drop-shadow-[0_0_10px_rgba(34,199,224,0.25)]">
+                    02
+                  </span>
+                  <span className="text-lg sm:text-[19px] font-semibold text-white tracking-wide uppercase">
+                    ESTRATÉGIA
+                  </span>
+                </div>
+                <div className="w-9 h-9 rounded-lg bg-[#070B14] border border-[#22C7E0]/20 text-[#22C7E0] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-[0_0_8px_rgba(34,199,224,0.12)]">
+                  <Compass className="w-4.5 h-4.5 stroke-[2]" />
+                </div>
+              </div>
+
+              {/* Bloco 03 OPORTUNIDADES */}
+              <div className="p-5 sm:p-6 rounded-2xl bg-[#081226] border border-slate-800 hover:border-[#22C7E0]/50 transition-all duration-300 shadow-xl flex items-center justify-between gap-4 group">
+                <div className="flex items-baseline gap-3">
+                  <span className="text-[26px] font-bold text-[#22C7E0] tracking-tight font-mono drop-shadow-[0_0_10px_rgba(34,199,224,0.25)]">
+                    03
+                  </span>
+                  <span className="text-lg sm:text-[19px] font-semibold text-white tracking-wide uppercase">
+                    OPORTUNIDADES
+                  </span>
+                </div>
+                <div className="w-9 h-9 rounded-lg bg-[#070B14] border border-[#22C7E0]/20 text-[#22C7E0] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-[0_0_8px_rgba(34,199,224,0.12)]">
+                  <Sparkles className="w-4.5 h-4.5 stroke-[2]" />
+                </div>
+              </div>
+
+              {/* Bloco 04 RESULTADOS */}
+              <div className="p-5 sm:p-6 rounded-2xl bg-[#081226] border border-slate-800 hover:border-[#22C7E0]/50 transition-all duration-300 shadow-xl flex items-center justify-between gap-4 group">
+                <div className="flex items-baseline gap-3">
+                  <span className="text-[26px] font-bold text-[#22C7E0] tracking-tight font-mono drop-shadow-[0_0_10px_rgba(34,199,224,0.25)]">
+                    04
+                  </span>
+                  <span className="text-lg sm:text-[19px] font-semibold text-white tracking-wide uppercase">
+                    RESULTADOS
+                  </span>
+                </div>
+                <div className="w-9 h-9 rounded-lg bg-[#070B14] border border-[#22C7E0]/20 text-[#22C7E0] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-[0_0_8px_rgba(34,199,224,0.12)]">
+                  <Award className="w-4.5 h-4.5 stroke-[2]" />
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Container dos 3 passos em linha com linha conectora pontilhada */}
