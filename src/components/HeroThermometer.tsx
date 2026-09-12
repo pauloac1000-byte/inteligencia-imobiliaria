@@ -64,7 +64,7 @@ export const HeroThermometer: React.FC = () => {
       </div>
 
       {/* Thermometer Glass Structure */}
-      <div className="relative w-22 sm:w-32 h-[270px] sm:h-[380px] bg-[#0B1F3A]/80 border-2 border-slate-700/70 rounded-full p-2 sm:p-2.5 flex flex-col justify-end backdrop-blur-sm shadow-2xl overflow-visible">
+      <div className="relative w-22 sm:w-32 h-[270px] sm:h-[380px] bg-[#0F172A]/90 border-2 border-[#22D3EE]/40 rounded-full p-2 sm:p-2.5 flex flex-col justify-end backdrop-blur-md shadow-2xl shadow-[#0F172A]/80 overflow-visible ring-1 ring-white/10">
         {/* Subtle grid lines & reference marks (25%, 50%, 75%) */}
         <div className="absolute inset-y-8 right-2 sm:right-3 flex flex-col justify-between text-[9px] sm:text-[10px] font-mono text-slate-400 pointer-events-none select-none z-10">
           <div className="flex items-center gap-0.5 sm:gap-1">
@@ -108,7 +108,7 @@ export const HeroThermometer: React.FC = () => {
         </div>
 
         {/* Bulb base */}
-        <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-14 sm:w-20 h-14 sm:h-20 bg-gradient-to-br from-[#0B1F3A] to-[#0F172A] border-2 border-slate-700/80 rounded-full flex items-center justify-center shadow-lg -z-0">
+        <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-14 sm:w-20 h-14 sm:h-20 bg-gradient-to-br from-[#0B1F3A] to-[#0F172A] border-2 border-[#22D3EE]/50 rounded-full flex items-center justify-center shadow-xl shadow-[#0F172A]/90 -z-0 ring-1 ring-white/10">
           <div className="w-9 sm:w-14 h-9 sm:h-14 rounded-full bg-gradient-to-br from-[#1D4ED8] to-[#22D3EE] p-0.5 flex items-center justify-center shadow-inner">
             <Activity className="w-4 sm:w-6 h-4 sm:h-6 text-white animate-pulse" />
           </div>
@@ -116,9 +116,9 @@ export const HeroThermometer: React.FC = () => {
       </div>
 
       {/* Micro-legend below thermometer */}
-      <div className="mt-7 sm:mt-8 text-center max-w-[290px] px-2">
-        <p className="text-xs sm:text-sm text-slate-300 sm:text-slate-400 flex items-center justify-center gap-1.5 font-medium leading-relaxed">
-          <Sparkles className="w-3.5 h-3.5 text-[#22D3EE] shrink-0" />
+      <div className="mt-7 sm:mt-8 text-center max-w-[290px] px-2 py-1 rounded-lg bg-[#0F172A]/80 backdrop-blur-sm border border-slate-700/40">
+        <p className="text-xs sm:text-sm text-slate-200 flex items-center justify-center gap-1.5 font-medium leading-relaxed">
+          <Sparkles className="w-3.5 h-3.5 text-[#22D3EE] shrink-0 animate-pulse" />
           <span>calculada em tempo real com base em 48 variáveis de investimento</span>
         </p>
       </div>
