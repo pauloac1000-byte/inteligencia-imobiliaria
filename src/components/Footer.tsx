@@ -16,7 +16,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
     e.preventDefault()
     const element = document.getElementById(targetId)
     if (element) {
-      const yOffset = -76
+      const yOffset = -90
       const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
       window.scrollTo({ top: y, behavior: 'smooth' })
     }
@@ -38,7 +38,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
               <img
                 src={korbixLogo}
                 alt="KORBIX - Inteligência Imobiliária"
-                className="h-10 sm:h-12 w-auto max-w-[200px] sm:max-w-[230px] object-contain rounded-md"
+                className="h-12 sm:h-16 md:h-20 w-auto max-w-[230px] sm:max-w-[280px] md:max-w-[340px] object-contain rounded-md"
                 loading="lazy"
               />
             </a>
