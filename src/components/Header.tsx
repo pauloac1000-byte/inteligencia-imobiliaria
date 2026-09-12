@@ -64,7 +64,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
     const targetId = href.replace('#', '')
     const element = document.getElementById(targetId)
     if (element) {
-      const yOffset = -90
+      const yOffset = -105
       const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
       window.scrollTo({ top: y, behavior: 'smooth' })
     }
@@ -77,24 +77,24 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 h-[76px] sm:h-[84px] md:h-[88px] transition-all duration-300 flex items-center ${
+      className={`fixed top-0 left-0 right-0 z-50 h-[88px] sm:h-[96px] md:h-[104px] transition-all duration-300 flex items-center ${
         scrolled
-          ? 'bg-[#070B14]/92 backdrop-blur-md border-b border-[#081226] shadow-2xl shadow-black/60'
+          ? 'bg-[#070B14]/95 backdrop-blur-md border-b border-[#081226] shadow-2xl shadow-black/60'
           : 'bg-transparent border-b border-transparent'
       }`}
     >
-      <div className="w-full max-w-[1200px] mx-auto px-3.5 sm:px-6 flex items-center justify-between gap-2">
-        {/* Logo KORBIX - Inteligência Imobiliária */}
+      <div className="w-full max-w-[1200px] mx-auto px-3 sm:px-6 h-full flex items-center justify-between gap-2 sm:gap-4">
+        {/* Logo KORBIX - Inteligência Imobiliária (ocupa toda a altura disponível do header) */}
         <a
           href="#"
           onClick={handleLogoClick}
-          className="group flex items-center text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#22C7E0] rounded-lg p-0.5 -ml-1 transition-opacity hover:opacity-90 shrink-0 min-w-0"
+          className="group flex items-center h-full py-1.5 sm:py-2 text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#22C7E0] rounded-lg transition-opacity hover:opacity-90 shrink min-w-0"
           aria-label="KORBIX - Inteligência Imobiliária - Início"
         >
           <img
             src={korbixLogo}
             alt="KORBIX - Inteligência Imobiliária"
-            className="h-12 sm:h-14 md:h-16 w-auto max-w-[210px] xs:max-w-[240px] sm:max-w-[280px] md:max-w-[320px] object-contain rounded-md"
+            className="h-full w-auto max-h-[76px] sm:max-h-[84px] md:max-h-[92px] max-w-[260px] xs:max-w-[300px] sm:max-w-[360px] md:max-w-[420px] object-contain rounded-md"
             loading="eager"
           />
         </a>
@@ -149,7 +149,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 top-[76px] sm:top-[84px] z-40 bg-black/80 backdrop-blur-sm animate-fade-in">
+        <div className="md:hidden fixed inset-0 top-[88px] sm:top-[96px] z-40 bg-black/80 backdrop-blur-sm animate-fade-in">
           <div className="absolute right-0 top-0 bottom-0 w-[min(300px,85vw)] bg-[#070B14] border-l border-[#081226] p-6 flex flex-col justify-between shadow-2xl overflow-y-auto animate-fade-in">
             <div className="space-y-5">
               <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 pb-2 border-b border-slate-800">

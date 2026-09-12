@@ -19,7 +19,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenModal }) => {
   }
 
   return (
-    <section className="relative min-h-[92vh] lg:min-h-screen bg-[#070B14] text-white flex items-center pt-24 sm:pt-28 lg:pt-24 pb-14 sm:pb-20 lg:py-0 overflow-hidden">
+    <section className="relative min-h-[92vh] lg:min-h-screen bg-[#070B14] text-white flex items-center pt-28 sm:pt-32 lg:pt-28 pb-14 sm:pb-20 lg:py-0 overflow-hidden">
       {/* 1. Fotografia real de fundo: Ponte suspensa noturna panorâmica */}
       <div className="absolute inset-0 pointer-events-none select-none z-0">
         <img
