@@ -17,7 +17,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
       const scrollY = window.scrollY
       setScrolled(scrollY > 20)
 
-      // Section spy
+      // Section spy recalibrado com o offset do header ampliado
       const sections = [
         'diferenciais',
         'para-vender',
@@ -25,7 +25,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
         'como-funciona',
         'compatibilidade',
       ]
-      const scrollPosition = scrollY + 115
+      const isDesktop = window.innerWidth >= 1280
+      const headerOffset = isDesktop ? 168 : window.innerWidth >= 1024 ? 152 : 136
+      const scrollPosition = scrollY + headerOffset
 
       let currentActive = ''
       for (const id of sections) {
@@ -38,7 +40,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
         }
       }
 
-      if (scrollY < 120) {
+      if (scrollY < 140) {
         setActiveSection('')
       } else {
         setActiveSection(currentActive)
@@ -64,13 +66,13 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
     const targetId = href.replace('#', '')
     const element = document.getElementById(targetId)
     if (element) {
-      const isDesktop = window.innerWidth >= 1024
-      const yOffset = isDesktop ? -108 : -84
+      // Offset recalibrado para a nova altura do header (128px mobile, 144px lg, 160px xl) + folga de 8px
+      const width = window.innerWidth
+      const yOffset = width >= 1280 ? -168 : width >= 1024 ? -152 : -136
       const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
       window.scrollTo({ top: y, behavior: 'smooth' })
     }
   }
-
   const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
     setMobileMenuOpen(false)
@@ -79,33 +81,33 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 h-[80px] sm:h-[88px] lg:h-[104px] transition-all duration-300 flex items-center ${
+      className={`fixed top-0 left-0 right-0 z-50 h-[128px] sm:h-[136px] md:h-[144px] lg:h-[152px] xl:h-[160px] transition-all duration-300 flex items-center ${
         scrolled
           ? 'bg-[#070B14]/95 backdrop-blur-md border-b border-[#081226] shadow-xl shadow-black/50'
           : 'bg-[#070B14]/85 backdrop-blur-sm border-b border-[#081226]/40'
       }`}
     >
-      <div className="w-full max-w-[1320px] mx-auto px-3.5 sm:px-6 lg:px-8 h-full flex items-center justify-between gap-3 sm:gap-4 lg:gap-6">
-        {/* Logo KORBIX no canto superior esquerdo - Maximizado preenchendo a área disponível à esquerda */}
-        <div className="flex items-center min-w-0 shrink-0 py-1.5 sm:py-2">
+      <div className="w-full max-w-[1360px] mx-auto px-3 sm:px-6 lg:px-8 h-full flex items-center justify-between gap-3 sm:gap-4 lg:gap-6">
+        {/* Logo KORBIX no canto superior esquerdo - Dobrado de tamanho, preenchendo quase toda a altura do header */}
+        <div className="flex items-center min-w-0 shrink-0 py-1 sm:py-1.5 h-full">
           <a
             href="#"
             onClick={handleLogoClick}
-            className="group flex items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#22C7E0] rounded-xl transition-all duration-200"
+            className="group flex items-center h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#22C7E0] rounded-xl transition-all duration-200"
             aria-label="KORBIX Inteligência Imobiliária - Início"
           >
             <img
               src={korbixLogo}
               alt="KORBIX Inteligência Imobiliária"
-              className="h-12 sm:h-14 md:h-16 lg:h-[72px] xl:h-[78px] w-auto max-w-[190px] xs:max-w-[210px] sm:max-w-[250px] md:max-w-[280px] lg:max-w-[320px] xl:max-w-[360px] object-contain drop-shadow-[0_0_18px_rgba(34,199,224,0.18)] group-hover:brightness-110 transition-all duration-200"
+              className="h-[104px] xs:h-[112px] sm:h-[120px] md:h-[128px] lg:h-[136px] xl:h-[148px] w-auto max-w-[220px] xs:max-w-[240px] sm:max-w-[340px] md:max-w-[420px] lg:max-w-[520px] xl:max-w-[660px] object-contain drop-shadow-[0_0_22px_rgba(34,199,224,0.22)] group-hover:brightness-110 transition-all duration-200"
               loading="eager"
             />
           </a>
         </div>
 
-        {/* Central Navigation (Desktop) - rearranjada com espaçamento equilibrado para acomodar o logo */}
+        {/* Central Navigation (Desktop) - exibida a partir de xl para garantir convivência harmônica e sem colisão com o logo gigante */}
         <nav
-          className="hidden lg:flex items-center gap-4 xl:gap-6 shrink min-w-0"
+          className="hidden xl:flex items-center gap-5 2xl:gap-7 shrink min-w-0"
           aria-label="Navegação principal"
         >
           {navItems.map((item) => {
@@ -115,7 +117,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
                 key={item.href}
                 href={item.href}
                 onClick={(e) => handleNavClick(e, item.href)}
-                className={`relative py-2 text-xs xl:text-sm font-medium transition-colors duration-200 whitespace-nowrap group ${
+                className={`relative py-2 text-sm font-medium transition-colors duration-200 whitespace-nowrap group ${
                   isActive ? 'text-white font-semibold' : 'text-slate-300 hover:text-white'
                 }`}
               >
@@ -136,17 +138,17 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
           <button
             type="button"
             onClick={() => onOpenModal()}
-            className="hidden sm:inline-flex items-center justify-center gap-2 px-4 lg:px-5 py-2.5 min-h-[44px] rounded-xl bg-[#1A3A75] hover:bg-[#142E5E] active:bg-[#0F2347] text-white text-xs lg:text-sm font-semibold shadow-inner border border-white/10 hover:border-white/20 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer whitespace-nowrap"
+            className="hidden md:inline-flex items-center justify-center gap-2 px-4 lg:px-5 py-2.5 min-h-[44px] rounded-xl bg-[#1A3A75] hover:bg-[#142E5E] active:bg-[#0F2347] text-white text-xs lg:text-sm font-semibold shadow-inner border border-white/10 hover:border-white/20 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer whitespace-nowrap"
           >
             <span>Começar agora</span>
             <ArrowRight className="w-4 h-4" />
           </button>
 
-          {/* Mobile Hamburger toggle com toque confortável 44x44 */}
+          {/* Hamburger toggle com toque confortável 44x44 - visível até telas xl para navegação limpa */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2.5 min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-xl text-slate-300 hover:text-white hover:bg-white/10 active:bg-white/15 transition-colors focus:outline-none focus:ring-2 focus:ring-[#22C7E0]"
+            className="xl:hidden p-2.5 min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-xl text-slate-300 hover:text-white hover:bg-white/10 active:bg-white/15 transition-colors focus:outline-none focus:ring-2 focus:ring-[#22C7E0]"
             aria-label={mobileMenuOpen ? 'Fechar menu' : 'Abrir menu'}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -154,9 +156,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
         </div>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile & Tablet Drawer recalibrado para a nova altura do header */}
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 top-[80px] sm:top-[88px] z-40 bg-black/80 backdrop-blur-sm animate-fade-in">
+        <div className="xl:hidden fixed inset-0 top-[128px] sm:top-[136px] md:top-[144px] lg:top-[152px] z-40 bg-black/80 backdrop-blur-sm animate-fade-in">
+          {' '}
           <div className="absolute right-0 top-0 bottom-0 w-[min(300px,85vw)] bg-[#070B14] border-l border-[#081226] p-6 flex flex-col justify-between shadow-2xl overflow-y-auto animate-fade-in">
             <div className="space-y-5">
               <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 pb-2 border-b border-slate-800">

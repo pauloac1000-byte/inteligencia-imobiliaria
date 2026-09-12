@@ -21,8 +21,8 @@ export const TwoPathsSection: React.FC<TwoPathsSectionProps> = ({ onOpenModal })
   const handleCardClick = (targetId: string) => {
     const target = document.getElementById(targetId)
     if (target) {
-      const isDesktop = window.innerWidth >= 1024
-      const yOffset = isDesktop ? -140 : -115
+      const width = window.innerWidth
+      const yOffset = width >= 1280 ? -176 : width >= 1024 ? -160 : -144
       const y = target.getBoundingClientRect().top + window.pageYOffset + yOffset
       window.scrollTo({ top: y, behavior: 'smooth' })
     }
