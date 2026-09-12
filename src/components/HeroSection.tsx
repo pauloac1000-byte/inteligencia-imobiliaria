@@ -19,7 +19,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenModal }) => {
   }
 
   return (
-    <section className="relative min-h-[92vh] lg:min-h-screen bg-[#070B14] text-white flex items-center pt-36 sm:pt-40 md:pt-44 lg:pt-48 xl:pt-52 pb-16 sm:pb-20 lg:pb-24 overflow-hidden">
+    <section className="relative min-h-[92vh] lg:min-h-screen bg-[#070B14] text-white flex items-center pt-38 sm:pt-42 md:pt-48 lg:pt-52 xl:pt-56 pb-16 sm:pb-20 lg:pb-24 overflow-hidden">
       {/* 1. Fotografia real de fundo: Ponte suspensa noturna panorâmica */}{' '}
       <div className="absolute inset-0 pointer-events-none select-none z-0">
         <img
@@ -51,7 +51,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenModal }) => {
         />
 
         {/* Overlay no topo (garante contraste sob o header fixo translúcido ampliado) */}
-        <div className="absolute top-0 left-0 right-0 h-44 bg-gradient-to-b from-[#070B14]/98 via-[#070B14]/80 to-transparent pointer-events-none" />
+        <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-[#070B14]/98 via-[#070B14]/80 to-transparent pointer-events-none" />
 
         {/* Overlay na base (transição suave para a escuridão da seção de métricas) */}
         <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-[#070B14] via-[#070B14]/85 to-transparent pointer-events-none" />
