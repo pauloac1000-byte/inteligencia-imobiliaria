@@ -9,34 +9,34 @@
 
 @layer base {
   :root {
-    /* Change the colors to match the design system */
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Dark Premium Tech-Midnight Design System */
+    --background: 223 47% 5%;
+    --foreground: 210 40% 98%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 221 65% 9%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 223 47% 5%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 222.2 84% 4.9%;
+    --primary: 219 64% 28%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 98%;
-    --secondary-foreground: 222.2 84% 4.9%;
+    --secondary: 221 65% 9%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 210 40% 98%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 221 55% 12%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 210 40% 98%;
-    --accent-foreground: 222.2 84% 4.9%;
+    --accent: 187 75% 51%;
+    --accent-foreground: 223 47% 5%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 221 55% 15%;
+    --input: 221 55% 15%;
+    --ring: 187 75% 51%;
 
     --radius: 0.5rem;
 
@@ -258,13 +258,13 @@
     0%,
     100% {
       box-shadow:
-        0 0 15px rgba(34, 211, 238, 0.3),
-        0 0 30px rgba(34, 211, 238, 0.15);
+        0 0 12px rgba(34, 199, 224, 0.25),
+        0 0 24px rgba(34, 199, 224, 0.12);
     }
     50% {
       box-shadow:
-        0 0 25px rgba(34, 211, 238, 0.6),
-        0 0 50px rgba(34, 211, 238, 0.3);
+        0 0 20px rgba(34, 199, 224, 0.45),
+        0 0 40px rgba(34, 199, 224, 0.22);
     }
   }
 

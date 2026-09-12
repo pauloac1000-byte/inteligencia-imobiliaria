@@ -32,17 +32,17 @@ export const CompetitiveDifferences: React.FC = () => {
   return (
     <section
       id="diferenciais"
-      className="bg-[#F8FAFC] py-14 sm:py-20 lg:py-24 px-3.5 sm:px-6 lg:px-8 border-b border-slate-200"
+      className="bg-[#081226] py-14 sm:py-20 lg:py-24 px-3.5 sm:px-6 lg:px-8 border-b border-slate-900"
     >
       <div className="max-w-[1200px] mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-14 lg:mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-200/90 text-[#0F172A] text-xs font-semibold mb-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A3A75]/35 border border-[#1A3A75]/60 text-[#22C7E0] text-xs font-semibold mb-3 shadow-[0_0_10px_rgba(34,199,224,0.15)]">
             Diferenciais Competitivos
           </div>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#0F172A]">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white">
             Por que a inteligência faz a diferença
           </h2>
-          <p className="mt-2.5 sm:mt-3 text-sm sm:text-base text-[#475569] leading-relaxed">
+          <p className="mt-2.5 sm:mt-3 text-sm sm:text-base text-slate-300 leading-relaxed">
             Processos analíticos e conexões qualificadas para transformar transações imobiliárias em
             decisões seguras e rentáveis.
           </p>
@@ -55,31 +55,31 @@ export const CompetitiveDifferences: React.FC = () => {
             return (
               <div
                 key={item.title}
-                className="group relative p-4.5 sm:p-6 lg:p-7 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-xl hover:border-[#22D3EE]/60 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 overflow-hidden"
+                className="group relative p-4.5 sm:p-6 lg:p-7 rounded-2xl bg-[#070B14] border border-slate-800 shadow-xl hover:shadow-[0_20px_40px_rgba(0,0,0,0.8)] hover:border-[#22C7E0]/60 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 overflow-hidden"
               >
                 {/* Linha sutil de destaque no topo ao hover */}
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#22D3EE] to-[#1D4ED8] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#22C7E0] to-[#1A3A75] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                 <div className="space-y-3.5 sm:space-y-4">
                   <div className="flex items-center justify-between">
-                    <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#0F172A]/5 border border-[#22D3EE]/30 flex items-center justify-center text-[#22D3EE] group-hover:bg-[#22D3EE]/10 group-hover:scale-105 transition-all duration-300 shrink-0">
+                    <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#081226] border border-[#22C7E0]/30 flex items-center justify-center text-[#22C7E0] group-hover:bg-[#22C7E0]/15 group-hover:scale-105 transition-all duration-300 shrink-0 shadow-[0_0_10px_rgba(34,199,224,0.15)]">
                       <Icon className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
                     </div>
-                    <span className="text-xs font-mono font-bold text-slate-400 group-hover:text-[#1D4ED8] transition-colors">
+                    <span className="text-xs font-mono font-bold text-slate-400 group-hover:text-[#22C7E0] transition-colors">
                       {item.badge}
                     </span>
                   </div>
 
                   <div className="space-y-1.5 sm:space-y-2">
-                    <h3 className="text-base sm:text-xl font-bold text-[#0F172A] tracking-tight">
+                    <h3 className="text-base sm:text-xl font-bold text-white tracking-tight">
                       {item.title}
                     </h3>
-                    <p className="text-sm text-[#475569] leading-relaxed">{item.description}</p>
+                    <p className="text-sm text-slate-300 leading-relaxed">{item.description}</p>
                   </div>
                 </div>
 
-                <div className="pt-4 sm:pt-6 mt-4 sm:mt-6 border-t border-slate-100 flex items-center gap-2 text-xs font-medium text-slate-500 group-hover:text-[#0F172A] transition-colors">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#22D3EE]" />
+                <div className="pt-4 sm:pt-6 mt-4 sm:mt-6 border-t border-slate-800/80 flex items-center gap-2 text-xs font-medium text-slate-400 group-hover:text-white transition-colors">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#22C7E0] shadow-[0_0_6px_#22C7E0]" />
                   <span>Padrão Imóveis Inteligentes</span>
                 </div>
               </div>

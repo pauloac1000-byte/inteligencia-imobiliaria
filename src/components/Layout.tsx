@@ -13,7 +13,7 @@ export default function Layout() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#0F172A] text-slate-100 selection:bg-[#1D4ED8] selection:text-white">
+    <div className="flex flex-col min-h-screen bg-[#070B14] text-slate-100 selection:bg-[#1A3A75] selection:text-white">
       {/* Header fixo 72px com blur/scroll tracking */}
       <Header onOpenModal={handleOpenModal} />
 

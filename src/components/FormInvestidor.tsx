@@ -106,11 +106,11 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
   if (sucesso) {
     return (
       <div className="py-8 px-4 text-center space-y-5 animate-fade-in">
-        <div className="w-16 h-16 rounded-full bg-[#22D3EE]/20 border-2 border-[#22D3EE] text-[#22D3EE] flex items-center justify-center mx-auto shadow-lg shadow-[#22D3EE]/30">
+        <div className="w-16 h-16 rounded-full bg-[#22C7E0]/20 border-2 border-[#22C7E0] text-[#22C7E0] flex items-center justify-center mx-auto shadow-lg shadow-[#22C7E0]/30">
           <CheckCircle2 className="w-9 h-9" />
         </div>
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#22D3EE]/20 border border-[#22D3EE]/40 text-[#22D3EE] text-xs font-semibold">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1A3A75]/40 border border-[#1A3A75]/70 text-[#22C7E0] text-xs font-semibold">
             Tese registrada no Supabase
           </div>
           <h3 className="text-2xl font-bold text-white tracking-tight">Recebemos seus dados!</h3>
@@ -133,7 +133,7 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 rounded-lg bg-[#0B1F3A] hover:bg-[#1A3865] border border-slate-700 text-slate-200 text-xs font-medium transition-colors"
+              className="px-4 py-2 rounded-lg bg-[#081226] hover:bg-[#0B1833] border border-slate-700 text-slate-200 text-xs font-medium transition-colors"
             >
               Fechar janela
             </button>
@@ -165,7 +165,7 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
             value={nome}
             onChange={(e) => setNome(e.target.value)}
             disabled={loading}
-            className="w-full px-3.5 py-2.5 rounded-lg bg-[#0B1F3A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white placeholder-slate-400 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
+            className="w-full px-3.5 py-2.5 rounded-lg bg-[#081226] border border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0] text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
           />
         </div>
 
@@ -180,7 +180,7 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
             value={telefone}
             onChange={(e) => setTelefone(e.target.value)}
             disabled={loading}
-            className="w-full px-3.5 py-2.5 rounded-lg bg-[#0B1F3A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white placeholder-slate-400 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
+            className="w-full px-3.5 py-2.5 rounded-lg bg-[#081226] border border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0] text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
           />
         </div>
       </div>
@@ -198,7 +198,7 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
-            className="w-full px-3.5 py-2.5 rounded-lg bg-[#0B1F3A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white placeholder-slate-400 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
+            className="w-full px-3.5 py-2.5 rounded-lg bg-[#081226] border border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0] text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
           />
         </div>
 
@@ -212,7 +212,7 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
               value={perfil}
               onChange={(e) => setPerfil(e.target.value)}
               disabled={loading}
-              className="w-full px-3.5 py-2.5 rounded-lg bg-[#0B1F3A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white text-base sm:text-sm outline-none transition-all appearance-none cursor-pointer disabled:opacity-50 min-h-[44px]"
+              className="w-full px-3.5 py-2.5 rounded-lg bg-[#081226] border border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0] text-white text-base sm:text-sm outline-none transition-all appearance-none cursor-pointer disabled:opacity-50 min-h-[44px]"
             >
               {OPCOES_PERFIL.map((op) => (
                 <option key={op.value} value={op.value}>
@@ -239,7 +239,7 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
               value={faixaValor}
               onChange={(e) => setFaixaValor(e.target.value)}
               disabled={loading}
-              className="w-full px-3.5 py-2.5 rounded-lg bg-[#0B1F3A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white text-base sm:text-sm outline-none transition-all appearance-none cursor-pointer disabled:opacity-50 min-h-[44px]"
+              className="w-full px-3.5 py-2.5 rounded-lg bg-[#081226] border border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0] text-white text-base sm:text-sm outline-none transition-all appearance-none cursor-pointer disabled:opacity-50 min-h-[44px]"
             >
               <option value="Até R$ 500 mil">Até R$ 500 mil</option>
               <option value="R$ 500 mil a R$ 1 milhão">R$ 500 mil a R$ 1 milhão</option>
@@ -264,7 +264,7 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
             value={cidadesInteresse}
             onChange={(e) => setCidadesInteresse(e.target.value)}
             disabled={loading}
-            className="w-full px-3.5 py-2.5 rounded-lg bg-[#0B1F3A] border border-slate-600 focus:border-[#22D3EE] focus:ring-1 focus:ring-[#22D3EE] text-white placeholder-slate-400 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
+            className="w-full px-3.5 py-2.5 rounded-lg bg-[#081226] border border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0] text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
           />
         </div>
       </div>
@@ -274,16 +274,16 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
         <button
           type="submit"
           disabled={loading}
-          className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 min-h-[48px] rounded-xl bg-[#22D3EE] hover:bg-[#06b6d4] active:bg-[#0891b2] text-[#0F172A] font-bold text-sm shadow-lg hover:shadow-[#22D3EE]/30 transition-all transform active:scale-[0.99] disabled:opacity-60 cursor-pointer"
+          className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 min-h-[48px] rounded-xl bg-[#1A3A75] hover:bg-[#142E5E] active:bg-[#0F2347] text-white font-semibold text-sm shadow-inner border border-white/10 hover:border-white/20 transition-all transform active:scale-[0.99] disabled:opacity-60 cursor-pointer"
         >
           {loading ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin text-[#0F172A] shrink-0" />
+              <Loader2 className="w-4 h-4 animate-spin text-white shrink-0" />
               <span>Gravando dados no Supabase...</span>
             </>
           ) : (
             <>
-              <TrendingUp className="w-4 h-4 shrink-0" />
+              <TrendingUp className="w-4 h-4 text-[#22C7E0] shrink-0" />
               <span>Buscar oportunidades de investimento</span>
               <ArrowRight className="w-4 h-4 ml-1 shrink-0" />
             </>

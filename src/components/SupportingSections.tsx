@@ -23,12 +23,12 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
       {/* SEÇÃO #para-vender */}
       <section
         id="para-vender"
-        className="bg-[#0F172A] text-white py-14 sm:py-20 lg:py-24 px-3.5 sm:px-6 lg:px-8 border-b border-slate-800"
+        className="bg-[#070B14] text-white py-14 sm:py-20 lg:py-24 px-3.5 sm:px-6 lg:px-8 border-b border-slate-900"
       >
         <div className="max-w-[1200px] mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 sm:gap-6 mb-8 sm:mb-14 lg:mb-16">
             <div className="max-w-2xl space-y-2.5 sm:space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1D4ED8]/20 border border-[#1D4ED8]/40 text-[#22D3EE] text-xs font-semibold">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A3A75]/35 border border-[#1A3A75]/60 text-[#22C7E0] text-xs font-semibold">
                 Para quem quer vender
               </div>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white leading-tight">
@@ -43,7 +43,7 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
             <button
               type="button"
               onClick={() => onOpenModal('vender')}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[48px] rounded-xl bg-[#1D4ED8] hover:bg-[#1e40af] active:bg-[#172554] text-white text-sm font-semibold transition-all shrink-0 cursor-pointer shadow-md"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[48px] rounded-xl bg-[#1A3A75] hover:bg-[#142E5E] active:bg-[#0F2347] text-white text-sm font-semibold shadow-inner border border-white/10 hover:border-white/20 transition-all shrink-0 cursor-pointer"
             >
               <span>Cadastrar imóvel</span>
               <ArrowRight className="w-4 h-4 shrink-0" />
@@ -52,8 +52,8 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
             {/* Benefício 1 */}
-            <div className="p-4.5 sm:p-6 lg:p-7 rounded-2xl bg-[#0B1F3A] border border-slate-700/80 space-y-3 sm:space-y-4 hover:border-[#1D4ED8]/50 transition-colors shadow-sm">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#1D4ED8]/20 text-[#22D3EE] flex items-center justify-center shrink-0">
+            <div className="p-4.5 sm:p-6 lg:p-7 rounded-2xl bg-[#081226] border border-slate-800 space-y-3 sm:space-y-4 hover:border-[#1A3A75] transition-colors shadow-xl">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#070B14] border border-[#1A3A75]/60 text-[#22C7E0] flex items-center justify-center shrink-0 shadow-[0_0_10px_rgba(34,199,224,0.15)]">
                 <Clock className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
@@ -67,8 +67,8 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
             </div>
 
             {/* Benefício 2 */}
-            <div className="p-4.5 sm:p-6 lg:p-7 rounded-2xl bg-[#0B1F3A] border border-slate-700/80 space-y-3 sm:space-y-4 hover:border-[#1D4ED8]/50 transition-colors shadow-sm">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#1D4ED8]/20 text-[#22D3EE] flex items-center justify-center shrink-0">
+            <div className="p-4.5 sm:p-6 lg:p-7 rounded-2xl bg-[#081226] border border-slate-800 space-y-3 sm:space-y-4 hover:border-[#1A3A75] transition-colors shadow-xl">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#070B14] border border-[#1A3A75]/60 text-[#22C7E0] flex items-center justify-center shrink-0 shadow-[0_0_10px_rgba(34,199,224,0.15)]">
                 <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
@@ -82,8 +82,8 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
             </div>
 
             {/* Benefício 3 */}
-            <div className="p-4.5 sm:p-6 lg:p-7 rounded-2xl bg-[#0B1F3A] border border-slate-700/80 space-y-3 sm:space-y-4 hover:border-[#1D4ED8]/50 transition-colors shadow-sm">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#1D4ED8]/20 text-[#22D3EE] flex items-center justify-center shrink-0">
+            <div className="p-4.5 sm:p-6 lg:p-7 rounded-2xl bg-[#081226] border border-slate-800 space-y-3 sm:space-y-4 hover:border-[#1A3A75] transition-colors shadow-xl">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#070B14] border border-[#1A3A75]/60 text-[#22C7E0] flex items-center justify-center shrink-0 shadow-[0_0_10px_rgba(34,199,224,0.15)]">
                 <UserCheck className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
@@ -98,21 +98,21 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
         </div>
       </section>
 
-      {/* SEÇÃO #para-investir */}
+      {/* SEÇÃO #para-investir (convertida para azul-marinho escuro) */}
       <section
         id="para-investir"
-        className="bg-[#F8FAFC] text-[#0F172A] py-14 sm:py-20 lg:py-24 px-3.5 sm:px-6 lg:px-8 border-b border-slate-200"
+        className="bg-[#081226] text-white py-14 sm:py-20 lg:py-24 px-3.5 sm:px-6 lg:px-8 border-b border-slate-900"
       >
         <div className="max-w-[1200px] mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 sm:gap-6 mb-8 sm:mb-14 lg:mb-16">
             <div className="max-w-2xl space-y-2.5 sm:space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#22D3EE]/20 border border-[#22D3EE]/40 text-[#0891b2] text-xs font-semibold">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A3A75]/40 border border-[#1A3A75]/70 text-[#22C7E0] text-xs font-semibold">
                 Para quem quer investir
               </div>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#0F172A] leading-tight">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white leading-tight">
                 Acesse oportunidades antes de virarem commodity nos portais
               </h2>
-              <p className="text-[#475569] text-sm sm:text-base leading-relaxed">
+              <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
                 Originação direta e inteligência orientada a dados para você tomar decisões de
                 alocação imobiliária com rentabilidade superior e risco calibrado.
               </p>
@@ -121,51 +121,51 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
             <button
               type="button"
               onClick={() => onOpenModal('investir')}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[48px] rounded-xl bg-[#22D3EE] hover:bg-[#06b6d4] active:bg-[#0891b2] text-[#0F172A] text-sm font-bold transition-all shrink-0 cursor-pointer shadow-md"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[48px] rounded-xl bg-[#1A3A75] hover:bg-[#142E5E] active:bg-[#0F2347] text-white text-sm font-semibold shadow-inner border border-white/10 hover:border-white/20 transition-all shrink-0 cursor-pointer"
             >
               <span>Definir tese de investimento</span>
-              <ArrowRight className="w-4 h-4 shrink-0 text-[#0F172A]" />
+              <ArrowRight className="w-4 h-4 shrink-0 text-[#22C7E0]" />
             </button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
             {/* Benefício Investir 1 */}
-            <div className="p-4.5 sm:p-6 lg:p-7 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-md space-y-3 sm:space-y-4 hover:border-[#22D3EE] transition-all">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#22D3EE]/15 text-[#0891b2] flex items-center justify-center shrink-0">
+            <div className="p-4.5 sm:p-6 lg:p-7 rounded-2xl bg-[#070B14] border border-slate-800 shadow-xl space-y-3 sm:space-y-4 hover:border-[#22C7E0]/60 transition-all">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#081226] border border-[#22C7E0]/30 text-[#22C7E0] flex items-center justify-center shrink-0 shadow-[0_0_10px_rgba(34,199,224,0.15)]">
                 <Eye className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-[#0F172A] tracking-tight">
+              <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
                 Antecipação a oportunidades
               </h3>
-              <p className="text-sm text-[#475569] leading-relaxed">
+              <p className="text-sm text-slate-300 leading-relaxed">
                 Receba ativos imobiliários antes que cheguem a anúncios públicos. Você negocia na
                 fonte com condições exclusivas e sem concorrência inflacionada.
               </p>
             </div>
 
             {/* Benefício Investir 2 */}
-            <div className="p-4.5 sm:p-6 lg:p-7 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-md space-y-3 sm:space-y-4 hover:border-[#22D3EE] transition-all">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#22D3EE]/15 text-[#0891b2] flex items-center justify-center shrink-0">
+            <div className="p-4.5 sm:p-6 lg:p-7 rounded-2xl bg-[#070B14] border border-slate-800 shadow-xl space-y-3 sm:space-y-4 hover:border-[#22C7E0]/60 transition-all">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#081226] border border-[#22C7E0]/30 text-[#22C7E0] flex items-center justify-center shrink-0 shadow-[0_0_10px_rgba(34,199,224,0.15)]">
                 <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-[#0F172A] tracking-tight">
+              <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
                 Dados analíticos para decisão
               </h3>
-              <p className="text-sm text-[#475569] leading-relaxed">
+              <p className="text-sm text-slate-300 leading-relaxed">
                 Tome decisões baseadas em números reais: projeção de valorização de região,
                 histórico de metro quadrado, liquidez projetada e yield comparativo.
               </p>
             </div>
 
             {/* Benefício Investir 3 */}
-            <div className="p-4.5 sm:p-6 lg:p-7 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-md space-y-3 sm:space-y-4 hover:border-[#22D3EE] transition-all">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#22D3EE]/15 text-[#0891b2] flex items-center justify-center shrink-0">
+            <div className="p-4.5 sm:p-6 lg:p-7 rounded-2xl bg-[#070B14] border border-slate-800 shadow-xl space-y-3 sm:space-y-4 hover:border-[#22C7E0]/60 transition-all">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#081226] border border-[#22C7E0]/30 text-[#22C7E0] flex items-center justify-center shrink-0 shadow-[0_0_10px_rgba(34,199,224,0.15)]">
                 <FileCheck2 className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-[#0F172A] tracking-tight">
+              <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
                 Segurança jurídica completa
               </h3>
-              <p className="text-sm text-[#475569] leading-relaxed">
+              <p className="text-sm text-slate-300 leading-relaxed">
                 Imóveis com documentação pré-auditada (certidões, ônus e histórico registral) para
                 garantir fechamento ágil e blindagem do seu patrimônio.
               </p>
@@ -177,14 +177,11 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
       {/* SEÇÃO #como-funciona: "Simples para os dois lados" (3 passos) */}
       <section
         id="como-funciona"
-        className="bg-[#0F172A] text-white py-14 sm:py-20 lg:py-24 px-3.5 sm:px-6 lg:px-8 border-b border-slate-800 relative overflow-hidden"
+        className="bg-[#070B14] text-white py-14 sm:py-20 lg:py-24 px-3.5 sm:px-6 lg:px-8 border-b border-slate-900 relative overflow-hidden"
       >
-        {/* Glow de fundo */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[600px] h-[300px] bg-[#1D4ED8]/10 blur-[120px] rounded-full pointer-events-none -z-0" />
-
         <div className="max-w-[1200px] mx-auto relative z-10">
           <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-16">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#22D3EE]/10 border border-[#22D3EE]/30 text-[#22D3EE] text-xs font-semibold mb-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A3A75]/35 border border-[#1A3A75]/60 text-[#22C7E0] text-xs font-semibold mb-3">
               Processo em 3 etapas
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white">
@@ -200,19 +197,19 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
           <div className="relative">
             {/* Linha conectora pontilhada no Desktop (simbolizando a ponte entre os passos) */}
             <div
-              className="hidden md:block absolute top-12 left-[16%] right-[16%] h-0 border-t-2 border-dashed border-[#22D3EE]/40 z-0 pointer-events-none"
+              className="hidden md:block absolute top-12 left-[16%] right-[16%] h-0 border-t-2 border-dashed border-[#22C7E0]/30 z-0 pointer-events-none"
               aria-hidden="true"
             />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-8 relative z-10">
               {/* Passo 1 */}
-              <div className="group relative p-5 sm:p-7 lg:p-8 rounded-2xl bg-[#0B1F3A]/85 border border-slate-700/80 hover:border-[#22D3EE]/60 transition-all duration-300 shadow-xl flex flex-col justify-between">
+              <div className="group relative p-5 sm:p-7 lg:p-8 rounded-2xl bg-[#081226] border border-slate-800 hover:border-[#22C7E0]/60 transition-all duration-300 shadow-2xl flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-4 sm:mb-6">
-                    <span className="text-3xl sm:text-5xl font-extrabold text-[#22D3EE] font-mono tracking-tight drop-shadow-[0_0_12px_rgba(34,211,238,0.35)]">
+                    <span className="text-3xl sm:text-5xl font-extrabold text-[#22C7E0] font-mono tracking-tight drop-shadow-[0_0_12px_rgba(34,199,224,0.35)]">
                       01
                     </span>
-                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#22D3EE]/15 border border-[#22D3EE]/30 text-[#22D3EE] flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
+                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#070B14] border border-[#22C7E0]/30 text-[#22C7E0] flex items-center justify-center group-hover:scale-105 transition-transform shrink-0 shadow-[0_0_10px_rgba(34,199,224,0.15)]">
                       <Layers className="w-5 h-5 stroke-[2]" />
                     </div>
                   </div>
@@ -223,20 +220,20 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
                     informe os dados do imóvel ou perfil de investimento
                   </p>
                 </div>
-                <div className="mt-5 sm:mt-6 pt-4 border-t border-slate-700/60 flex items-center gap-2 text-xs font-medium text-[#22D3EE]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#22D3EE] animate-pulse" />
+                <div className="mt-5 sm:mt-6 pt-4 border-t border-slate-800/80 flex items-center gap-2 text-xs font-medium text-[#22C7E0]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#22C7E0] animate-pulse" />
                   <span>Entrada de informações</span>
                 </div>
               </div>
 
               {/* Passo 2 */}
-              <div className="group relative p-5 sm:p-7 lg:p-8 rounded-2xl bg-[#0B1F3A]/85 border border-[#22D3EE]/50 hover:border-[#22D3EE] transition-all duration-300 shadow-xl shadow-[#22D3EE]/5 flex flex-col justify-between">
+              <div className="group relative p-5 sm:p-7 lg:p-8 rounded-2xl bg-[#081226] border border-[#22C7E0]/40 hover:border-[#22C7E0] transition-all duration-300 shadow-2xl shadow-[#22C7E0]/5 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-4 sm:mb-6">
-                    <span className="text-3xl sm:text-5xl font-extrabold text-[#22D3EE] font-mono tracking-tight drop-shadow-[0_0_12px_rgba(34,211,238,0.35)]">
+                    <span className="text-3xl sm:text-5xl font-extrabold text-[#22C7E0] font-mono tracking-tight drop-shadow-[0_0_12px_rgba(34,199,224,0.35)]">
                       02
                     </span>
-                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#22D3EE]/20 border border-[#22D3EE]/40 text-[#22D3EE] flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
+                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#070B14] border border-[#22C7E0]/40 text-[#22C7E0] flex items-center justify-center group-hover:scale-105 transition-transform shrink-0 shadow-[0_0_10px_rgba(34,199,224,0.15)]">
                       <Cpu className="w-5 h-5 stroke-[2]" />
                     </div>
                   </div>
@@ -247,20 +244,20 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
                     corretores analisam precificação racional, liquidez e compatibilidade
                   </p>
                 </div>
-                <div className="mt-5 sm:mt-6 pt-4 border-t border-slate-700/60 flex items-center gap-2 text-xs font-medium text-[#22D3EE]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#22D3EE] animate-pulse" />
+                <div className="mt-5 sm:mt-6 pt-4 border-t border-slate-800/80 flex items-center gap-2 text-xs font-medium text-[#22C7E0]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#22C7E0] animate-pulse" />
                   <span>Avaliação criteriosa</span>
                 </div>
               </div>
 
               {/* Passo 3 */}
-              <div className="group relative p-5 sm:p-7 lg:p-8 rounded-2xl bg-[#0B1F3A]/85 border border-slate-700/80 hover:border-[#22D3EE]/60 transition-all duration-300 shadow-xl flex flex-col justify-between">
+              <div className="group relative p-5 sm:p-7 lg:p-8 rounded-2xl bg-[#081226] border border-slate-800 hover:border-[#22C7E0]/60 transition-all duration-300 shadow-2xl flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-4 sm:mb-6">
-                    <span className="text-3xl sm:text-5xl font-extrabold text-[#22D3EE] font-mono tracking-tight drop-shadow-[0_0_12px_rgba(34,211,238,0.35)]">
+                    <span className="text-3xl sm:text-5xl font-extrabold text-[#22C7E0] font-mono tracking-tight drop-shadow-[0_0_12px_rgba(34,199,224,0.35)]">
                       03
                     </span>
-                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#22D3EE]/15 border border-[#22D3EE]/30 text-[#22D3EE] flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
+                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#070B14] border border-[#22C7E0]/30 text-[#22C7E0] flex items-center justify-center group-hover:scale-105 transition-transform shrink-0 shadow-[0_0_10px_rgba(34,199,224,0.15)]">
                       <Network className="w-5 h-5 stroke-[2]" />
                     </div>
                   </div>
@@ -271,8 +268,8 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
                     apresentação direta com condução segura até o fechamento
                   </p>
                 </div>
-                <div className="mt-5 sm:mt-6 pt-4 border-t border-slate-700/60 flex items-center gap-2 text-xs font-medium text-[#22D3EE]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#22D3EE] animate-pulse" />
+                <div className="mt-5 sm:mt-6 pt-4 border-t border-slate-800/80 flex items-center gap-2 text-xs font-medium text-[#22C7E0]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#22C7E0] animate-pulse" />
                   <span>Fechamento seguro</span>
                 </div>
               </div>
