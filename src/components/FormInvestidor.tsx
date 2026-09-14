@@ -6,8 +6,9 @@ import {
   ObjetivoInvestidor,
   PrazoDecisaoInvestidor,
 } from '@/services/leads'
-import { CheckCircle2, ArrowRight, Loader2, AlertCircle, Compass, Check } from 'lucide-react'
+import { ArrowRight, Loader2, AlertCircle, Compass, Check } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
+import { ConfirmationProtocolo } from './ConfirmationProtocolo'
 
 interface FormInvestidorProps {
   onSuccess?: () => void
@@ -76,6 +77,7 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
   const [autorizoContato, setAutorizoContato] = useState(false)
   const [autorizoTouched, setAutorizoTouched] = useState(false)
 
+  const [protocolo, setProtocolo] = useState<string>('')
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const [sucesso, setSucesso] = useState(false)
@@ -167,16 +169,13 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
       return
     }
 
+    setProtocolo(res.protocolo || 'KX-0001')
     setSucesso(true)
-    if (onSuccess) {
-      setTimeout(() => {
-        onSuccess()
-      }, 3500)
-    }
   }
 
   const handleReset = () => {
     setTelefone('')
+    setProtocolo('')
     setTicket('300_600k')
     setObjetivo('renda_aluguel')
     setPrazoDecisao('30_dias')
@@ -190,41 +189,13 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
 
   if (sucesso) {
     return (
-      <div className="py-8 px-4 text-center space-y-5 animate-fade-in">
-        <div className="w-16 h-16 rounded-full bg-[#22C7E0]/20 border-2 border-[#22C7E0] text-[#22C7E0] flex items-center justify-center mx-auto shadow-lg shadow-[#22C7E0]/30">
-          <CheckCircle2 className="w-9 h-9" />
-        </div>
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1A3A75]/40 border border-[#1A3A75]/70 text-[#22C7E0] text-xs font-semibold">
-            Tese registrada com sucesso
-          </div>
-          <h3 className="text-2xl font-bold text-white tracking-tight">Recebemos sua tese!</h3>
-          <p className="text-slate-300 text-sm max-w-md mx-auto leading-relaxed">
-            Nossa mecânica de dados iniciou a busca por oportunidades e imóveis com compatibilidade
-            exata à sua alocação. Nossa equipe apresentará os primeiros ativos selecionados via
-            WhatsApp antes de chegarem ao mercado aberto.
-          </p>
-        </div>
-
-        <div className="pt-3 flex flex-col sm:flex-row items-center justify-center gap-3">
-          <button
-            type="button"
-            onClick={handleReset}
-            className="text-xs text-slate-400 hover:text-white underline underline-offset-4 transition-colors cursor-pointer"
-          >
-            Registrar outra tese
-          </button>
-          {onCancel && (
-            <button
-              type="button"
-              onClick={onCancel}
-              className="px-4 py-2 rounded-lg bg-[#081226] hover:bg-[#0B1833] border border-slate-700 text-slate-200 text-xs font-medium transition-colors cursor-pointer"
-            >
-              Fechar janela
-            </button>
-          )}
-        </div>
-      </div>
+      <ConfirmationProtocolo
+        protocolo={protocolo || 'KX-0001'}
+        rota="investidor"
+        onReset={handleReset}
+        onClose={onCancel}
+        resetLabel="Registrar outra tese"
+      />
     )
   }
 

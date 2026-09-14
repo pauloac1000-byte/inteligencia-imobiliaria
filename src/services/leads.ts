@@ -54,10 +54,28 @@ export interface LeadInvestidorInput {
   rota?: 'investidor' | string
 }
 
+// Constantes centralizadas para atendimento KORBIX
+export const KORBIX_WHATSAPP_NUMBER = '5511999999999' // Placeholder centralizado para fácil troca futura
+export const KORBIX_WHATSAPP_DISPLAY = '(11) 99999-9999'
+
 export interface LeadResult {
   success: boolean
   id?: string
+  protocolo?: string
   error?: string
+}
+
+/**
+ * Monta o link wa.me com mensagem personalizada contendo o protocolo gerado.
+ */
+export function buildWhatsAppLink(protocolo: string, rota: 'proprietario' | 'investidor'): string {
+  const mensagem =
+    rota === 'proprietario'
+      ? `Olá, equipe KORBIX! Acabei de cadastrar meu imóvel com o protocolo ${protocolo} e gostaria de falar com um especialista sobre a análise técnica.`
+      : `Olá, equipe KORBIX! Acabei de registrar minha tese de investimento com o protocolo ${protocolo} e gostaria de falar com a curadoria de oportunidades.`
+
+  const encoded = encodeURIComponent(mensagem)
+  return `https://wa.me/${KORBIX_WHATSAPP_NUMBER}?text=${encoded}`
 }
 
 export async function salvarLeadVendaEtapa1(input: LeadVendaEtapa1Input): Promise<LeadResult> {
@@ -71,7 +89,7 @@ export async function salvarLeadVendaEtapa1(input: LeadVendaEtapa1Input): Promis
           rota: input.rota || 'proprietario',
         },
       ])
-      .select('id')
+      .select('id, protocolo')
       .single()
 
     if (error) {
@@ -82,7 +100,7 @@ export async function salvarLeadVendaEtapa1(input: LeadVendaEtapa1Input): Promis
       }
     }
 
-    return { success: true, id: data?.id }
+    return { success: true, id: data?.id, protocolo: data?.protocolo }
   } catch (err: any) {
     console.error('Exceção ao enviar etapa 1 de venda:', err)
     return {
@@ -96,7 +114,7 @@ export async function salvarLeadVendaEtapa1(input: LeadVendaEtapa1Input): Promis
 
 export async function atualizarLeadVendaEtapa2(input: LeadVendaEtapa2Input): Promise<LeadResult> {
   try {
-    const { error } = await (supabase.from as any)('leads_venda')
+    const { data, error } = await (supabase.from as any)('leads_venda')
       .update({
         nome: input.nome.trim(),
         email: input.email.trim().toLowerCase(),
@@ -106,6 +124,8 @@ export async function atualizarLeadVendaEtapa2(input: LeadVendaEtapa2Input): Pro
         mensagem: input.mensagem ? input.mensagem.trim() : null,
       })
       .eq('id', input.id)
+      .select('id, protocolo')
+      .single()
 
     if (error) {
       console.error('Erro ao atualizar lead de venda (etapa 2):', error)
@@ -115,7 +135,7 @@ export async function atualizarLeadVendaEtapa2(input: LeadVendaEtapa2Input): Pro
       }
     }
 
-    return { success: true, id: input.id }
+    return { success: true, id: input.id, protocolo: data?.protocolo }
   } catch (err: any) {
     console.error('Exceção ao enviar etapa 2 de venda:', err)
     return {
@@ -150,14 +170,14 @@ export async function salvarLeadVenda(input: LeadVendaInput): Promise<LeadResult
       const res = await (supabase.from as any)('leads_venda')
         .update(payload)
         .eq('id', input.id)
-        .select('id')
+        .select('id, protocolo')
         .single()
       error = res.error
       data = res.data
     } else {
       const res = await (supabase.from as any)('leads_venda')
         .insert([payload])
-        .select('id')
+        .select('id, protocolo')
         .single()
       error = res.error
       data = res.data
@@ -171,7 +191,7 @@ export async function salvarLeadVenda(input: LeadVendaInput): Promise<LeadResult
       }
     }
 
-    return { success: true, id: data?.id || input.id }
+    return { success: true, id: data?.id || input.id, protocolo: data?.protocolo }
   } catch (err: any) {
     console.error('Exceção ao enviar lead de venda:', err)
     return {
@@ -203,7 +223,10 @@ export async function salvarLeadInvestidor(input: LeadInvestidorInput): Promise<
     if (input.perfil) payload.perfil = input.perfil
     if (input.faixa_valor) payload.faixa_valor = input.faixa_valor
 
-    const { error } = await (supabase.from as any)('leads_investidor').insert([payload])
+    const { data, error } = await (supabase.from as any)('leads_investidor')
+      .insert([payload])
+      .select('id, protocolo')
+      .single()
 
     if (error) {
       console.error('Erro ao salvar lead de investidor:', error)
@@ -214,7 +237,7 @@ export async function salvarLeadInvestidor(input: LeadInvestidorInput): Promise<
       }
     }
 
-    return { success: true }
+    return { success: true, id: data?.id, protocolo: data?.protocolo }
   } catch (err: any) {
     console.error('Exceção ao enviar lead de investidor:', err)
     return {

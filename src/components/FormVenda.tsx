@@ -1,16 +1,9 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { salvarLeadVendaEtapa1, atualizarLeadVendaEtapa2 } from '@/services/leads'
-import {
-  CheckCircle2,
-  ArrowRight,
-  ArrowLeft,
-  Loader2,
-  AlertCircle,
-  Building2,
-  Check,
-} from 'lucide-react'
+import { ArrowRight, ArrowLeft, Loader2, AlertCircle, Building2, Check } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
+import { ConfirmationProtocolo } from './ConfirmationProtocolo'
 
 interface FormVendaProps {
   onSuccess?: () => void
@@ -49,6 +42,7 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
   // Controle de etapa: 1 ou 2
   const [etapa, setEtapa] = useState<1 | 2>(1)
   const [leadId, setLeadId] = useState<string | null>(null)
+  const [protocolo, setProtocolo] = useState<string>('')
 
   // Etapa 1: apenas 3 campos obrigatórios
   const [cidade, setCidade] = useState('')
@@ -117,6 +111,9 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
     if (res.id) {
       setLeadId(res.id)
     }
+    if (res.protocolo) {
+      setProtocolo(res.protocolo)
+    }
 
     // Avança para etapa 2
     setEtapa(2)
@@ -155,6 +152,8 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
     setErrorMsg('')
     setLoading(true)
 
+    let protocoloFinal = protocolo
+
     if (leadId) {
       const res = await atualizarLeadVendaEtapa2({
         id: leadId,
@@ -171,6 +170,9 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
       if (!res.success) {
         setErrorMsg(res.error || 'Ocorreu um erro ao atualizar suas informações. Tente novamente.')
         return
+      }
+      if (res.protocolo) {
+        protocoloFinal = res.protocolo
       }
     } else {
       // Fallback defensivo: se por algum motivo leadId não tiver sido salvo, faz insert completo
@@ -194,19 +196,19 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
         setErrorMsg(res.error || 'Ocorreu um erro ao registrar suas informações. Tente novamente.')
         return
       }
+      if (res.protocolo) {
+        protocoloFinal = res.protocolo
+      }
     }
 
+    setProtocolo(protocoloFinal || 'KX-0001')
     setSucesso(true)
-    if (onSuccess) {
-      setTimeout(() => {
-        onSuccess()
-      }, 3500)
-    }
   }
 
   const handleReset = () => {
     setEtapa(1)
     setLeadId(null)
+    setProtocolo('')
     setCidade('')
     setTipoImovel('apartamento')
     setTelefone('')
@@ -224,40 +226,13 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
 
   if (sucesso) {
     return (
-      <div className="py-8 px-4 text-center space-y-5 animate-fade-in">
-        <div className="w-16 h-16 rounded-full bg-[#22C7E0]/20 border-2 border-[#22C7E0] text-[#22C7E0] flex items-center justify-center mx-auto shadow-lg shadow-[#22C7E0]/30">
-          <CheckCircle2 className="w-9 h-9" />
-        </div>
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1A3A75]/40 border border-[#1A3A75]/70 text-[#22C7E0] text-xs font-semibold">
-            Dados gravados com sucesso
-          </div>
-          <h3 className="text-2xl font-bold text-white tracking-tight">Recebemos seus dados!</h3>
-          <p className="text-slate-300 text-sm max-w-md mx-auto leading-relaxed">
-            Nossa equipe de especialistas e mecânica de dados entrará em contato para analisar o
-            valor do seu imóvel e apresentar compradores com perfil e liquidez compatíveis.
-          </p>
-        </div>
-
-        <div className="pt-3 flex flex-col sm:flex-row items-center justify-center gap-3">
-          <button
-            type="button"
-            onClick={handleReset}
-            className="text-xs text-slate-400 hover:text-white underline underline-offset-4 transition-colors cursor-pointer"
-          >
-            Cadastrar outro imóvel
-          </button>
-          {onCancel && (
-            <button
-              type="button"
-              onClick={onCancel}
-              className="px-4 py-2 rounded-lg bg-[#081226] hover:bg-[#0B1833] border border-slate-700 text-slate-200 text-xs font-medium transition-colors"
-            >
-              Fechar janela
-            </button>
-          )}
-        </div>
-      </div>
+      <ConfirmationProtocolo
+        protocolo={protocolo || 'KX-0001'}
+        rota="proprietario"
+        onReset={handleReset}
+        onClose={onCancel}
+        resetLabel="Cadastrar outro imóvel"
+      />
     )
   }
 
