@@ -18,6 +18,7 @@ export type Database = {
           id: string
           nome: string
           perfil: string | null
+          rota: string
           telefone: string
         }
         Insert: {
@@ -28,6 +29,7 @@ export type Database = {
           id?: string
           nome: string
           perfil?: string | null
+          rota?: string
           telefone: string
         }
         Update: {
@@ -38,6 +40,7 @@ export type Database = {
           id?: string
           nome?: string
           perfil?: string | null
+          rota?: string
           telefone?: string
         }
         Relationships: []
@@ -50,6 +53,7 @@ export type Database = {
           id: string
           mensagem: string | null
           nome: string
+          rota: string
           telefone: string
           tipo_imovel: string | null
           valor_estimado: string | null
@@ -61,6 +65,7 @@ export type Database = {
           id?: string
           mensagem?: string | null
           nome: string
+          rota?: string
           telefone: string
           tipo_imovel?: string | null
           valor_estimado?: string | null
@@ -72,6 +77,7 @@ export type Database = {
           id?: string
           mensagem?: string | null
           nome?: string
+          rota?: string
           telefone?: string
           tipo_imovel?: string | null
           valor_estimado?: string | null
