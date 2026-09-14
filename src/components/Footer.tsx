@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ArrowUpRight, ShieldCheck, Mail, Phone, FileBadge } from 'lucide-react'
 import korbixLogo from '@/assets/5-contorno-e238f.png'
 
@@ -7,13 +8,25 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
+  const location = useLocation()
+  const navigate = useNavigate()
+
   const scrollToTop = (e: React.MouseEvent) => {
     e.preventDefault()
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    if (location.pathname !== '/') {
+      navigate('/')
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
   }
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
     e.preventDefault()
+    if (location.pathname !== '/') {
+      navigate('/#' + targetId)
+      return
+    }
+
     const element = document.getElementById(targetId)
     if (element) {
       const width = window.innerWidth
@@ -189,9 +202,12 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
 
             {/* Links informativos (privacidade, termos, contato) mantidos */}
             <div className="pt-2 flex flex-wrap items-center gap-3 sm:gap-4 text-xs text-slate-400">
-              <span className="hover:text-white cursor-pointer transition-colors py-1">
+              <Link
+                to="/politica-de-privacidade"
+                className="hover:text-[#22C7E0] transition-colors py-1"
+              >
                 Privacidade
-              </span>
+              </Link>
               <span>•</span>
               <span className="hover:text-white cursor-pointer transition-colors py-1">
                 Termos de Uso

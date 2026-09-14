@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Menu, X, ArrowRight } from 'lucide-react'
 import korbixLogo from '@/assets/5.2-logo-sem-fundo-e9820.png'
 
@@ -7,6 +8,8 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
+  const location = useLocation()
+  const navigate = useNavigate()
   const [scrolled, setScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState<string>('')
@@ -70,19 +73,29 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
     e.preventDefault()
     setMobileMenuOpen(false)
     const targetId = href.replace('#', '')
+
+    if (location.pathname !== '/') {
+      navigate('/' + href)
+      return
+    }
+
     const element = document.getElementById(targetId)
     if (element) {
-      // Offset recalibrado para a altura do header com a linha de termos
       const width = window.innerWidth
       const yOffset = width >= 1280 ? -176 : width >= 1024 ? -168 : width >= 768 ? -160 : -144
       const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
       window.scrollTo({ top: y, behavior: 'smooth' })
     }
   }
+
   const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
     setMobileMenuOpen(false)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    if (location.pathname !== '/') {
+      navigate('/')
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
   }
 
   return (

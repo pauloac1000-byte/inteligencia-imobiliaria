@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { salvarLeadVenda } from '@/services/leads'
 import { CheckCircle2, ArrowRight, Loader2, AlertCircle, Building2 } from 'lucide-react'
+import { Checkbox } from '@/components/ui/checkbox'
 
 interface FormVendaProps {
   onSuccess?: () => void
@@ -16,6 +18,8 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
   const [cidade, setCidade] = useState('')
   const [valorEstimado, setValorEstimado] = useState('')
   const [mensagem, setMensagem] = useState('')
+  const [autorizoContato, setAutorizoContato] = useState(false)
+  const [autorizoTouched, setAutorizoTouched] = useState(false)
 
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
@@ -47,6 +51,12 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
 
     if (!cidade.trim()) {
       setErrorMsg('Informe a cidade do imóvel.')
+      return
+    }
+
+    if (!autorizoContato) {
+      setAutorizoTouched(true)
+      setErrorMsg('É necessário autorizar o contato para enviar o formulário.')
       return
     }
 
@@ -87,6 +97,8 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
     setCidade('')
     setValorEstimado('')
     setMensagem('')
+    setAutorizoContato(false)
+    setAutorizoTouched(false)
     setSucesso(false)
     setErrorMsg('')
   }
@@ -260,17 +272,62 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
         />
       </div>
 
+      {/* Checkbox de Autorização de Contato */}
+      <div className="pt-1 space-y-1.5">
+        <div className="flex items-start gap-2.5 p-2.5 rounded-lg bg-[#081226]/80 border border-slate-800 transition-colors hover:border-slate-700">
+          <Checkbox
+            id="autorizo-contato-venda"
+            checked={autorizoContato}
+            onCheckedChange={(checked) => {
+              const val = checked === true
+              setAutorizoContato(val)
+              setAutorizoTouched(true)
+              if (
+                val &&
+                errorMsg === 'É necessário autorizar o contato para enviar o formulário.'
+              ) {
+                setErrorMsg('')
+              }
+            }}
+            className="mt-0.5 border-slate-600 data-[state=checked]:bg-[#22C7E0] data-[state=checked]:border-[#22C7E0] data-[state=checked]:text-[#070B14] cursor-pointer"
+          />
+          <label
+            htmlFor="autorizo-contato-venda"
+            className="text-xs text-slate-300 leading-snug cursor-pointer select-none"
+          >
+            Autorizo o contato por WhatsApp, telefone ou e-mail sobre este cadastro, de acordo com a{' '}
+            <Link
+              to="/politica-de-privacidade"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#22C7E0] hover:text-[#22C7E0]/80 underline underline-offset-2 transition-colors font-medium inline-block"
+              onClick={(e) => e.stopPropagation()}
+            >
+              Política de Privacidade
+            </Link>
+            . *
+          </label>
+        </div>
+
+        {autorizoTouched && !autorizoContato && (
+          <p className="text-[11px] text-red-400 pl-1 flex items-center gap-1">
+            <span className="w-1 h-1 rounded-full bg-red-400 shrink-0" />
+            Por favor, marque a caixa acima para autorizar o contato antes de enviar.
+          </p>
+        )}
+      </div>
+
       {/* Botão de envio */}
       <div className="pt-2">
         <button
           type="submit"
-          disabled={loading}
-          className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 min-h-[48px] rounded-xl bg-[#1A3A75] hover:bg-[#142E5E] active:bg-[#0F2347] text-white font-semibold text-sm shadow-inner border border-white/10 hover:border-white/20 transition-all transform active:scale-[0.99] disabled:opacity-60 cursor-pointer"
+          disabled={loading || !autorizoContato}
+          className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 min-h-[48px] rounded-xl bg-[#1A3A75] hover:bg-[#142E5E] active:bg-[#0F2347] text-white font-semibold text-sm shadow-inner border border-white/10 hover:border-white/20 transition-all transform active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin text-white shrink-0" />
-              <span>Gravando dados no Supabase...</span>
+              <span>Processando cadastro...</span>
             </>
           ) : (
             <>
@@ -282,8 +339,9 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
         </button>
       </div>
 
-      <p className="text-[11px] text-center text-slate-400 pt-1">
-        Nenhum dado é perdido. Seus dados são salvos em nosso banco com total sigilo analítico.
+      <p className="text-[11px] text-center text-slate-400 pt-1 leading-relaxed">
+        Seus dados são usados apenas para analisar o seu caso e não são compartilhados com
+        terceiros. Você pode pedir a exclusão a qualquer momento.
       </p>
     </form>
   )
