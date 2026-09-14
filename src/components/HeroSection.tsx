@@ -1,7 +1,7 @@
 import React from 'react'
 import { ArrowRight, Building, TrendingUp } from 'lucide-react'
 import { HeroThermometer } from './HeroThermometer'
-import heroBridgeBg from '@/assets/chatgpt-image-11-de-set.de-2026-224434-7c109.png'
+import heroBridgeBg from '@/assets/geminigeneratedimagebrcru6brcru6brcr-58806.jpeg'
 
 interface HeroSectionProps {
   onOpenModal: (intent: 'vender' | 'investir') => void
