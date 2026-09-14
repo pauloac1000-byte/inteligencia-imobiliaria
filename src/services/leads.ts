@@ -37,13 +37,20 @@ export interface LeadVendaInput {
   rota?: 'proprietario' | string
 }
 
+export type TicketInvestidor = 'ate_300k' | '300_600k' | 'acima_600k' | string
+export type ObjetivoInvestidor = 'renda_aluguel' | 'revenda' | 'reforma_venda' | string
+export type PrazoDecisaoInvestidor = '30_dias' | '60_dias' | 'flexivel' | string
+
 export interface LeadInvestidorInput {
-  nome: string
   telefone: string
-  email: string
-  perfil: 'comprar para morar' | 'investir para renda' | 'investir para revenda' | string
-  faixa_valor: string
-  cidades_interesse: string
+  ticket: TicketInvestidor
+  objetivo: ObjetivoInvestidor
+  cidades_interesse: string[] | string
+  prazo_decisao: PrazoDecisaoInvestidor
+  nome?: string
+  email?: string
+  perfil?: string
+  faixa_valor?: string
   rota?: 'investidor' | string
 }
 
@@ -178,17 +185,25 @@ export async function salvarLeadVenda(input: LeadVendaInput): Promise<LeadResult
 
 export async function salvarLeadInvestidor(input: LeadInvestidorInput): Promise<LeadResult> {
   try {
-    const { error } = await (supabase.from as any)('leads_investidor').insert([
-      {
-        nome: input.nome.trim(),
-        telefone: input.telefone.trim(),
-        email: input.email.trim().toLowerCase(),
-        perfil: input.perfil,
-        faixa_valor: input.faixa_valor.trim(),
-        cidades_interesse: input.cidades_interesse.trim(),
-        rota: input.rota || 'investidor',
-      },
-    ])
+    const cidadesFormatadas = Array.isArray(input.cidades_interesse)
+      ? input.cidades_interesse.join(', ')
+      : input.cidades_interesse.trim()
+
+    const payload: Record<string, any> = {
+      telefone: input.telefone.trim(),
+      ticket: input.ticket,
+      objetivo: input.objetivo,
+      cidades_interesse: cidadesFormatadas,
+      prazo_decisao: input.prazo_decisao,
+      rota: 'investidor',
+    }
+
+    if (input.nome) payload.nome = input.nome.trim()
+    if (input.email) payload.email = input.email.trim().toLowerCase()
+    if (input.perfil) payload.perfil = input.perfil
+    if (input.faixa_valor) payload.faixa_valor = input.faixa_valor
+
+    const { error } = await (supabase.from as any)('leads_investidor').insert([payload])
 
     if (error) {
       console.error('Erro ao salvar lead de investidor:', error)

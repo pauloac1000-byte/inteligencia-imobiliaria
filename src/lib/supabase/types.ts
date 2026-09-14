@@ -52,7 +52,9 @@ export type Database = {
           email: string | null
           id: string
           mensagem: string | null
-          nome: string
+          motivo_venda: string | null
+          nome: string | null
+          prazo_desejado: string | null
           rota: string
           telefone: string
           tipo_imovel: string | null
@@ -64,7 +66,9 @@ export type Database = {
           email?: string | null
           id?: string
           mensagem?: string | null
-          nome: string
+          motivo_venda?: string | null
+          nome?: string | null
+          prazo_desejado?: string | null
           rota?: string
           telefone: string
           tipo_imovel?: string | null
@@ -76,7 +80,9 @@ export type Database = {
           email?: string | null
           id?: string
           mensagem?: string | null
-          nome?: string
+          motivo_venda?: string | null
+          nome?: string | null
+          prazo_desejado?: string | null
           rota?: string
           telefone?: string
           tipo_imovel?: string | null
