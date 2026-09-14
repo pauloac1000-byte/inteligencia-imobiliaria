@@ -46,6 +46,7 @@ const CIDADES_DISPONIVEIS = [
   'Santos & Litoral',
   'Jundiaí',
   'ABC Paulista',
+  'Circuito das Águas Paulista',
 ]
 
 // Máscara e formatação em tempo real de telefone/WhatsApp brasileiro (mínimo 10 dígitos com DDD)

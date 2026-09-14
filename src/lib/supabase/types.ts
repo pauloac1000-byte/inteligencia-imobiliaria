@@ -16,10 +16,13 @@ export type Database = {
           email: string | null
           faixa_valor: string | null
           id: string
-          nome: string
+          nome: string | null
+          objetivo: string | null
           perfil: string | null
+          prazo_decisao: string | null
           rota: string
           telefone: string
+          ticket: string | null
         }
         Insert: {
           cidades_interesse?: string | null
@@ -27,10 +30,13 @@ export type Database = {
           email?: string | null
           faixa_valor?: string | null
           id?: string
-          nome: string
+          nome?: string | null
+          objetivo?: string | null
           perfil?: string | null
+          prazo_decisao?: string | null
           rota?: string
           telefone: string
+          ticket?: string | null
         }
         Update: {
           cidades_interesse?: string | null
@@ -38,10 +44,13 @@ export type Database = {
           email?: string | null
           faixa_valor?: string | null
           id?: string
-          nome?: string
+          nome?: string | null
+          objetivo?: string | null
           perfil?: string | null
+          prazo_decisao?: string | null
           rota?: string
           telefone?: string
+          ticket?: string | null
         }
         Relationships: []
       }
