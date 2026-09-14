@@ -8,6 +8,7 @@ export interface LeadVendaInput {
   cidade: string
   valor_estimado?: string
   mensagem?: string
+  rota?: 'proprietario' | string
 }
 
 export interface LeadInvestidorInput {
@@ -17,6 +18,7 @@ export interface LeadInvestidorInput {
   perfil: 'comprar para morar' | 'investir para renda' | 'investir para revenda' | string
   faixa_valor: string
   cidades_interesse: string
+  rota?: 'investidor' | string
 }
 
 export interface LeadResult {
@@ -35,6 +37,7 @@ export async function salvarLeadVenda(input: LeadVendaInput): Promise<LeadResult
         cidade: input.cidade.trim(),
         valor_estimado: input.valor_estimado ? input.valor_estimado.trim() : null,
         mensagem: input.mensagem ? input.mensagem.trim() : null,
+        rota: input.rota || 'proprietario',
       },
     ])
 
@@ -68,6 +71,7 @@ export async function salvarLeadInvestidor(input: LeadInvestidorInput): Promise<
         perfil: input.perfil,
         faixa_valor: input.faixa_valor.trim(),
         cidades_interesse: input.cidades_interesse.trim(),
+        rota: input.rota || 'investidor',
       },
     ])
 

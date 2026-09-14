@@ -83,6 +83,7 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
       perfil,
       faixa_valor: faixaValor,
       cidades_interesse: cidadesInteresse,
+      rota: 'investidor',
     })
 
     setLoading(false)

@@ -71,6 +71,7 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
       cidade,
       valor_estimado: valorEstimado || undefined,
       mensagem: mensagem || undefined,
+      rota: 'proprietario',
     })
 
     setLoading(false)

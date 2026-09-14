@@ -6,7 +6,6 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog'
-import { Building, TrendingUp } from 'lucide-react'
 import { FormVenda } from './FormVenda'
 import { FormInvestidor } from './FormInvestidor'
 
@@ -23,7 +22,7 @@ export const ModalComecarAgora: React.FC<ModalComecarAgoraProps> = ({
 }) => {
   const [intencao, setIntencao] = useState<'vender' | 'investir'>('vender')
 
-  // Sincronizar intenção inicial se passar via prop ao abrir
+  // Define a rota/formulário diretamente a partir do botão clicado
   useEffect(() => {
     if (initialIntent) {
       setIntencao(initialIntent)
@@ -41,9 +40,7 @@ export const ModalComecarAgora: React.FC<ModalComecarAgoraProps> = ({
       <DialogContent className="w-[calc(100%-1.5rem)] sm:max-w-[560px] max-h-[92vh] overflow-y-auto bg-[#070B14] border border-[#1A3A75]/60 text-white shadow-2xl backdrop-blur-md p-4 sm:p-8 rounded-2xl">
         <DialogHeader className="text-left space-y-2 pr-6">
           <DialogTitle className="text-lg sm:text-2xl font-bold tracking-tight text-white leading-snug">
-            {intencao === 'vender'
-              ? 'Quero vender meu imóvel'
-              : 'Quero oportunidade de investimento'}
+            {intencao === 'vender' ? 'Quero vender meu imóvel' : 'Quero investir'}
           </DialogTitle>
           <DialogDescription className="text-slate-300 text-xs sm:text-sm leading-relaxed">
             {intencao === 'vender'
@@ -52,55 +49,7 @@ export const ModalComecarAgora: React.FC<ModalComecarAgoraProps> = ({
           </DialogDescription>
         </DialogHeader>
 
-        {/* Seletor de Abas de Intenção */}
-        <div className="pt-2 pb-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-slate-300 block mb-2">
-            Escolha seu objetivo:
-          </label>
-          <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
-            <button
-              type="button"
-              onClick={() => setIntencao('vender')}
-              className={`flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 min-h-[48px] rounded-xl border text-left transition-all cursor-pointer ${
-                intencao === 'vender'
-                  ? 'border-[#1A3A75] bg-[#1A3A75]/35 text-white shadow-sm ring-1 ring-[#1A3A75]'
-                  : 'border-slate-800 bg-[#081226]/80 text-slate-300 hover:border-slate-700'
-              }`}
-            >
-              <div className="w-8 h-8 rounded-lg bg-[#1A3A75]/30 flex items-center justify-center shrink-0">
-                <Building className="w-4 h-4 text-white" />
-              </div>
-              <div className="flex flex-col min-w-0">
-                <span className="text-xs font-bold truncate">Quero vender</span>
-                <span className="text-[10px] sm:text-[11px] text-slate-400 truncate">
-                  Tenho um imóvel
-                </span>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setIntencao('investir')}
-              className={`flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 min-h-[48px] rounded-xl border text-left transition-all cursor-pointer ${
-                intencao === 'investir'
-                  ? 'border-[#1A3A75] bg-[#1A3A75]/35 text-white shadow-sm ring-1 ring-[#1A3A75]'
-                  : 'border-slate-800 bg-[#081226]/80 text-slate-300 hover:border-slate-700'
-              }`}
-            >
-              <div className="w-8 h-8 rounded-lg bg-[#1A3A75]/30 flex items-center justify-center shrink-0">
-                <TrendingUp className="w-4 h-4 text-[#22C7E0]" />
-              </div>
-              <div className="flex flex-col min-w-0">
-                <span className="text-xs font-bold truncate">Investimento</span>
-                <span className="text-[10px] sm:text-[11px] text-slate-400 truncate">
-                  Busco retorno/renda
-                </span>
-              </div>
-            </button>
-          </div>
-        </div>
-
-        {/* Formulário Conectado ao Supabase */}
+        {/* Formulário Conectado ao Supabase (Rota definida pelo botão de entrada) */}
         <div className="pt-2">
           {intencao === 'vender' ? (
             <FormVenda isInModal={true} onCancel={handleClose} onSuccess={handleClose} />
