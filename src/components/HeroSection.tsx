@@ -1,7 +1,7 @@
 import React from 'react'
 import { ArrowRight, Building, TrendingUp } from 'lucide-react'
 import { HeroThermometer } from './HeroThermometer'
-import heroBridgeBg from '@/assets/analise-1.5-hibrido-fusao-entre-modernidade-e-urbanismo-e-confianca-e-corporativo-ec2ac.png'
+import heroBridgeBg from '@/assets/chatgpt-image-11-de-set.de-2026-224434-7c109.png'
 
 interface HeroSectionProps {
   onOpenModal: (intent: 'vender' | 'investir') => void

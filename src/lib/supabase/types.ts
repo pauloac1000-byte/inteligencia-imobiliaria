@@ -110,7 +110,70 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      fn_submit_lead_investidor: {
+        Args: {
+          p_cidades_interesse: string
+          p_email?: string
+          p_faixa_valor?: string
+          p_nome?: string
+          p_objetivo: string
+          p_perfil?: string
+          p_prazo_decisao: string
+          p_rota?: string
+          p_telefone: string
+          p_ticket: string
+        }
+        Returns: {
+          id: string
+          protocolo: string
+        }[]
+      }
+      fn_submit_lead_venda: {
+        Args: {
+          p_cidade: string
+          p_email?: string
+          p_id?: string
+          p_mensagem?: string
+          p_motivo_venda?: string
+          p_nome?: string
+          p_prazo_desejado?: string
+          p_rota?: string
+          p_telefone: string
+          p_tipo_imovel: string
+          p_valor_estimado?: string
+        }
+        Returns: {
+          id: string
+          protocolo: string
+        }[]
+      }
+      fn_submit_lead_venda_etapa1: {
+        Args: {
+          p_cidade: string
+          p_rota?: string
+          p_telefone: string
+          p_tipo_imovel: string
+        }
+        Returns: {
+          id: string
+          protocolo: string
+        }[]
+      }
+      fn_submit_lead_venda_etapa2: {
+        Args: {
+          p_email: string
+          p_id: string
+          p_mensagem?: string
+          p_motivo_venda: string
+          p_nome: string
+          p_prazo_desejado: string
+          p_valor_estimado?: string
+        }
+        Returns: {
+          id: string
+          protocolo: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
