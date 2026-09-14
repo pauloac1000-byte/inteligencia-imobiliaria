@@ -131,7 +131,7 @@ export const CompatibilityThermometerSection: React.FC<CompatibilityThermometerS
 
           {/* TÍTULO EXATO REQUISITADO */}
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight">
-            Compatibilidade medida, não adivinhada
+            Compatibilidade medida antes do investimento.
           </h2>
 
           <p className="mt-2.5 sm:mt-4 text-sm sm:text-base lg:text-lg text-slate-300 leading-relaxed max-w-2xl mx-auto">
