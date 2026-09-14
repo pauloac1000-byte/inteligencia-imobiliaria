@@ -339,7 +339,7 @@ export const CompatibilityThermometerSection: React.FC<CompatibilityThermometerS
               <div className="p-4 sm:p-5 rounded-2xl bg-[#070B14] border border-[#1A3A75]/70 space-y-2 shadow-xl">
                 <div className="text-xs uppercase font-mono font-semibold tracking-wider text-[#22C7E0] flex items-center gap-2">
                   <Sparkles className="w-3.5 h-3.5 shrink-0" />
-                  <span>Exemplo verificado em base real</span>
+                  <span>SIMULAÇÃO ILUSTRATIVA DO MODELO</span>
                 </div>
                 {/* String exata requisitada */}
                 <div className="text-base sm:text-lg lg:text-xl font-bold text-white tracking-tight leading-snug break-words">
@@ -433,6 +433,9 @@ export const CompatibilityThermometerSection: React.FC<CompatibilityThermometerS
             </div>
           </div>
         </div>
+        <p className="mt-3 text-center text-[11px] sm:text-xs text-slate-400">
+          exemplo demonstrativo — não representa negociação concluída
+        </p>
       </div>
     </section>
   )

@@ -85,9 +85,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenModal }) => {
 
             {/* Subheadline EXATA */}
             <p className="text-sm sm:text-lg lg:text-xl text-slate-300 font-normal leading-relaxed max-w-2xl drop-shadow-sm">
-              Nossa mecânica de dados cruza perfil do imóvel com objetivo de compra de milhares de
-              investidores. A compatibilidade precisa guia a ponte entre você e a oportunidade
-              certa.
+              Nossa mecânica de dados cruza perfil do imóvel com objetivo de compra de investidores
+              com tese de compra registrada. A compatibilidade precisa guia a ponte entre você e a
+              oportunidade certa.
             </p>
 
             {/* CTAs in Line (ambos no azul corporate #1A3A75 sóbrio e profundo) */}
@@ -119,18 +119,18 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenModal }) => {
             <div className="pt-4 sm:pt-5 border-t border-slate-700/60 w-full grid grid-cols-3 gap-2 sm:gap-4 text-slate-300">
               <div className="space-y-0.5 min-w-0">
                 <div className="text-white font-bold text-base sm:text-xl lg:text-2xl font-mono drop-shadow-sm">
-                  48
+                  5
                 </div>
                 <div className="text-[10px] sm:text-xs text-slate-300 sm:text-slate-300 leading-snug break-words">
-                  Variáveis de análise
+                  Critérios objetivos de compatibilidade
                 </div>
               </div>
               <div className="space-y-0.5 min-w-0">
                 <div className="text-white font-bold text-base sm:text-xl lg:text-2xl font-mono drop-shadow-sm">
-                  100%
+                  48h
                 </div>
                 <div className="text-[10px] sm:text-xs text-slate-300 sm:text-slate-300 leading-snug break-words">
-                  Dados verificados
+                  Prazo da análise técnica
                 </div>
               </div>
               <div className="space-y-0.5 min-w-0">
