@@ -1,5 +1,5 @@
 import React from 'react'
-import { ArrowRight, Building, TrendingUp, ShieldCheck, Check } from 'lucide-react'
+import { ArrowRight, Building, TrendingUp, ShieldCheck } from 'lucide-react'
 
 interface FinalCtaSectionProps {
   onOpenModal: (intent: 'vender' | 'investir') => void
@@ -74,37 +74,8 @@ export const FinalCtaSection: React.FC<FinalCtaSectionProps> = ({ onOpenModal })
             </button>
           </div>
 
-          {/* Coluna do CTA Secundário com reassurance de checkmarks */}
-          <div className="flex flex-col items-stretch sm:items-start text-left">
-            {/* Bloco de reassurance: 4 checkmarks + palavra (~16px acima do CTA secundário, ~12px entre itens, ~14px font-normal slate-300, checkmarks em ciano) */}
-            <div className="mb-4 flex flex-col gap-3 text-slate-300 text-sm font-normal">
-              <div className="inline-flex items-center gap-2">
-                <Check className="w-4 h-4 text-[#22C7E0] shrink-0 stroke-[2.5]" />
-                <span className="tracking-wide text-xs sm:text-sm text-slate-300 font-normal">
-                  ANÁLISE
-                </span>
-              </div>
-              <div className="inline-flex items-center gap-2">
-                <Check className="w-4 h-4 text-[#22C7E0] shrink-0 stroke-[2.5]" />
-                <span className="tracking-wide text-xs sm:text-sm text-slate-300 font-normal">
-                  ESTRATÉGIA
-                </span>
-              </div>
-              <div className="inline-flex items-center gap-2">
-                <Check className="w-4 h-4 text-[#22C7E0] shrink-0 stroke-[2.5]" />
-                <span className="tracking-wide text-xs sm:text-sm text-slate-300 font-normal">
-                  OPORTUNIDADES
-                </span>
-              </div>
-              <div className="inline-flex items-center gap-2">
-                <Check className="w-4 h-4 text-[#22C7E0] shrink-0 stroke-[2.5]" />
-                <span className="tracking-wide text-xs sm:text-sm text-slate-300 font-normal">
-                  RESULTADOS
-                </span>
-              </div>
-            </div>
-
-            {/* CTA Secundário: Quero oportunidade de investimento */}
+          {/* CTA Secundário: Quero oportunidade de investimento */}
+          <div className="flex flex-col justify-end">
             <button
               type="button"
               onClick={handleInvestirClick}
