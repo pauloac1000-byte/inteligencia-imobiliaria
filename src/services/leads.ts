@@ -80,6 +80,23 @@ export function buildWhatsAppLink(protocolo: string, rota: 'proprietario' | 'inv
 
 export async function salvarLeadVendaEtapa1(input: LeadVendaEtapa1Input): Promise<LeadResult> {
   try {
+    // Abordagem segura via RPC Security Definer (permite retorno de id + protocolo para perfil anônimo sem abrir SELECT geral)
+    const { data: rpcData, error: rpcError } = await (supabase.rpc as any)(
+      'fn_submit_lead_venda_etapa1',
+      {
+        p_cidade: input.cidade.trim(),
+        p_tipo_imovel: input.tipo_imovel,
+        p_telefone: input.telefone.trim(),
+        p_rota: input.rota || 'proprietario',
+      },
+    )
+
+    if (!rpcError && rpcData) {
+      const row = Array.isArray(rpcData) ? rpcData[0] : rpcData
+      return { success: true, id: row?.id, protocolo: row?.protocolo }
+    }
+
+    // Fallback defensivo com insert direto se RPC não estiver disponível
     const { data, error } = await (supabase.from as any)('leads_venda')
       .insert([
         {
@@ -93,10 +110,13 @@ export async function salvarLeadVendaEtapa1(input: LeadVendaEtapa1Input): Promis
       .single()
 
     if (error) {
-      console.error('Erro ao salvar lead de venda (etapa 1):', error)
+      console.error('Erro ao salvar lead de venda (etapa 1):', error || rpcError)
       return {
         success: false,
-        error: error.message || 'Não foi possível registrar seu imóvel. Tente novamente.',
+        error:
+          error.message ||
+          rpcError?.message ||
+          'Não foi possível registrar seu imóvel. Tente novamente.',
       }
     }
 
@@ -114,6 +134,26 @@ export async function salvarLeadVendaEtapa1(input: LeadVendaEtapa1Input): Promis
 
 export async function atualizarLeadVendaEtapa2(input: LeadVendaEtapa2Input): Promise<LeadResult> {
   try {
+    // Abordagem segura via RPC Security Definer
+    const { data: rpcData, error: rpcError } = await (supabase.rpc as any)(
+      'fn_submit_lead_venda_etapa2',
+      {
+        p_id: input.id,
+        p_nome: input.nome.trim(),
+        p_email: input.email.trim().toLowerCase(),
+        p_motivo_venda: input.motivo_venda,
+        p_prazo_desejado: input.prazo_desejado,
+        p_valor_estimado: input.valor_estimado ? input.valor_estimado.trim() : null,
+        p_mensagem: input.mensagem ? input.mensagem.trim() : null,
+      },
+    )
+
+    if (!rpcError && rpcData) {
+      const row = Array.isArray(rpcData) ? rpcData[0] : rpcData
+      return { success: true, id: row?.id || input.id, protocolo: row?.protocolo }
+    }
+
+    // Fallback defensivo com update direto
     const { data, error } = await (supabase.from as any)('leads_venda')
       .update({
         nome: input.nome.trim(),
@@ -128,10 +168,13 @@ export async function atualizarLeadVendaEtapa2(input: LeadVendaEtapa2Input): Pro
       .single()
 
     if (error) {
-      console.error('Erro ao atualizar lead de venda (etapa 2):', error)
+      console.error('Erro ao atualizar lead de venda (etapa 2):', error || rpcError)
       return {
         success: false,
-        error: error.message || 'Não foi possível atualizar as informações. Tente novamente.',
+        error:
+          error.message ||
+          rpcError?.message ||
+          'Não foi possível atualizar as informações. Tente novamente.',
       }
     }
 
@@ -149,6 +192,27 @@ export async function atualizarLeadVendaEtapa2(input: LeadVendaEtapa2Input): Pro
 
 export async function salvarLeadVenda(input: LeadVendaInput): Promise<LeadResult> {
   try {
+    // Abordagem segura via RPC Security Definer
+    const { data: rpcData, error: rpcError } = await (supabase.rpc as any)('fn_submit_lead_venda', {
+      p_telefone: input.telefone.trim(),
+      p_tipo_imovel: input.tipo_imovel,
+      p_cidade: input.cidade.trim(),
+      p_rota: input.rota || 'proprietario',
+      p_id: input.id || null,
+      p_nome: input.nome ? input.nome.trim() : null,
+      p_email: input.email ? input.email.trim().toLowerCase() : null,
+      p_valor_estimado: input.valor_estimado ? input.valor_estimado.trim() : null,
+      p_motivo_venda: input.motivo_venda || null,
+      p_prazo_desejado: input.prazo_desejado || null,
+      p_mensagem: input.mensagem ? input.mensagem.trim() : null,
+    })
+
+    if (!rpcError && rpcData) {
+      const row = Array.isArray(rpcData) ? rpcData[0] : rpcData
+      return { success: true, id: row?.id || input.id, protocolo: row?.protocolo }
+    }
+
+    // Fallback defensivo direto
     const payload: Record<string, any> = {
       telefone: input.telefone.trim(),
       tipo_imovel: input.tipo_imovel,
@@ -184,10 +248,13 @@ export async function salvarLeadVenda(input: LeadVendaInput): Promise<LeadResult
     }
 
     if (error) {
-      console.error('Erro ao salvar lead de venda:', error)
+      console.error('Erro ao salvar lead de venda:', error || rpcError)
       return {
         success: false,
-        error: error.message || 'Não foi possível registrar seu imóvel. Tente novamente.',
+        error:
+          error.message ||
+          rpcError?.message ||
+          'Não foi possível registrar seu imóvel. Tente novamente.',
       }
     }
 
@@ -209,6 +276,29 @@ export async function salvarLeadInvestidor(input: LeadInvestidorInput): Promise<
       ? input.cidades_interesse.join(', ')
       : input.cidades_interesse.trim()
 
+    // Abordagem segura via RPC Security Definer
+    const { data: rpcData, error: rpcError } = await (supabase.rpc as any)(
+      'fn_submit_lead_investidor',
+      {
+        p_telefone: input.telefone.trim(),
+        p_ticket: input.ticket,
+        p_objetivo: input.objetivo,
+        p_cidades_interesse: cidadesFormatadas,
+        p_prazo_decisao: input.prazo_decisao,
+        p_rota: 'investidor',
+        p_nome: input.nome ? input.nome.trim() : null,
+        p_email: input.email ? input.email.trim().toLowerCase() : null,
+        p_perfil: input.perfil ? input.perfil.trim() : null,
+        p_faixa_valor: input.faixa_valor ? input.faixa_valor.trim() : null,
+      },
+    )
+
+    if (!rpcError && rpcData) {
+      const row = Array.isArray(rpcData) ? rpcData[0] : rpcData
+      return { success: true, id: row?.id, protocolo: row?.protocolo }
+    }
+
+    // Fallback defensivo direto
     const payload: Record<string, any> = {
       telefone: input.telefone.trim(),
       ticket: input.ticket,
@@ -229,11 +319,13 @@ export async function salvarLeadInvestidor(input: LeadInvestidorInput): Promise<
       .single()
 
     if (error) {
-      console.error('Erro ao salvar lead de investidor:', error)
+      console.error('Erro ao salvar lead de investidor:', error || rpcError)
       return {
         success: false,
         error:
-          error.message || 'Não foi possível registrar sua tese de investimento. Tente novamente.',
+          error.message ||
+          rpcError?.message ||
+          'Não foi possível registrar sua tese de investimento. Tente novamente.',
       }
     }
 
