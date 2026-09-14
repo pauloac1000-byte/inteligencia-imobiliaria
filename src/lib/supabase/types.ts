@@ -20,6 +20,7 @@ export type Database = {
           objetivo: string | null
           perfil: string | null
           prazo_decisao: string | null
+          protocolo: string | null
           rota: string
           telefone: string
           ticket: string | null
@@ -34,6 +35,7 @@ export type Database = {
           objetivo?: string | null
           perfil?: string | null
           prazo_decisao?: string | null
+          protocolo?: string | null
           rota?: string
           telefone: string
           ticket?: string | null
@@ -48,6 +50,7 @@ export type Database = {
           objetivo?: string | null
           perfil?: string | null
           prazo_decisao?: string | null
+          protocolo?: string | null
           rota?: string
           telefone?: string
           ticket?: string | null
@@ -64,6 +67,7 @@ export type Database = {
           motivo_venda: string | null
           nome: string | null
           prazo_desejado: string | null
+          protocolo: string | null
           rota: string
           telefone: string
           tipo_imovel: string | null
@@ -78,6 +82,7 @@ export type Database = {
           motivo_venda?: string | null
           nome?: string | null
           prazo_desejado?: string | null
+          protocolo?: string | null
           rota?: string
           telefone: string
           tipo_imovel?: string | null
@@ -92,6 +97,7 @@ export type Database = {
           motivo_venda?: string | null
           nome?: string | null
           prazo_desejado?: string | null
+          protocolo?: string | null
           rota?: string
           telefone?: string
           tipo_imovel?: string | null

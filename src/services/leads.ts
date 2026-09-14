@@ -55,8 +55,8 @@ export interface LeadInvestidorInput {
 }
 
 // Constantes centralizadas para atendimento KORBIX
-export const KORBIX_WHATSAPP_NUMBER = '5511999999999' // Placeholder centralizado para fácil troca futura
-export const KORBIX_WHATSAPP_DISPLAY = '(11) 99999-9999'
+export const KORBIX_WHATSAPP_NUMBER = '5519998563025' // WhatsApp oficial KORBIX
+export const KORBIX_WHATSAPP_DISPLAY = '(19) 99856-3025'
 
 export interface LeadResult {
   success: boolean

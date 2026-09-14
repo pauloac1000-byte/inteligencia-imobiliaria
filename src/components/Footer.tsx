@@ -1,10 +1,11 @@
 import React from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ArrowUpRight, ShieldCheck, Mail, Phone, FileBadge } from 'lucide-react'
+import { KORBIX_WHATSAPP_NUMBER, KORBIX_WHATSAPP_DISPLAY } from '@/services/leads'
 import korbixLogo from '@/assets/5-contorno-e238f.png'
 
 interface FooterProps {
-  onOpenModal: (intent?: 'vender' | 'investir') => void
+  onOpenModal?: (intent?: 'vender' | 'investir') => void
 }
 
 export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
@@ -178,7 +179,14 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-[#22C7E0] shrink-0" />
                 <span className="text-slate-400">WhatsApp:</span>
-                <span className="font-mono text-white font-medium">[A DEFINIR]</span>
+                <a
+                  href={`https://wa.me/${KORBIX_WHATSAPP_NUMBER}?text=${encodeURIComponent('Olá! Gostaria de falar com a equipe da KORBIX.')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono text-white font-medium hover:text-[#22C7E0] transition-colors"
+                >
+                  {KORBIX_WHATSAPP_DISPLAY}
+                </a>
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-[#22C7E0] shrink-0" />
@@ -191,14 +199,15 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
               Pronto para colocar seus dados a favor de um fechamento ágil e seguro?
             </p>
 
-            <button
-              type="button"
-              onClick={() => onOpenModal()}
+            <a
+              href={`https://wa.me/${KORBIX_WHATSAPP_NUMBER}?text=${encodeURIComponent('Olá! Gostaria de falar com um especialista da KORBIX sobre oportunidades e imóveis.')}`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 min-h-[44px] rounded-lg bg-[#1A3A75] hover:bg-[#142E5E] active:bg-[#0F2347] text-white text-xs sm:text-sm font-semibold shadow-inner border border-white/10 transition-all cursor-pointer"
             >
-              <span>Falar com especialista em dados</span>
+              <span>Falar no WhatsApp</span>
               <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />
-            </button>
+            </a>
 
             {/* Links informativos (privacidade, termos, contato) mantidos */}
             <div className="pt-2 flex flex-wrap items-center gap-3 sm:gap-4 text-xs text-slate-400">

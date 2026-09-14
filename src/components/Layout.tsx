@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import { Header } from './Header'
 import { ModalComecarAgora } from './ModalComecarAgora'
+import { FloatingWhatsApp } from './FloatingWhatsApp'
 
 export default function Layout() {
   const [modalOpen, setModalOpen] = useState(false)
@@ -21,6 +22,9 @@ export default function Layout() {
       <main className="flex-1 w-full">
         <Outlet context={{ onOpenModal: handleOpenModal }} />
       </main>
+
+      {/* Botão flutuante de WhatsApp com detecção de seção inteligente */}
+      <FloatingWhatsApp />
 
       {/* Modal global de captura "Começar agora" */}
       <ModalComecarAgora
