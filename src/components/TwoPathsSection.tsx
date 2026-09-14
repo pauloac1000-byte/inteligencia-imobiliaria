@@ -22,7 +22,7 @@ export const TwoPathsSection: React.FC<TwoPathsSectionProps> = ({ onOpenModal })
     const target = document.getElementById(targetId)
     if (target) {
       const width = window.innerWidth
-      const yOffset = width >= 1280 ? -176 : width >= 1024 ? -160 : -144
+      const yOffset = width >= 768 ? -80 : -72
       const y = target.getBoundingClientRect().top + window.pageYOffset + yOffset
       window.scrollTo({ top: y, behavior: 'smooth' })
     }

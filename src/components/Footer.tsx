@@ -30,7 +30,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
     const element = document.getElementById(targetId)
     if (element) {
       const width = window.innerWidth
-      const yOffset = width >= 1280 ? -176 : width >= 1024 ? -168 : width >= 768 ? -160 : -144
+      const yOffset = width >= 768 ? -80 : -72
       const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
       window.scrollTo({ top: y, behavior: 'smooth' })
     }

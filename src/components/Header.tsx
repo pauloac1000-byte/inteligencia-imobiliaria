@@ -20,7 +20,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
       const scrollY = window.scrollY
       setScrolled(scrollY > 20)
 
-      // Section spy recalibrado com o offset do header ampliado
+      // Section spy calibrado com a nova altura do header (72px mobile / 80px desktop)
       const sections = [
         'diferenciais',
         'para-vender',
@@ -28,14 +28,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
         'como-funciona',
         'compatibilidade',
       ]
-      const isDesktop = window.innerWidth >= 1280
-      const headerOffset = isDesktop
-        ? 176
-        : window.innerWidth >= 1024
-          ? 168
-          : window.innerWidth >= 768
-            ? 160
-            : 144
+      const isDesktop = window.innerWidth >= 768
+      const headerOffset = isDesktop ? 88 : 80
       const scrollPosition = scrollY + headerOffset
 
       let currentActive = ''
@@ -49,7 +43,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
         }
       }
 
-      if (scrollY < 140) {
+      if (scrollY < 80) {
         setActiveSection('')
       } else {
         setActiveSection(currentActive)
@@ -82,7 +76,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
     const element = document.getElementById(targetId)
     if (element) {
       const width = window.innerWidth
-      const yOffset = width >= 1280 ? -176 : width >= 1024 ? -168 : width >= 768 ? -160 : -144
+      const yOffset = width >= 768 ? -80 : -72
       const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
       window.scrollTo({ top: y, behavior: 'smooth' })
     }
@@ -100,15 +94,15 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 h-[132px] sm:h-[140px] md:h-[152px] lg:h-[160px] xl:h-[168px] transition-all duration-300 flex items-center ${
+      className={`fixed top-0 left-0 right-0 z-50 h-[72px] md:h-[80px] transition-all duration-300 flex items-center ${
         scrolled
           ? 'bg-[#070B14]/95 backdrop-blur-md border-b border-[#081226] shadow-xl shadow-black/50'
           : 'bg-[#070B14]/85 backdrop-blur-sm border-b border-[#081226]/40'
       }`}
     >
       <div className="w-full max-w-[1360px] mx-auto px-3 sm:px-6 lg:px-8 h-full flex items-center justify-between gap-3 sm:gap-4 lg:gap-6">
-        {/* Bloco KORBIX no canto superior esquerdo: Logo + Linha de termos logo abaixo alinhada */}
-        <div className="flex flex-col justify-center items-start min-w-0 shrink-0 py-1 sm:py-1.5 max-w-[220px] xs:max-w-[240px] sm:max-w-[340px] md:max-w-[420px] lg:max-w-[520px] xl:max-w-[660px]">
+        {/* Bloco KORBIX no canto superior esquerdo: Logo sem distorção, máx 56px de altura */}
+        <div className="flex items-center min-w-0 shrink-0">
           <a
             href="#"
             onClick={handleLogoClick}
@@ -118,33 +112,13 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
             <img
               src={korbixLogo}
               alt="KORBIX Inteligência Imobiliária"
-              className="h-[88px] xs:h-[94px] sm:h-[102px] md:h-[114px] lg:h-[122px] xl:h-[132px] w-auto max-w-full object-contain drop-shadow-[0_0_22px_rgba(34,199,224,0.22)] group-hover:brightness-110 transition-all duration-200"
+              className="h-[46px] xs:h-[50px] sm:h-[54px] md:h-[56px] max-h-[56px] w-auto max-w-full object-contain drop-shadow-[0_0_18px_rgba(34,199,224,0.22)] group-hover:brightness-110 transition-all duration-200"
               loading="eager"
             />
           </a>
-
-          {/* Linha de termos de posicionamento da marca imediatamente abaixo do logo */}
-          <div
-            className="w-full flex flex-wrap items-center gap-x-1.5 sm:gap-x-2 gap-y-0.5 text-[9px] xs:text-[10px] sm:text-[11px] md:text-xs font-semibold tracking-wider text-slate-300 uppercase select-none mt-0.5"
-            aria-label="Análise, Estratégia, Oportunidades, Resultados"
-          >
-            <span className="whitespace-nowrap">ANÁLISE</span>
-            <span className="text-[#22C7E0] font-bold" aria-hidden="true">
-              ·
-            </span>
-            <span className="whitespace-nowrap">ESTRATÉGIA</span>
-            <span className="text-[#22C7E0] font-bold" aria-hidden="true">
-              ·
-            </span>
-            <span className="whitespace-nowrap">OPORTUNIDADES</span>
-            <span className="text-[#22C7E0] font-bold" aria-hidden="true">
-              ·
-            </span>
-            <span className="whitespace-nowrap">RESULTADOS</span>
-          </div>
         </div>
 
-        {/* Central Navigation (Desktop) - exibida a partir de xl para garantir convivência harmônica e sem colisão com o logo gigante */}
+        {/* Central Navigation (Desktop) */}
         <nav
           className="hidden xl:flex items-center gap-5 2xl:gap-7 shrink min-w-0"
           aria-label="Navegação principal"
@@ -195,9 +169,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
         </div>
       </div>
 
-      {/* Mobile & Tablet Drawer recalibrado para a nova altura do header */}
+      {/* Mobile & Tablet Drawer recalibrado para a nova altura do header (72px mobile / 80px desktop) */}
       {mobileMenuOpen && (
-        <div className="xl:hidden fixed inset-0 top-[132px] sm:top-[140px] md:top-[152px] lg:top-[160px] z-40 bg-black/80 backdrop-blur-sm animate-fade-in">
+        <div className="xl:hidden fixed inset-0 top-[72px] md:top-[80px] z-40 bg-black/80 backdrop-blur-sm animate-fade-in">
           {' '}
           <div className="absolute right-0 top-0 bottom-0 w-[min(300px,85vw)] bg-[#070B14] border-l border-[#081226] p-6 flex flex-col justify-between shadow-2xl overflow-y-auto animate-fade-in">
             <div className="space-y-5">

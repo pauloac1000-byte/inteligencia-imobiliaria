@@ -19,7 +19,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenModal }) => {
   }
 
   return (
-    <section className="relative min-h-[92vh] lg:min-h-screen bg-[#070B14] text-white flex items-center pt-38 sm:pt-42 md:pt-48 lg:pt-52 xl:pt-56 pb-16 sm:pb-20 lg:pb-24 overflow-hidden">
+    <section className="relative min-h-[92vh] lg:min-h-screen bg-[#070B14] text-white flex items-center pt-24 sm:pt-28 md:pt-28 lg:pt-30 xl:pt-32 pb-12 sm:pb-16 lg:pb-20 overflow-hidden">
       {/* 1. Fotografia real de fundo: Ponte suspensa noturna panorâmica */}{' '}
       <div className="absolute inset-0 pointer-events-none select-none z-0">
         <img
@@ -50,8 +50,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenModal }) => {
           }}
         />
 
-        {/* Overlay no topo (garante contraste sob o header fixo translúcido ampliado) */}
-        <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-[#070B14]/98 via-[#070B14]/80 to-transparent pointer-events-none" />
+        {/* Overlay no topo (garante contraste sob o header fixo translúcido) */}
+        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#070B14]/98 via-[#070B14]/80 to-transparent pointer-events-none" />
 
         {/* Overlay na base (transição suave para a escuridão da seção de métricas) */}
         <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-[#070B14] via-[#070B14]/85 to-transparent pointer-events-none" />
@@ -61,10 +61,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenModal }) => {
         <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-[#22C7E0]/10 rounded-full blur-3xl pointer-events-none" />
       </div>
       {/* Main Container: 60% Left / 40% Right in Desktop */}
-      <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-12 lg:gap-8 items-center">
+      <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-8 items-center">
           {/* Left Column (60% ~ 7 cols in desktop) */}
-          <div className="lg:col-span-7 flex flex-col items-start text-left space-y-5 sm:space-y-7 animate-fade-in-up">
+          <div className="lg:col-span-7 flex flex-col items-start text-left space-y-4 sm:space-y-5 lg:space-y-6 animate-fade-in-up">
             {/* Pill Tag */}
             <div className="inline-flex items-center gap-2 sm:gap-2.5 px-3 sm:px-3.5 py-1.5 rounded-full bg-[#081226]/90 border border-[#1A3A75]/60 text-[#22C7E0] text-[10px] sm:text-xs font-semibold backdrop-blur-md shadow-sm max-w-full">
               <span className="w-2 h-2 rounded-full bg-[#22C7E0] animate-ping shrink-0 shadow-[0_0_8px_#22C7E0]" />
