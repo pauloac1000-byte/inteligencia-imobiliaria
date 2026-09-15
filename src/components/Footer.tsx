@@ -209,6 +209,17 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
               <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />
             </a>
 
+            {/* Link discreto para a Calculadora sem alterar mais nada */}
+            <div className="pt-1">
+              <Link
+                to="/calculadora"
+                className="inline-flex items-center gap-1.5 text-xs text-[#22C7E0] hover:text-[#4fe3f8] transition-colors py-1 font-medium group"
+              >
+                <span>Calculadora: quanto custa seu imóvel parado?</span>
+                <ArrowUpRight className="w-3.5 h-3.5 shrink-0 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </Link>
+            </div>
+
             {/* Links informativos (privacidade, termos, contato) mantidos */}
             <div className="pt-2 flex flex-wrap items-center gap-3 sm:gap-4 text-xs text-slate-400">
               <Link
