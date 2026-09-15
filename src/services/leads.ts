@@ -54,6 +54,20 @@ export interface LeadInvestidorInput {
   rota?: 'investidor' | string
 }
 
+export interface LeadCalculadoraInput {
+  cidade: string
+  telefone: string
+  valor_imovel: string
+  iptu_anual?: string
+  condominio_mensal?: string
+  manutencao_mensal?: string
+  meses_parado?: number
+  taxa_mensal?: number
+  custo_mensal_total?: string
+  custo_acumulado_total?: string
+  rota?: 'proprietario' | string
+}
+
 // Constantes centralizadas para atendimento KORBIX
 export const KORBIX_WHATSAPP_NUMBER = '5519998563025' // WhatsApp oficial KORBIX
 export const KORBIX_WHATSAPP_DISPLAY = '(19) 99856-3025'
@@ -261,6 +275,81 @@ export async function salvarLeadVenda(input: LeadVendaInput): Promise<LeadResult
     return { success: true, id: data?.id || input.id, protocolo: data?.protocolo }
   } catch (err: any) {
     console.error('Exceção ao enviar lead de venda:', err)
+    return {
+      success: false,
+      error:
+        err?.message ||
+        'Falha de conexão ao salvar os dados. Verifique sua rede e tente novamente.',
+    }
+  }
+}
+
+export async function salvarLeadCalculadora(input: LeadCalculadoraInput): Promise<LeadResult> {
+  try {
+    // Abordagem segura via RPC Security Definer
+    const { data: rpcData, error: rpcError } = await (supabase.rpc as any)(
+      'fn_submit_lead_calculadora',
+      {
+        p_cidade: input.cidade.trim(),
+        p_telefone: input.telefone.trim(),
+        p_valor_imovel: input.valor_imovel ? input.valor_imovel.trim() : null,
+        p_iptu_anual: input.iptu_anual ? input.iptu_anual.trim() : null,
+        p_condominio_mensal: input.condominio_mensal ? input.condominio_mensal.trim() : null,
+        p_manutencao_mensal: input.manutencao_mensal ? input.manutencao_mensal.trim() : null,
+        p_meses_parado: input.meses_parado ?? null,
+        p_taxa_mensal: input.taxa_mensal ?? null,
+        p_custo_mensal_total: input.custo_mensal_total ? input.custo_mensal_total.trim() : null,
+        p_custo_acumulado_total: input.custo_acumulado_total
+          ? input.custo_acumulado_total.trim()
+          : null,
+        p_rota: input.rota || 'proprietario',
+      },
+    )
+
+    if (!rpcError && rpcData) {
+      const row = Array.isArray(rpcData) ? rpcData[0] : rpcData
+      return { success: true, id: row?.id, protocolo: row?.protocolo }
+    }
+
+    // Fallback defensivo com insert direto
+    const { data, error } = await (supabase.from as any)('leads_venda')
+      .insert([
+        {
+          cidade: input.cidade.trim(),
+          telefone: input.telefone.trim(),
+          valor_estimado: input.valor_imovel ? input.valor_imovel.trim() : null,
+          rota: input.rota || 'proprietario',
+          calc_iptu_anual: input.iptu_anual ? input.iptu_anual.trim() : null,
+          calc_condominio_mensal: input.condominio_mensal ? input.condominio_mensal.trim() : null,
+          calc_manutencao_mensal: input.manutencao_mensal ? input.manutencao_mensal.trim() : null,
+          calc_meses_parado: input.meses_parado ?? null,
+          calc_taxa_mensal: input.taxa_mensal ?? null,
+          calc_custo_mensal_total: input.custo_mensal_total
+            ? input.custo_mensal_total.trim()
+            : null,
+          calc_custo_acumulado_total: input.custo_acumulado_total
+            ? input.custo_acumulado_total.trim()
+            : null,
+          mensagem: 'Lead originado da Calculadora de Custo de Imóvel Parado (/calculadora)',
+        },
+      ])
+      .select('id, protocolo')
+      .single()
+
+    if (error) {
+      console.error('Erro ao salvar lead da calculadora:', error || rpcError)
+      return {
+        success: false,
+        error:
+          error.message ||
+          rpcError?.message ||
+          'Não foi possível registrar seus dados. Tente novamente.',
+      }
+    }
+
+    return { success: true, id: data?.id, protocolo: data?.protocolo }
+  } catch (err: any) {
+    console.error('Exceção ao enviar lead da calculadora:', err)
     return {
       success: false,
       error:

@@ -15,8 +15,16 @@ import {
   Layers,
   ChevronDown,
   ChevronUp,
+  Loader2,
+  AlertCircle,
+  CheckCircle2,
 } from 'lucide-react'
-import { KORBIX_WHATSAPP_NUMBER, KORBIX_WHATSAPP_DISPLAY } from '@/services/leads'
+import {
+  KORBIX_WHATSAPP_NUMBER,
+  KORBIX_WHATSAPP_DISPLAY,
+  salvarLeadCalculadora,
+} from '@/services/leads'
+import { ConfirmationProtocolo } from '@/components/ConfirmationProtocolo'
 import { Footer } from '@/components/Footer'
 
 interface LayoutContextType {
@@ -62,6 +70,17 @@ function numberToCurrencyInput(centsNumber: number): string {
   })
 }
 
+function formatarTelefone(valor: string): string {
+  const digits = valor.replace(/\D/g, '').slice(0, 11)
+  if (!digits) return ''
+  if (digits.length <= 2) return `(${digits}`
+  if (digits.length <= 6) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`
+  if (digits.length <= 10) {
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`
+  }
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`
+}
+
 export const CalculadoraImovelParado: React.FC = () => {
   const context = useOutletContext<LayoutContextType>()
   const navigate = useNavigate()
@@ -76,6 +95,15 @@ export const CalculadoraImovelParado: React.FC = () => {
   const [mesesParado, setMesesParado] = useState<number>(8)
   const [taxaOportunidade, setTaxaOportunidade] = useState<number>(0.9) // 0,9% ao mês padrão
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false)
+
+  // Estados do mini-formulário de conversão de lead
+  const [showLeadForm, setShowLeadForm] = useState<boolean>(false)
+  const [cidadeLead, setCidadeLead] = useState<string>('')
+  const [telefoneLead, setTelefoneLead] = useState<string>('')
+  const [leadLoading, setLeadLoading] = useState<boolean>(false)
+  const [leadError, setLeadError] = useState<string>('')
+  const [leadProtocolo, setLeadProtocolo] = useState<string>('')
+  const [leadSucesso, setLeadSucesso] = useState<boolean>(false)
 
   // Handlers para inputs de moeda
   const handleCurrencyChange =
@@ -152,6 +180,62 @@ export const CalculadoraImovelParado: React.FC = () => {
     setManutencaoMensalStr('R$ 350,00')
     setMesesParado(8)
     setTaxaOportunidade(0.9)
+  }
+
+  const handleTelefoneLeadChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTelefoneLead(formatarTelefone(e.target.value))
+    if (leadError) setLeadError('')
+  }
+
+  const handleSubmitLeadCalculadora = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!cidadeLead.trim()) {
+      setLeadError('Informe a cidade do imóvel.')
+      return
+    }
+
+    const digits = telefoneLead.replace(/\D/g, '')
+    if (!digits || digits.length < 10) {
+      setLeadError('Por favor, informe um WhatsApp válido com DDD (mínimo 10 dígitos).')
+      return
+    }
+
+    setLeadError('')
+    setLeadLoading(true)
+
+    const res = await salvarLeadCalculadora({
+      cidade: cidadeLead,
+      telefone: telefoneLead,
+      valor_imovel: valorImovelStr,
+      iptu_anual: iptuAnualStr,
+      condominio_mensal: condominioMensalStr,
+      manutencao_mensal: manutencaoMensalStr,
+      meses_parado: meses,
+      taxa_mensal: taxaOportunidade,
+      custo_mensal_total: formatCurrency(custoMensalTotal),
+      custo_acumulado_total: formatCurrency(custoAcumuladoTotal),
+      rota: 'proprietario',
+    })
+
+    setLeadLoading(false)
+
+    if (!res.success) {
+      setLeadError(res.error || 'Não foi possível solicitar a análise no momento. Tente novamente.')
+      return
+    }
+
+    setLeadProtocolo(res.protocolo || 'KX-0001')
+    setLeadSucesso(true)
+  }
+
+  const handleResetLead = () => {
+    setLeadSucesso(false)
+    setLeadProtocolo('')
+    setCidadeLead('')
+    setTelefoneLead('')
+    setLeadError('')
+    setShowLeadForm(false)
   }
 
   return (
@@ -571,33 +655,166 @@ export const CalculadoraImovelParado: React.FC = () => {
                 </div>
               </div>
 
-              {/* CTAs Finais de Ação */}
-              <div className="space-y-3">
-                {/* Botão Primário: Quero vender meu imóvel */}
-                <button
-                  type="button"
-                  onClick={handleQueroVender}
-                  className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-5 min-h-[48px] rounded-xl bg-[#1A3A75] hover:bg-[#142E5E] active:bg-[#0F2347] text-white font-semibold text-sm shadow-[0_0_20px_rgba(26,58,117,0.4)] border border-white/10 hover:border-white/20 transition-all transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
-                >
-                  <Building className="w-4 h-4 shrink-0" />
-                  <span>Quero vender meu imóvel</span>
-                  <ArrowRight className="w-4 h-4 ml-1 shrink-0" />
-                </button>
+              {/* Bloco de Conversão Direta: Receber Análise de Compatibilidade deste Imóvel */}
+              <div className="space-y-4">
+                {leadSucesso ? (
+                  <div className="p-5 sm:p-6 rounded-2xl bg-[#081226] border border-[#22C7E0]/50 shadow-[0_0_35px_rgba(34,199,224,0.15)] animate-fade-in">
+                    <ConfirmationProtocolo
+                      protocolo={leadProtocolo}
+                      rota="proprietario"
+                      onReset={handleResetLead}
+                      resetLabel="Fazer nova simulação"
+                    />
+                  </div>
+                ) : (
+                  <div className="rounded-2xl bg-gradient-to-b from-[#081226] to-[#0A1838] border border-[#22C7E0]/40 p-5 sm:p-6 shadow-[0_0_30px_rgba(34,199,224,0.15)] space-y-4">
+                    <div className="space-y-1">
+                      <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#22C7E0]/10 border border-[#22C7E0]/30 text-[#22C7E0] text-[11px] font-semibold uppercase tracking-wider">
+                        <Sparkles className="w-3 h-3 shrink-0" />
+                        <span>Análise de Compatibilidade</span>
+                      </div>
+                      <h3 className="text-base sm:text-lg font-bold text-white tracking-tight leading-snug">
+                        Receber a análise de compatibilidade deste imóvel
+                      </h3>
+                      <p className="text-xs text-slate-300 leading-relaxed">
+                        Cruzamos o valor de{' '}
+                        <strong className="text-[#22C7E0] font-mono">
+                          {formatCurrencyCompact(valorImovel)}
+                        </strong>{' '}
+                        e os custos simulados com investidores com capital pronto na sua cidade.
+                      </p>
+                    </div>
 
-                {/* Botão Secundário: Falar no WhatsApp com mensagem contextual */}
-                <a
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-5 min-h-[48px] rounded-xl bg-[#081226] hover:bg-[#0a1733] active:bg-[#070e1f] text-slate-200 hover:text-white font-medium text-sm border border-slate-700 hover:border-[#22C7E0]/40 transition-all cursor-pointer"
-                >
-                  <span>Falar no WhatsApp com especialista</span>
-                  <ArrowUpRight className="w-4 h-4 text-[#22C7E0] shrink-0" />
-                </a>
+                    {!showLeadForm ? (
+                      <button
+                        type="button"
+                        onClick={() => setShowLeadForm(true)}
+                        className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-5 min-h-[48px] rounded-xl bg-gradient-to-r from-[#22C7E0] to-[#1BA8BD] hover:from-[#35d0e8] hover:to-[#22C7E0] active:brightness-95 text-[#070B14] font-bold text-sm shadow-[0_0_20px_rgba(34,199,224,0.35)] transition-all transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+                      >
+                        <CheckCircle2 className="w-4 h-4 shrink-0 text-[#070B14]" />
+                        <span>Receber a análise de compatibilidade deste imóvel</span>
+                        <ArrowRight className="w-4 h-4 ml-0.5 shrink-0" />
+                      </button>
+                    ) : (
+                      <form
+                        onSubmit={handleSubmitLeadCalculadora}
+                        className="space-y-3.5 pt-1 animate-fade-in text-left"
+                      >
+                        {leadError && (
+                          <div className="p-3 text-xs bg-red-500/20 border border-red-500/40 text-red-200 rounded-lg flex items-start gap-2">
+                            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-400" />
+                            <span>{leadError}</span>
+                          </div>
+                        )}
 
-                <p className="text-[11px] text-center text-slate-400">
-                  Atendimento oficial KORBIX: {KORBIX_WHATSAPP_DISPLAY}
-                </p>
+                        <div className="space-y-1.5">
+                          <label
+                            htmlFor="calc-lead-cidade"
+                            className="text-xs font-semibold uppercase tracking-wider text-slate-300"
+                          >
+                            Cidade / Estado *
+                          </label>
+                          <input
+                            id="calc-lead-cidade"
+                            type="text"
+                            required
+                            placeholder="Ex.: Campinas, SP"
+                            value={cidadeLead}
+                            onChange={(e) => {
+                              setCidadeLead(e.target.value)
+                              if (leadError) setLeadError('')
+                            }}
+                            disabled={leadLoading}
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-[#070B14] border border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0] text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
+                          />
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <label
+                            htmlFor="calc-lead-whatsapp"
+                            className="text-xs font-semibold uppercase tracking-wider text-slate-300"
+                          >
+                            WhatsApp *
+                          </label>
+                          <input
+                            id="calc-lead-whatsapp"
+                            type="tel"
+                            required
+                            placeholder="(19) 98765-4321"
+                            value={telefoneLead}
+                            onChange={handleTelefoneLeadChange}
+                            disabled={leadLoading}
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-[#070B14] border border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0] text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
+                          />
+                        </div>
+
+                        <div className="p-2.5 rounded-lg bg-[#070B14]/80 border border-slate-800 text-[11px] text-slate-400 leading-snug flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#22C7E0] shrink-0" />
+                          <span>
+                            Enviaremos o dossiê com o cruzamento de compradores ativos para o seu
+                            número.
+                          </span>
+                        </div>
+
+                        <div className="pt-1 flex flex-col gap-2">
+                          <button
+                            type="submit"
+                            disabled={leadLoading}
+                            className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 min-h-[48px] rounded-xl bg-gradient-to-r from-[#22C7E0] to-[#1BA8BD] hover:from-[#35d0e8] hover:to-[#22C7E0] active:brightness-95 text-[#070B14] font-bold text-sm shadow-[0_0_20px_rgba(34,199,224,0.35)] transition-all transform active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                          >
+                            {leadLoading ? (
+                              <>
+                                <Loader2 className="w-4 h-4 animate-spin text-[#070B14] shrink-0" />
+                                <span>Gravando simulação e gerando protocolo...</span>
+                              </>
+                            ) : (
+                              <>
+                                <span>Solicitar análise técnica com protocolo</span>
+                                <ArrowRight className="w-4 h-4 ml-0.5 shrink-0 text-[#070B14]" />
+                              </>
+                            )}
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => setShowLeadForm(false)}
+                            disabled={leadLoading}
+                            className="text-xs text-slate-400 hover:text-white py-1 transition-colors cursor-pointer text-center"
+                          >
+                            Recolher formulário
+                          </button>
+                        </div>
+                      </form>
+                    )}
+                  </div>
+                )}
+
+                {/* CTAs Finais Auxiliares mantidos */}
+                <div className="space-y-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={handleQueroVender}
+                    className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-5 min-h-[48px] rounded-xl bg-[#1A3A75] hover:bg-[#142E5E] active:bg-[#0F2347] text-white font-semibold text-sm shadow-[0_0_20px_rgba(26,58,117,0.4)] border border-white/10 hover:border-white/20 transition-all transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+                  >
+                    <Building className="w-4 h-4 shrink-0" />
+                    <span>Quero vender meu imóvel</span>
+                    <ArrowRight className="w-4 h-4 ml-1 shrink-0" />
+                  </button>
+
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-5 min-h-[48px] rounded-xl bg-[#081226] hover:bg-[#0a1733] active:bg-[#070e1f] text-slate-200 hover:text-white font-medium text-sm border border-slate-700 hover:border-[#22C7E0]/40 transition-all cursor-pointer"
+                  >
+                    <span>Falar no WhatsApp com especialista</span>
+                    <ArrowUpRight className="w-4 h-4 text-[#22C7E0] shrink-0" />
+                  </a>
+
+                  <p className="text-[11px] text-center text-slate-400">
+                    Atendimento oficial KORBIX: {KORBIX_WHATSAPP_DISPLAY}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
