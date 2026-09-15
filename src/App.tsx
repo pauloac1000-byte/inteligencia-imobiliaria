@@ -3,11 +3,15 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Toaster } from '@/components/ui/toaster'
 import { Toaster as Sonner } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { AuthProvider } from '@/hooks/use-auth'
 import Index from './pages/Index'
 import NotFound from './pages/NotFound'
 import PoliticaPrivacidade from './pages/PoliticaPrivacidade'
 import CalculadoraImovelParado from './pages/CalculadoraImovelParado'
 import SimuladorRetornoInvestidor from './pages/SimuladorRetornoInvestidor'
+import Login from './pages/Login'
+import Cadastro from './pages/Cadastro'
+import MinhaArea from './pages/MinhaArea'
 import Layout from './components/Layout'
 
 // ONLY IMPORT AND RENDER WORKING PAGES, NEVER ADD PLACEHOLDER COMPONENTS OR PAGES IN THIS FILE
@@ -15,20 +19,26 @@ import Layout from './components/Layout'
 
 const App = () => (
   <BrowserRouter>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Index />} />
-          <Route path="/politica-de-privacidade" element={<PoliticaPrivacidade />} />
-          <Route path="/calculadora" element={<CalculadoraImovelParado />} />
-          <Route path="/simulador-de-retorno" element={<SimuladorRetornoInvestidor />} />
-          {/* ADD ALL CUSTOM ROUTES MUST BE ADDED HERE */}
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<Index />} />
+            <Route path="/politica-de-privacidade" element={<PoliticaPrivacidade />} />
+            <Route path="/calculadora" element={<CalculadoraImovelParado />} />
+            <Route path="/simulador-de-retorno" element={<SimuladorRetornoInvestidor />} />
+          </Route>
+          {/* Rotas de Autenticação e Áreas de Usuário sem o Header/Footer padrão da landing */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/cadastro" element={<Cadastro />} />
+          <Route path="/minha-area" element={<MinhaArea />} />
+          <Route path="/painel" element={<MinhaArea forceGestor={true} />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </TooltipProvider>
+    </AuthProvider>
   </BrowserRouter>
 )
 

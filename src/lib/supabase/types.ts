@@ -22,6 +22,14 @@ export type Database = {
           prazo_decisao: string | null
           protocolo: string | null
           rota: string
+          sim_aluguel_mensal: string | null
+          sim_capital_investido: string | null
+          sim_custo_reforma: string | null
+          sim_prazo_revenda_meses: number | null
+          sim_rentabilidade_mensal: number | null
+          sim_retorno_total: number | null
+          sim_valor_compra: string | null
+          sim_valorizacao_anual: number | null
           telefone: string
           ticket: string | null
         }
@@ -37,6 +45,14 @@ export type Database = {
           prazo_decisao?: string | null
           protocolo?: string | null
           rota?: string
+          sim_aluguel_mensal?: string | null
+          sim_capital_investido?: string | null
+          sim_custo_reforma?: string | null
+          sim_prazo_revenda_meses?: number | null
+          sim_rentabilidade_mensal?: number | null
+          sim_retorno_total?: number | null
+          sim_valor_compra?: string | null
+          sim_valorizacao_anual?: number | null
           telefone: string
           ticket?: string | null
         }
@@ -52,6 +68,14 @@ export type Database = {
           prazo_decisao?: string | null
           protocolo?: string | null
           rota?: string
+          sim_aluguel_mensal?: string | null
+          sim_capital_investido?: string | null
+          sim_custo_reforma?: string | null
+          sim_prazo_revenda_meses?: number | null
+          sim_rentabilidade_mensal?: number | null
+          sim_retorno_total?: number | null
+          sim_valor_compra?: string | null
+          sim_valorizacao_anual?: number | null
           telefone?: string
           ticket?: string | null
         }
@@ -162,6 +186,25 @@ export type Database = {
           p_rota?: string
           p_telefone: string
           p_ticket: string
+        }
+        Returns: {
+          id: string
+          protocolo: string
+        }[]
+      }
+      fn_submit_lead_simulador_investidor: {
+        Args: {
+          p_cidade: string
+          p_rota?: string
+          p_sim_aluguel_mensal?: string
+          p_sim_capital_investido?: string
+          p_sim_custo_reforma?: string
+          p_sim_prazo_revenda_meses?: number
+          p_sim_rentabilidade_mensal?: number
+          p_sim_retorno_total?: number
+          p_sim_valor_compra: string
+          p_sim_valorizacao_anual?: number
+          p_telefone: string
         }
         Returns: {
           id: string
