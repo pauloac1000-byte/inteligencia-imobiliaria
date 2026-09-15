@@ -3,11 +3,15 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/hooks/use-auth'
 import {
   buscarLeadsVinculados,
+  buscarTesesInvestidorVinculadas,
   getRedirectPathByRole,
   LeadVinculado,
+  TeseInvestidorVinculada,
   UserRole,
 } from '@/services/profiles'
 import { ImovelDetalhes } from '@/components/ImovelDetalhes'
+import { InvestorArea } from '@/components/InvestorArea'
+import { buscarOportunidadesInvestidor, OportunidadeInvestidor } from '@/services/investidor'
 import {
   LogOut,
   ArrowLeft,
@@ -35,6 +39,11 @@ export default function MinhaArea({ forceGestor = false }: MinhaAreaProps) {
   const [loadingLeads, setLoadingLeads] = useState(false)
   const [loggingOut, setLoggingOut] = useState(false)
 
+  // Estados específicos para investidores
+  const [teses, setTeses] = useState<TeseInvestidorVinculada[]>([])
+  const [oportunidades, setOportunidades] = useState<OportunidadeInvestidor[]>([])
+  const [loadingInvestidor, setLoadingInvestidor] = useState(false)
+
   // Tipo efetivo (se a URL for /painel, trata como visão de gestor)
   const tipoEfetivo: UserRole =
     forceGestor || location.pathname.startsWith('/painel')
@@ -58,16 +67,37 @@ export default function MinhaArea({ forceGestor = false }: MinhaAreaProps) {
     }
   }, [authLoading, user, profile, forceGestor, location.pathname, navigate])
 
-  // Busca leads vinculados (especialmente para a visão de proprietário)
+  // Carrega dados de acordo com o papel do usuário
+  const carregarDadosInvestidor = async (userId: string) => {
+    setLoadingInvestidor(true)
+    try {
+      const [tesesRes, opsRes] = await Promise.all([
+        buscarTesesInvestidorVinculadas(userId),
+        buscarOportunidadesInvestidor(),
+      ])
+      setTeses(tesesRes)
+      setOportunidades(opsRes)
+    } catch (err) {
+      console.warn('Erro ao carregar dados do investidor:', err)
+    } finally {
+      setLoadingInvestidor(false)
+    }
+  }
+
+  // Busca leads vinculados (proprietário) ou teses/oportunidades (investidor)
   useEffect(() => {
     if (user?.id) {
-      setLoadingLeads(true)
-      buscarLeadsVinculados(user.id)
-        .then((data) => setLeads(data))
-        .catch(() => setLeads([]))
-        .finally(() => setLoadingLeads(false))
+      if (tipoEfetivo === 'investidor') {
+        carregarDadosInvestidor(user.id)
+      } else {
+        setLoadingLeads(true)
+        buscarLeadsVinculados(user.id)
+          .then((data) => setLeads(data))
+          .catch(() => setLeads([]))
+          .finally(() => setLoadingLeads(false))
+      }
     }
-  }, [user?.id])
+  }, [user?.id, tipoEfetivo])
 
   const handleSignOut = async () => {
     setLoggingOut(true)
@@ -271,16 +301,16 @@ export default function MinhaArea({ forceGestor = false }: MinhaAreaProps) {
           )}
           {/* Visão Adaptativa: Investidor */}
           {tipoEfetivo === 'investidor' && (
-            <div className="p-4 sm:p-5 rounded-xl bg-[#070B14] border border-slate-800 text-sm text-slate-300 space-y-2">
-              <div className="flex items-center gap-2 font-medium text-emerald-400">
-                <CheckCircle2 className="w-4 h-4" />
-                <span>Perfil de Investidor Ativo</span>
-              </div>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Sua conta de investidor está autenticada. Quando houver novas oportunidades
-                alinhadas ao seu perfil de aporte, nossa equipe fará o contato direto.
-              </p>
-            </div>
+            <InvestorArea
+              teses={teses}
+              oportunidades={oportunidades}
+              loading={loadingInvestidor}
+              onRefresh={() => {
+                if (user?.id) {
+                  carregarDadosInvestidor(user.id)
+                }
+              }}
+            />
           )}
 
           {/* Visão Adaptativa: Gestor */}

@@ -28,6 +28,21 @@ export interface LeadVinculado {
   user_id?: string | null
 }
 
+export interface TeseInvestidorVinculada {
+  id: string
+  protocolo: string | null
+  ticket?: string | null
+  objetivo?: string | null
+  cidades_interesse?: string | null
+  prazo_decisao?: string | null
+  telefone?: string | null
+  email?: string | null
+  nome?: string | null
+  rota?: string | null
+  criado_em?: string | null
+  user_id?: string | null
+}
+
 /**
  * Busca o perfil cadastrado na tabela public.profiles
  */
@@ -108,6 +123,32 @@ export async function buscarLeadsVinculados(userId: string): Promise<LeadVincula
     }
 
     return (data || []) as unknown as LeadVinculado[]
+  } catch {
+    return []
+  }
+}
+
+/**
+ * Busca as teses de investidor (leads_investidor) vinculadas ao usuário autenticado
+ */
+export async function buscarTesesInvestidorVinculadas(
+  userId: string,
+): Promise<TeseInvestidorVinculada[]> {
+  try {
+    const { data, error } = await supabase
+      .from('leads_investidor' as any)
+      .select(
+        'id, protocolo, ticket, objetivo, cidades_interesse, prazo_decisao, telefone, email, nome, rota, criado_em, user_id',
+      )
+      .eq('user_id', userId)
+      .order('criado_em', { ascending: false })
+
+    if (error) {
+      console.warn('Erro ao consultar teses de investidor vinculadas:', error.message)
+      return []
+    }
+
+    return (data || []) as unknown as TeseInvestidorVinculada[]
   } catch {
     return []
   }

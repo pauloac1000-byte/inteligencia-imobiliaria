@@ -57,6 +57,57 @@ export type Database = {
           },
         ]
       }
+      compatibilidades: {
+        Row: {
+          atualizado_em: string
+          criado_em: string
+          criterios: Json
+          criterios_atendidos: Json
+          criterios_nao_atendidos: Json
+          id: string
+          lead_investidor_id: string
+          lead_venda_id: string
+          percentual: number
+        }
+        Insert: {
+          atualizado_em?: string
+          criado_em?: string
+          criterios?: Json
+          criterios_atendidos?: Json
+          criterios_nao_atendidos?: Json
+          id?: string
+          lead_investidor_id: string
+          lead_venda_id: string
+          percentual?: number
+        }
+        Update: {
+          atualizado_em?: string
+          criado_em?: string
+          criterios?: Json
+          criterios_atendidos?: Json
+          criterios_nao_atendidos?: Json
+          id?: string
+          lead_investidor_id?: string
+          lead_venda_id?: string
+          percentual?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'compatibilidades_lead_investidor_id_fkey'
+            columns: ['lead_investidor_id']
+            isOneToOne: false
+            referencedRelation: 'leads_investidor'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'compatibilidades_lead_venda_id_fkey'
+            columns: ['lead_venda_id']
+            isOneToOne: false
+            referencedRelation: 'leads_venda'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       lead_arquivos: {
         Row: {
           criado_em: string
@@ -283,6 +334,15 @@ export type Database = {
       fn_calcular_compatibilidade: {
         Args: { p_lead_investidor_id: string; p_lead_venda_id: string }
         Returns: {
+          criterios_atendidos: Json
+          criterios_nao_atendidos: Json
+          percentual: number
+        }[]
+      }
+      fn_calcular_compatibilidade_detalhada: {
+        Args: { p_lead_investidor_id: string; p_lead_venda_id: string }
+        Returns: {
+          criterios: Json
           criterios_atendidos: Json
           criterios_nao_atendidos: Json
           percentual: number
