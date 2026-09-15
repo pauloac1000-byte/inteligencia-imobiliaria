@@ -1,17 +1,24 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/hooks/use-auth'
-import { buscarLeadsVinculados, LeadVinculado, UserRole } from '@/services/profiles'
+import {
+  buscarLeadsVinculados,
+  getRedirectPathByRole,
+  LeadVinculado,
+  UserRole,
+} from '@/services/profiles'
+import { ImovelDetalhes } from '@/components/ImovelDetalhes'
 import {
   LogOut,
   ArrowLeft,
   Shield,
   TrendingUp,
   User,
-  Building2,
   CheckCircle2,
   AlertCircle,
   Loader2,
+  PlusCircle,
+  RefreshCw,
 } from 'lucide-react'
 import korbixLogo from '@/assets/5.2-logo-sem-fundo-e9820.png'
 
@@ -35,11 +42,21 @@ export default function MinhaArea({ forceGestor = false }: MinhaAreaProps) {
       : profile?.tipo || 'proprietario'
 
   // Redirecionamento de proteção: se não houver usuário após carregar, vai para /login
+  // E se a role do usuário não for proprietario e estiver acessando /minha-area, redirecionar conforme getRedirectPathByRole
   useEffect(() => {
     if (!authLoading && !user) {
       navigate('/login', { replace: true })
+      return
     }
-  }, [authLoading, user, navigate])
+
+    if (!authLoading && user && profile && !forceGestor) {
+      // Se for gestor acessando /minha-area, redireciona para /painel
+      if (profile.tipo === 'gestor' && location.pathname === '/minha-area') {
+        const dest = getRedirectPathByRole('gestor')
+        navigate(dest, { replace: true })
+      }
+    }
+  }, [authLoading, user, profile, forceGestor, location.pathname, navigate])
 
   // Busca leads vinculados (especialmente para a visão de proprietário)
   useEffect(() => {
@@ -166,46 +183,92 @@ export default function MinhaArea({ forceGestor = false }: MinhaAreaProps) {
 
           {/* Visão Adaptativa: Proprietário */}
           {tipoEfetivo === 'proprietario' && (
-            <div className="space-y-4">
-              <div className="space-y-1">
-                <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-                  <Building2 className="w-4 h-4 text-[#22C7E0]" />
-                  <span>Vínculo de Imóveis Cadastrados</span>
-                </h2>
-                <p className="text-xs text-slate-400">
-                  Correspondência automática baseada no endereço de e-mail da sua conta.
-                </p>
-              </div>
-
+            <div className="space-y-6">
+              {/* Badge de vínculo com feedback claro */}
               {loadingLeads ? (
                 <div className="p-4 rounded-xl bg-[#070B14] border border-slate-800 flex items-center gap-3 text-xs text-slate-400">
                   <Loader2 className="w-4 h-4 animate-spin text-[#22C7E0]" />
                   <span>Consultando protocolos vinculados...</span>
                 </div>
               ) : leads.length > 0 ? (
-                <div className="p-4 sm:p-5 rounded-xl bg-[#070B14] border border-[#22C7E0]/30 shadow-[0_0_14px_rgba(34,199,224,0.08)] space-y-2">
-                  {leads.map((l) => (
-                    <div key={l.id} className="flex items-center gap-2 text-sm text-slate-200">
+                <div className="space-y-6">
+                  {/* Badge / Confirmação de Vínculo */}
+                  <div className="p-3.5 sm:p-4 rounded-xl bg-[#070B14] border border-[#22C7E0]/30 shadow-[0_0_14px_rgba(34,199,224,0.08)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-200">
                       <CheckCircle2 className="w-4 h-4 text-[#22C7E0] shrink-0" />
                       <span>
                         Seu cadastro{' '}
                         <strong className="text-[#22C7E0] font-mono tracking-wide">
-                          {l.protocolo || 'KX-XXXX'}
+                          {leads[0].protocolo || 'KX-XXXX'}
                         </strong>{' '}
                         está vinculado a esta conta
+                        {leads.length > 1 &&
+                          ` (+${leads.length - 1} outro${leads.length > 2 ? 's' : ''})`}
                       </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (user?.id) {
+                          setLoadingLeads(true)
+                          buscarLeadsVinculados(user.id)
+                            .then((data) => setLeads(data))
+                            .finally(() => setLoadingLeads(false))
+                        }
+                      }}
+                      className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors cursor-pointer self-start sm:self-auto"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      <span>Atualizar</span>
+                    </button>
+                  </div>
+
+                  {/* Exibição detalhada do imóvel principal e demais se houver */}
+                  {leads.map((leadItem, index) => (
+                    <div key={leadItem.id} className="space-y-6">
+                      {leads.length > 1 && (
+                        <div className="pt-4 border-t border-slate-800 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                          Imóvel #{index + 1} — {leadItem.protocolo || 'KX-XXXX'}
+                        </div>
+                      )}
+                      <ImovelDetalhes lead={leadItem} />
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="p-4 sm:p-5 rounded-xl bg-[#070B14] border border-slate-800 flex items-center gap-3 text-sm text-slate-400">
-                  <AlertCircle className="w-4 h-4 text-slate-500 shrink-0" />
-                  <span>Nenhum cadastro vinculado a este e-mail ainda</span>
+                /* Estado vazio amigável quando o usuário logado NÃO tem lead vinculado */
+                <div className="p-6 sm:p-8 rounded-2xl bg-[#070B14] border border-slate-800 text-center space-y-4">
+                  <div className="w-12 h-12 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center mx-auto text-slate-400">
+                    <AlertCircle className="w-6 h-6 text-amber-400" />
+                  </div>
+                  <div className="space-y-1.5 max-w-md mx-auto">
+                    <h3 className="text-base sm:text-lg font-bold text-white">
+                      Nenhum imóvel vinculado a este e-mail ainda
+                    </h3>
+                    <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                      Cadastre seu imóvel na plataforma KORBIX para receber avaliação técnica e
+                      conectar-se a investidores com capital pronto para aquisição rápida.
+                    </p>
+                  </div>
+                  <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <Link
+                      to="/"
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#22C7E0] hover:bg-[#1fb3ca] text-[#070B14] font-bold text-xs sm:text-sm shadow-[0_0_18px_rgba(34,199,224,0.3)] transition-all cursor-pointer"
+                    >
+                      <PlusCircle className="w-4 h-4" />
+                      <span>Cadastrar meu imóvel agora</span>
+                    </Link>
+                    <Link
+                      to="/calculadora"
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#081226] hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white text-xs sm:text-sm transition-colors"
+                    >
+                      <span>Calcular custo de imóvel parado</span>
+                    </Link>
+                  </div>
                 </div>
               )}
             </div>
           )}
-
           {/* Visão Adaptativa: Investidor */}
           {tipoEfetivo === 'investidor' && (
             <div className="p-4 sm:p-5 rounded-xl bg-[#070B14] border border-slate-800 text-sm text-slate-300 space-y-2">

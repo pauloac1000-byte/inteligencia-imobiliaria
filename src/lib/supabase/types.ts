@@ -102,6 +102,7 @@ export type Database = {
           rota: string
           telefone: string
           tipo_imovel: string | null
+          user_id: string | null
           valor_estimado: string | null
         }
         Insert: {
@@ -124,6 +125,7 @@ export type Database = {
           rota?: string
           telefone: string
           tipo_imovel?: string | null
+          user_id?: string | null
           valor_estimado?: string | null
         }
         Update: {
@@ -146,7 +148,29 @@ export type Database = {
           rota?: string
           telefone?: string
           tipo_imovel?: string | null
+          user_id?: string | null
           valor_estimado?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          tipo: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id: string
+          tipo: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          tipo?: string
         }
         Relationships: []
       }
@@ -255,6 +279,13 @@ export type Database = {
         Returns: {
           id: string
           protocolo: string
+        }[]
+      }
+      fn_vincular_lead_por_email: {
+        Args: { p_email: string; p_user_id: string }
+        Returns: {
+          protocolos: string[]
+          total_vinculados: number
         }[]
       }
     }
