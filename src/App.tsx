@@ -12,6 +12,7 @@ import SimuladorRetornoInvestidor from './pages/SimuladorRetornoInvestidor'
 import Login from './pages/Login'
 import Cadastro from './pages/Cadastro'
 import MinhaArea from './pages/MinhaArea'
+import PainelGestor from './pages/PainelGestor'
 import Layout from './components/Layout'
 
 // ONLY IMPORT AND RENDER WORKING PAGES, NEVER ADD PLACEHOLDER COMPONENTS OR PAGES IN THIS FILE
@@ -34,7 +35,7 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/cadastro" element={<Cadastro />} />
           <Route path="/minha-area" element={<MinhaArea />} />
-          <Route path="/painel" element={<MinhaArea forceGestor={true} />} />
+          <Route path="/painel" element={<PainelGestor />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </TooltipProvider>

@@ -108,6 +108,57 @@ export type Database = {
           },
         ]
       }
+      interesses_investidor: {
+        Row: {
+          atualizado_em: string
+          criado_em: string
+          id: string
+          lead_investidor_id: string
+          lead_venda_id: string
+          mensagem: string | null
+          notificado_em: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          criado_em?: string
+          id?: string
+          lead_investidor_id: string
+          lead_venda_id: string
+          mensagem?: string | null
+          notificado_em?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          atualizado_em?: string
+          criado_em?: string
+          id?: string
+          lead_investidor_id?: string
+          lead_venda_id?: string
+          mensagem?: string | null
+          notificado_em?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'interesses_investidor_lead_investidor_id_fkey'
+            columns: ['lead_investidor_id']
+            isOneToOne: false
+            referencedRelation: 'leads_investidor'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'interesses_investidor_lead_venda_id_fkey'
+            columns: ['lead_venda_id']
+            isOneToOne: false
+            referencedRelation: 'leads_venda'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       lead_arquivos: {
         Row: {
           criado_em: string
@@ -181,6 +232,7 @@ export type Database = {
           sim_valorizacao_anual: number | null
           telefone: string
           ticket: string | null
+          user_id: string | null
         }
         Insert: {
           cidades_interesse?: string | null
@@ -204,6 +256,7 @@ export type Database = {
           sim_valorizacao_anual?: number | null
           telefone: string
           ticket?: string | null
+          user_id?: string | null
         }
         Update: {
           cidades_interesse?: string | null
@@ -227,6 +280,7 @@ export type Database = {
           sim_valorizacao_anual?: number | null
           telefone?: string
           ticket?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -353,6 +407,47 @@ export type Database = {
         Returns: number
       }
       fn_compat_normalizar_texto: { Args: { p_input: string }; Returns: string }
+      fn_listar_oportunidades_investidor: {
+        Args: never
+        Returns: {
+          cidade: string
+          compatibilidade_id: string
+          criado_em_imovel: string
+          criterios: Json
+          criterios_atendidos: Json
+          criterios_nao_atendidos: Json
+          faixa_valor: string
+          interesse_id: string
+          interesse_status: string
+          ja_manifestou_interesse: boolean
+          lead_investidor_id: string
+          lead_venda_id: string
+          percentual: number
+          protocolo_imovel: string
+          status_imovel: string
+          tese_objetivo: string
+          tese_protocolo: string
+          tese_ticket: string
+          tipo_imovel: string
+        }[]
+      }
+      fn_manifestar_interesse_investidor: {
+        Args: {
+          p_lead_investidor_id: string
+          p_lead_venda_id: string
+          p_mensagem?: string
+        }
+        Returns: {
+          id: string
+          ja_existia: boolean
+          notificado_em: string
+          status: string
+        }[]
+      }
+      fn_mascarar_faixa_valor: {
+        Args: { p_valor_estimado: string }
+        Returns: string
+      }
       fn_recalcular_compatibilidade_lead_investidor: {
         Args: { p_lead_investidor_id: string }
         Returns: number
@@ -384,24 +479,44 @@ export type Database = {
           protocolo: string
         }[]
       }
-      fn_submit_lead_investidor: {
-        Args: {
-          p_cidades_interesse: string
-          p_email?: string
-          p_faixa_valor?: string
-          p_nome?: string
-          p_objetivo: string
-          p_perfil?: string
-          p_prazo_decisao: string
-          p_rota?: string
-          p_telefone: string
-          p_ticket: string
-        }
-        Returns: {
-          id: string
-          protocolo: string
-        }[]
-      }
+      fn_submit_lead_investidor:
+        | {
+            Args: {
+              p_cidades_interesse: string
+              p_email?: string
+              p_faixa_valor?: string
+              p_nome?: string
+              p_objetivo: string
+              p_perfil?: string
+              p_prazo_decisao: string
+              p_rota?: string
+              p_telefone: string
+              p_ticket: string
+            }
+            Returns: {
+              id: string
+              protocolo: string
+            }[]
+          }
+        | {
+            Args: {
+              p_cidades_interesse: string
+              p_email?: string
+              p_faixa_valor?: string
+              p_nome?: string
+              p_objetivo: string
+              p_perfil?: string
+              p_prazo_decisao: string
+              p_rota?: string
+              p_telefone: string
+              p_ticket: string
+              p_user_id?: string
+            }
+            Returns: {
+              id: string
+              protocolo: string
+            }[]
+          }
       fn_submit_lead_simulador_investidor: {
         Args: {
           p_cidade: string
