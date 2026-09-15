@@ -100,6 +100,7 @@ export type Database = {
           prazo_desejado: string | null
           protocolo: string | null
           rota: string
+          status: string
           telefone: string
           tipo_imovel: string | null
           user_id: string | null
@@ -123,6 +124,7 @@ export type Database = {
           prazo_desejado?: string | null
           protocolo?: string | null
           rota?: string
+          status?: string
           telefone: string
           tipo_imovel?: string | null
           user_id?: string | null
@@ -146,6 +148,7 @@ export type Database = {
           prazo_desejado?: string | null
           protocolo?: string | null
           rota?: string
+          status?: string
           telefone?: string
           tipo_imovel?: string | null
           user_id?: string | null

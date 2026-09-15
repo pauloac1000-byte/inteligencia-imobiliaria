@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Camera,
   FileText,
@@ -13,9 +13,13 @@ import {
   HelpCircle,
   ArrowRight,
   ShieldCheck,
+  ImageIcon,
 } from 'lucide-react'
 import { LeadVinculado, StatusImovelLead } from '@/services/profiles'
 import { KORBIX_WHATSAPP_NUMBER } from '@/services/leads'
+import { LeadArquivo, listarArquivosDoLead, RotuloDocumento } from '@/services/arquivos'
+import { UploadFotos } from './UploadFotos'
+import { UploadDocumentos } from './UploadDocumentos'
 
 interface ImovelCardProps {
   lead: LeadVinculado
@@ -88,9 +92,40 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
   // Estado opcional para o usuário marcar um item como preenchido/enviado para conferência própria
   const [concluidos, setConcluidos] = useState<Record<string, boolean>>({})
 
+  // Arquivos reais persistidos no Supabase Storage e na tabela lead_arquivos
+  const [arquivos, setArquivos] = useState<LeadArquivo[]>([])
+  const [carregandoArquivos, setCarregandoArquivos] = useState(false)
+
+  // Carregar arquivos vinculados ao lead
+  useEffect(() => {
+    if (lead.id) {
+      setCarregandoArquivos(true)
+      listarArquivosDoLead(lead.id)
+        .then((data) => setArquivos(data))
+        .catch(() => setArquivos([]))
+        .finally(() => setCarregandoArquivos(false))
+    }
+  }, [lead.id])
+
+  // Fotos e Documentos segregados
+  const fotos = arquivos.filter((a) => a.tipo === 'foto')
+  const docs = arquivos.filter((a) => a.tipo === 'documento')
+
+  const docMatricula = docs.find((d) => d.rotulo === 'matricula')
+  const docIptu = docs.find((d) => d.rotulo === 'iptu')
+  const docCertidao = docs.find((d) => d.rotulo === 'certidao')
+
+  // Verificação de completude de arquivos
+  const temFotos = fotos.length > 0
+  const temMatricula = Boolean(docMatricula)
+  const temIptu = Boolean(docIptu)
+  const temCertidao = Boolean(docCertidao)
+  const temAlgumDoc = docs.length > 0
+
   // Cálculo da completude do cadastro
   // Campos etapa 1: cidade, tipo_imovel, telefone
   // Campos etapa 2: nome, email, valor_estimado, motivo_venda, prazo_desejado
+  // Arquivos: Fotos do imóvel, Documentos (Matrícula, IPTU e Certidão)
   const camposEtapa1 = [
     { label: 'Cidade', preenchido: Boolean(lead.cidade && lead.cidade.trim()) },
     { label: 'Tipo de imóvel', preenchido: Boolean(lead.tipo_imovel && lead.tipo_imovel.trim()) },
@@ -114,10 +149,28 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
     },
   ]
 
-  const totalCampos = camposEtapa1.length + camposEtapa2.length
-  const camposPreenchidos =
-    camposEtapa1.filter((c) => c.preenchido).length +
-    camposEtapa2.filter((c) => c.preenchido).length
+  const camposArquivos = [
+    {
+      label: `Fotos (${fotos.length})`,
+      preenchido: temFotos,
+    },
+    {
+      label: `Matrícula`,
+      preenchido: temMatricula,
+    },
+    {
+      label: `IPTU`,
+      preenchido: temIptu,
+    },
+    {
+      label: `Certidão`,
+      preenchido: temCertidao,
+    },
+  ]
+
+  const todosCampos = [...camposEtapa1, ...camposEtapa2, ...camposArquivos]
+  const totalCampos = todosCampos.length
+  const camposPreenchidos = todosCampos.filter((c) => c.preenchido).length
   const percentualCompletude = Math.round((camposPreenchidos / totalCampos) * 100)
 
   // Status visual
@@ -176,7 +229,7 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
             'A matrícula comprova a titularidade, metragem real averbada e existência de eventuais gravames, ônus ou usufrutos.',
           exemplos: [
             'Certidão de inteiro teor (preferencialmente emitida nos últimos 30 a 90 dias)',
-            'Pode ser versão digital em PDF baixada do registrador ou foto nítida de todas as folhas',
+            'Pode ser versão digital em PDF baixada do registrador do imóvel',
           ],
           dica: 'Caso esteja em processo de inventário ou partilha, a cópia simples do formal também é aceita.',
           mensagemWhatsApp: 'Matrícula atualizada do imóvel',
@@ -190,10 +243,24 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
             'Permite à KORBIX validar a inscrição municipal, área construída cadastrada e valor venal de referência.',
           exemplos: [
             'Página com número de inscrição/cadastro do imóvel',
-            'Valor venal e demonstrativo de parcelas',
+            'Valor venal e demonstrativo de parcelas em PDF',
           ],
-          dica: 'Você encontra a segunda via facilmente no portal da Prefeitura da sua cidade.',
+          dica: 'Você encontra a segunda via em PDF facilmente no portal da Prefeitura da sua cidade.',
           mensagemWhatsApp: 'Cópia ou espelho do IPTU',
+          statusPadrao: 'pendente',
+        },
+        {
+          id: 'doc_certidao',
+          titulo: 'Certidão adicional (ônus / negativas)',
+          subtitulo: 'Certidão de ações reipersecutórias, débitos ou formal de partilha',
+          descricao:
+            'Validação jurídica complementar para atestar regularidade da titularidade perante os compradores.',
+          exemplos: [
+            'Certidão negativa de ônus reais',
+            'Certidão conjunta de tributos municipais/federais ou escritura de inventário',
+          ],
+          dica: 'Envie em formato PDF para análise imediata pelo corpo jurídico da KORBIX.',
+          mensagemWhatsApp: 'Certidões do imóvel',
           statusPadrao: 'pendente',
         },
       ],
@@ -274,42 +341,46 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
             </div>
 
             <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight flex items-center gap-2">
-              <span>Enviar fotos do imóvel para início da análise</span>
+              <span>
+                {temFotos
+                  ? 'Fotos enviadas com sucesso! Envie agora os documentos'
+                  : 'Enviar fotos do imóvel para início da análise'}
+              </span>
             </h3>
 
             <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-              Nossa equipe já recebeu o cadastro do seu imóvel. A tarefa mais crítica agora é o
-              envio das fotos (fachada e cômodos principais) para que os peritos finalizem a análise
-              de liquidez dentro do prazo garantido de <strong>até 48 horas</strong>.
+              {temFotos
+                ? `Você já enviou ${fotos.length} foto(s). Quanto mais documentos (Matrícula, IPTU) você enviar pelo painel, mais rápida e precisa será a precificação e a proposta com investidores.`
+                : 'Nossa equipe já recebeu o cadastro do seu imóvel. Envie as fotos (fachada e cômodos principais) diretamente pelo painel para que os peritos finalizem a análise de liquidez dentro de até 48 horas.'}
             </p>
           </div>
 
           <div className="shrink-0 flex flex-col sm:flex-row md:flex-col gap-2.5">
-            <a
-              href={montarLinkWhatsApp(
-                'Fotos do imóvel para análise técnica',
-                'Quero enviar as fotos agora',
-              )}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#22C7E0] hover:bg-[#1fb3ca] active:bg-[#1ca2b7] text-[#070B14] font-bold text-sm shadow-[0_0_20px_rgba(34,199,224,0.4)] transition-all transform hover:scale-[1.02] active:scale-[0.99] cursor-pointer"
-            >
-              <MessageCircle className="w-4 h-4 fill-current" />
-              <span>Enviar fotos pelo WhatsApp</span>
-            </a>
-
             <button
               type="button"
               onClick={() => {
-                setItemAberto('fotos_comodos')
+                setItemAberto(temFotos ? 'doc_matricula' : 'fotos_comodos')
                 const el = document.getElementById('secao-pendencias')
                 if (el) el.scrollIntoView({ behavior: 'smooth' })
               }}
-              className="inline-flex items-center justify-center gap-1 text-xs text-slate-400 hover:text-white transition-colors py-1 cursor-pointer"
+              className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#22C7E0] hover:bg-[#1fb3ca] active:bg-[#1ca2b7] text-[#070B14] font-bold text-sm shadow-[0_0_20px_rgba(34,199,224,0.4)] transition-all transform hover:scale-[1.02] active:scale-[0.99] cursor-pointer"
             >
-              <span>Ver detalhes do que enviar</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <Camera className="w-4 h-4" />
+              <span>{temFotos ? 'Enviar documentos pelo painel' : 'Enviar fotos pelo painel'}</span>
             </button>
+
+            <a
+              href={montarLinkWhatsApp(
+                'Fotos e documentos do imóvel',
+                'Alternativa de envio por WhatsApp',
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors py-1 cursor-pointer"
+            >
+              <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Enviar via WhatsApp (alternativa)</span>
+            </a>
           </div>
         </div>
       </div>
@@ -444,13 +515,13 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
           </div>
 
           {/* Pílulas dos campos preenchidos e faltantes */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-xs">
-            {[...camposEtapa1, ...camposEtapa2].map((campo) => (
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2 pt-1 text-xs">
+            {todosCampos.map((campo) => (
               <div
                 key={campo.label}
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border ${
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border transition-colors ${
                   campo.preenchido
-                    ? 'bg-slate-900/60 border-slate-800 text-slate-300'
+                    ? 'bg-slate-900/80 border-emerald-500/30 text-emerald-300'
                     : 'bg-amber-500/5 border-amber-500/20 text-amber-300/80'
                 }`}
               >
@@ -529,7 +600,41 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
                 <div className="space-y-2.5">
                   {grupo.itens.map((item) => {
                     const isOpen = itemAberto === item.id
-                    const isFeito = concluidos[item.id] || false
+
+                    // Determina se o item está efetivamente enviado / concluído
+                    let isEfetivamenteFeito = concluidos[item.id] || false
+                    let tagComplementar: string | null = null
+
+                    if (item.id === 'fotos_comodos') {
+                      if (temFotos) {
+                        isEfetivamenteFeito = true
+                        tagComplementar = `${fotos.length} foto${fotos.length > 1 ? 's' : ''}`
+                      }
+                    } else if (item.id === 'doc_matricula') {
+                      if (temMatricula) {
+                        isEfetivamenteFeito = true
+                        tagComplementar = 'PDF enviado'
+                      }
+                    } else if (item.id === 'doc_iptu') {
+                      if (temIptu) {
+                        isEfetivamenteFeito = true
+                        tagComplementar = 'PDF enviado'
+                      }
+                    } else if (item.id === 'doc_certidao') {
+                      if (temCertidao) {
+                        isEfetivamenteFeito = true
+                        tagComplementar = 'PDF enviado'
+                      }
+                    }
+
+                    // Determina se é área de fotos ou de documentos
+                    const isItemFotos = item.id === 'fotos_comodos'
+                    const rotuloDocMap: Record<string, RotuloDocumento> = {
+                      doc_matricula: 'matricula',
+                      doc_iptu: 'iptu',
+                      doc_certidao: 'certidao',
+                    }
+                    const rotuloDocItem = rotuloDocMap[item.id]
 
                     return (
                       <div
@@ -552,10 +657,12 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
                               type="button"
                               onClick={(e) => alternarConcluido(item.id, e)}
                               title={
-                                isFeito ? 'Marcar como pendente' : 'Marcar como enviado/concluído'
+                                isEfetivamenteFeito
+                                  ? 'Marcar como pendente'
+                                  : 'Marcar como enviado/concluído'
                               }
                               className={`mt-0.5 sm:mt-0 p-1 rounded-lg border transition-all cursor-pointer ${
-                                isFeito
+                                isEfetivamenteFeito
                                   ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400'
                                   : 'bg-slate-900 border-slate-700 text-slate-500 hover:text-slate-300'
                               }`}
@@ -567,20 +674,25 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
                               <div className="flex items-center gap-2 flex-wrap">
                                 <span
                                   className={`text-sm font-semibold ${
-                                    isFeito ? 'text-slate-400 line-through' : 'text-white'
+                                    isEfetivamenteFeito ? 'text-slate-300' : 'text-white'
                                   }`}
                                 >
                                   {item.titulo}
                                 </span>
                                 <span
                                   className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full border ${
-                                    isFeito
+                                    isEfetivamenteFeito
                                       ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/40'
                                       : 'bg-amber-500/15 text-amber-300 border-amber-500/40'
                                   }`}
                                 >
-                                  {isFeito ? 'Enviado / OK' : 'Pendente'}
+                                  {isEfetivamenteFeito ? 'Enviado / OK' : 'Pendente'}
                                 </span>
+                                {tagComplementar && (
+                                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-cyan-500/10 text-[#22C7E0] border border-cyan-500/30">
+                                    {tagComplementar}
+                                  </span>
+                                )}
                               </div>
                               <p className="text-xs text-slate-400 truncate mt-0.5">
                                 {item.subtitulo}
@@ -590,7 +702,7 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
 
                           <div className="flex items-center gap-2 shrink-0 pt-0.5 sm:pt-0">
                             <span className="text-xs text-[#22C7E0] hidden sm:inline">
-                              {isOpen ? 'Ocultar' : 'Ver instruções'}
+                              {isOpen ? 'Ocultar' : 'Ver instruções e upload'}
                             </span>
                             {isOpen ? (
                               <ChevronUp className="w-4 h-4 text-[#22C7E0]" />
@@ -600,9 +712,9 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
                           </div>
                         </button>
 
-                        {/* Painel de Explicação Inline quando aberto */}
+                        {/* Painel de Explicação e Upload Inline quando aberto */}
                         {isOpen && (
-                          <div className="px-3.5 sm:px-4 pb-4 pt-1 border-t border-slate-800/80 space-y-3.5 text-xs text-slate-300 animate-fade-in">
+                          <div className="px-3.5 sm:px-4 pb-4 pt-1 border-t border-slate-800/80 space-y-4 text-xs text-slate-300 animate-fade-in">
                             <p className="leading-relaxed text-slate-200">{item.descricao}</p>
 
                             {/* O que enviar / exemplos */}
@@ -620,34 +732,98 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
                               </ul>
                             </div>
 
+                            {/* MÓDULO DE UPLOAD INTEGRADO: FOTOS */}
+                            {isItemFotos && lead.id && (
+                              <div className="bg-[#081226] border border-[#22C7E0]/30 rounded-2xl p-4 space-y-3">
+                                <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                                  <div className="flex items-center gap-2">
+                                    <ImageIcon className="w-4 h-4 text-[#22C7E0]" />
+                                    <span className="font-bold text-white text-xs sm:text-sm">
+                                      Upload de Fotos do Imóvel
+                                    </span>
+                                  </div>
+                                  <span className="text-[11px] text-cyan-300">
+                                    {fotos.length > 0
+                                      ? `${fotos.length} foto${fotos.length > 1 ? 's' : ''} pronta${
+                                          fotos.length > 1 ? 's' : ''
+                                        }`
+                                      : 'Nenhuma foto enviada'}
+                                  </span>
+                                </div>
+
+                                <UploadFotos
+                                  leadId={lead.id}
+                                  userId={lead.user_id || ''}
+                                  fotos={fotos}
+                                  onFotosChange={(novasFotos) => {
+                                    // Atualiza lista completa mantendo os documentos
+                                    const outros = arquivos.filter((a) => a.tipo !== 'foto')
+                                    setArquivos([...novasFotos, ...outros])
+                                  }}
+                                />
+                              </div>
+                            )}
+
+                            {/* MÓDULO DE UPLOAD INTEGRADO: DOCUMENTO (PDF com rótulo) */}
+                            {rotuloDocItem && lead.id && (
+                              <div className="bg-[#081226] border border-indigo-500/30 rounded-2xl p-4 space-y-3">
+                                <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                                  <div className="flex items-center gap-2">
+                                    <FileText className="w-4 h-4 text-indigo-400" />
+                                    <span className="font-bold text-white text-xs sm:text-sm">
+                                      Upload de Documento (PDF)
+                                    </span>
+                                  </div>
+                                  <span className="text-[11px] text-indigo-300">
+                                    Rótulo: {item.titulo.split(' ')[0]}
+                                  </span>
+                                </div>
+
+                                <UploadDocumentos
+                                  leadId={lead.id}
+                                  userId={lead.user_id || ''}
+                                  documentos={docs}
+                                  filtroRotulo={rotuloDocItem}
+                                  onDocumentosChange={(novosDocs) => {
+                                    const fotosExistentes = arquivos.filter(
+                                      (a) => a.tipo === 'foto',
+                                    )
+                                    setArquivos([...fotosExistentes, ...novosDocs])
+                                  }}
+                                />
+                              </div>
+                            )}
+
                             {/* Dica do especialista */}
                             <div className="flex items-start gap-2 text-slate-400 bg-slate-900/50 p-2.5 rounded-lg border border-slate-800">
                               <HelpCircle className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
                               <span className="italic">{item.dica}</span>
                             </div>
 
-                            {/* Ações do item */}
-                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 pt-1">
+                            {/* Ações do item: Manter WhatsApp oficial como alternativa secundária */}
+                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 pt-2 border-t border-slate-800/60">
                               <button
                                 type="button"
                                 onClick={(e) => alternarConcluido(item.id, e)}
                                 className={`text-xs px-3 py-2 rounded-lg border font-medium transition-all text-center cursor-pointer ${
-                                  isFeito
+                                  isEfetivamenteFeito
                                     ? 'bg-slate-900 border-slate-700 text-slate-300 hover:bg-slate-800'
                                     : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20'
                                 }`}
                               >
-                                {isFeito ? 'Desmarcar envio' : 'Marcar como já enviado'}
+                                {isEfetivamenteFeito
+                                  ? 'Desmarcar envio manual'
+                                  : 'Marcar como já enviado'}
                               </button>
 
                               <a
                                 href={montarLinkWhatsApp(item.mensagemWhatsApp, item.subtitulo)}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[#22C7E0] hover:bg-[#1fb3ca] text-[#070B14] font-bold text-xs shadow-md transition-all cursor-pointer"
+                                className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold text-xs shadow-sm transition-all cursor-pointer"
                               >
-                                <MessageCircle className="w-3.5 h-3.5 fill-current" />
-                                <span>Enviar pelo WhatsApp oficial</span>
+                                <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
+                                <span>Enviar pelo WhatsApp oficial (alternativa)</span>
                               </a>
                             </div>
                           </div>

@@ -25,6 +25,7 @@ export interface LeadVinculado {
   mensagem?: string | null
   status?: StatusImovelLead | string | null
   criado_em?: string | null
+  user_id?: string | null
 }
 
 /**
@@ -96,7 +97,7 @@ export async function buscarLeadsVinculados(userId: string): Promise<LeadVincula
     const { data, error } = await supabase
       .from('leads_venda' as any)
       .select(
-        'id, protocolo, tipo_imovel, cidade, telefone, nome, email, valor_estimado, motivo_venda, prazo_desejado, mensagem, status, criado_em',
+        'id, protocolo, tipo_imovel, cidade, telefone, nome, email, valor_estimado, motivo_venda, prazo_desejado, mensagem, status, criado_em, user_id',
       )
       .eq('user_id', userId)
       .order('criado_em', { ascending: false })
