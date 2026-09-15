@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowUpRight, ShieldCheck, Mail, Phone, FileBadge } from 'lucide-react'
+import { ArrowUpRight, ShieldCheck, Mail, Phone, FileBadge, Calculator } from 'lucide-react'
 import { KORBIX_WHATSAPP_NUMBER, KORBIX_WHATSAPP_DISPLAY } from '@/services/leads'
 import korbixLogo from '@/assets/5-contorno-e238f.png'
 
@@ -37,9 +37,69 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
     }
   }
 
+  const handleCalculadoraClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // Se o usuário clicar com modificadores (abrir em nova aba etc.), deixa o navegador agir
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) {
+      return
+    }
+    // Tenta navegação interna suave pelo React Router, com fallback nativo se falhar
+    try {
+      e.preventDefault()
+      navigate('/calculadora')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    } catch {
+      // Fallback: se o router falhar (ex.: contexto de iframe restrito), navega via window.location
+      window.location.href = '/calculadora'
+    }
+  }
+
   return (
     <footer className="bg-[#070B14] text-white pt-12 sm:pt-16 pb-12 px-3.5 sm:px-6 lg:px-8 border-t border-slate-900">
       <div className="max-w-[1200px] mx-auto space-y-10 sm:space-y-12">
+        {/* Banner CTA em Destaque da Calculadora - Posicionado no topo do rodapé */}
+        <section aria-label="Calculadora de Custo de Imóvel Parado">
+          <a
+            href="/calculadora"
+            onClick={handleCalculadoraClick}
+            className="group relative block rounded-2xl bg-[#081226] border border-[#22C7E0] p-5 sm:p-6 lg:p-7 shadow-[0_0_24px_rgba(34,199,224,0.18)] hover:shadow-[0_0_36px_rgba(34,199,224,0.32)] transition-all duration-300 hover:border-[#22C7E0] hover:-translate-y-0.5 overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-[#22C7E0]"
+          >
+            {/* Efeito sutil de iluminação decorativa no canto superior direito */}
+            <div
+              className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-[#22C7E0]/15 blur-3xl pointer-events-none group-hover:bg-[#22C7E0]/25 transition-colors"
+              aria-hidden="true"
+            />
+
+            <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-5 sm:gap-6">
+              {/* Lado Esquerdo: Ícone + Título + Subtítulo */}
+              <div className="flex items-start sm:items-center gap-4 sm:gap-5 min-w-0">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#070B14] border border-[#22C7E0]/40 flex items-center justify-center text-[#22C7E0] group-hover:scale-105 group-hover:border-[#22C7E0] transition-all duration-300 shrink-0 shadow-[0_0_14px_rgba(34,199,224,0.22)]">
+                  <Calculator className="w-6 h-6 sm:w-7 sm:h-7" />
+                </div>
+                <div className="space-y-1 min-w-0">
+                  <div className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-[#22C7E0] mb-0.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#22C7E0] shadow-[0_0_6px_#22C7E0]" />
+                    <span>Ferramenta Gratuita</span>
+                  </div>
+                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-white group-hover:text-white transition-colors">
+                    Quanto custa seu imóvel parado?
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    Simule em 30 segundos o prejuízo mensal — sem cadastro
+                  </p>
+                </div>
+              </div>
+
+              {/* Lado Direito: Botão primário ciano com glow */}
+              <div className="shrink-0 w-full md:w-auto pt-1 md:pt-0">
+                <span className="w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 min-h-[46px] rounded-xl bg-[#22C7E0] hover:bg-[#32d4eb] active:bg-[#1bb5cc] text-[#070B14] text-xs sm:text-sm font-bold tracking-wide shadow-[0_0_20px_rgba(34,199,224,0.45)] group-hover:shadow-[0_0_30px_rgba(34,199,224,0.7)] border border-white/20 transition-all duration-300 cursor-pointer">
+                  <span>Abrir calculadora</span>
+                  <ArrowUpRight className="w-4 h-4 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </span>
+              </div>
+            </div>
+          </a>
+        </section>
+
         {/* Grid Principal do Rodapé */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12">
           {/* Marca + Tagline do Projeto */}
@@ -208,17 +268,6 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
               <span>Falar no WhatsApp</span>
               <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />
             </a>
-
-            {/* Link discreto para a Calculadora sem alterar mais nada */}
-            <div className="pt-1">
-              <Link
-                to="/calculadora"
-                className="inline-flex items-center gap-1.5 text-xs text-[#22C7E0] hover:text-[#4fe3f8] transition-colors py-1 font-medium group"
-              >
-                <span>Calculadora: quanto custa seu imóvel parado?</span>
-                <ArrowUpRight className="w-3.5 h-3.5 shrink-0 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-              </Link>
-            </div>
 
             {/* Links informativos (privacidade, termos, contato) mantidos */}
             <div className="pt-2 flex flex-wrap items-center gap-3 sm:gap-4 text-xs text-slate-400">
