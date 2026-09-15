@@ -59,6 +59,13 @@ export type Database = {
       }
       leads_venda: {
         Row: {
+          calc_condominio_mensal: string | null
+          calc_custo_acumulado_total: string | null
+          calc_custo_mensal_total: string | null
+          calc_iptu_anual: string | null
+          calc_manutencao_mensal: string | null
+          calc_meses_parado: number | null
+          calc_taxa_mensal: number | null
           cidade: string | null
           criado_em: string | null
           email: string | null
@@ -74,6 +81,13 @@ export type Database = {
           valor_estimado: string | null
         }
         Insert: {
+          calc_condominio_mensal?: string | null
+          calc_custo_acumulado_total?: string | null
+          calc_custo_mensal_total?: string | null
+          calc_iptu_anual?: string | null
+          calc_manutencao_mensal?: string | null
+          calc_meses_parado?: number | null
+          calc_taxa_mensal?: number | null
           cidade?: string | null
           criado_em?: string | null
           email?: string | null
@@ -89,6 +103,13 @@ export type Database = {
           valor_estimado?: string | null
         }
         Update: {
+          calc_condominio_mensal?: string | null
+          calc_custo_acumulado_total?: string | null
+          calc_custo_mensal_total?: string | null
+          calc_iptu_anual?: string | null
+          calc_manutencao_mensal?: string | null
+          calc_meses_parado?: number | null
+          calc_taxa_mensal?: number | null
           cidade?: string | null
           criado_em?: string | null
           email?: string | null
@@ -110,6 +131,25 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      fn_submit_lead_calculadora: {
+        Args: {
+          p_cidade: string
+          p_condominio_mensal?: string
+          p_custo_acumulado_total?: string
+          p_custo_mensal_total?: string
+          p_iptu_anual?: string
+          p_manutencao_mensal?: string
+          p_meses_parado?: number
+          p_rota?: string
+          p_taxa_mensal?: number
+          p_telefone: string
+          p_valor_imovel: string
+        }
+        Returns: {
+          id: string
+          protocolo: string
+        }[]
+      }
       fn_submit_lead_investidor: {
         Args: {
           p_cidades_interesse: string

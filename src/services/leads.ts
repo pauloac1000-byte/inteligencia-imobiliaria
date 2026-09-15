@@ -68,6 +68,20 @@ export interface LeadCalculadoraInput {
   rota?: 'proprietario' | string
 }
 
+export interface LeadSimuladorInvestidorInput {
+  cidade: string
+  telefone: string
+  valor_compra: string
+  custo_reforma?: string
+  aluguel_mensal?: string
+  prazo_revenda_meses?: number
+  valorizacao_anual?: number
+  capital_investido?: string
+  rentabilidade_mensal?: number
+  retorno_total?: number
+  rota?: 'investidor' | string
+}
+
 // Constantes centralizadas para atendimento KORBIX
 export const KORBIX_WHATSAPP_NUMBER = '5519998563025' // WhatsApp oficial KORBIX
 export const KORBIX_WHATSAPP_DISPLAY = '(19) 99856-3025'
@@ -350,6 +364,76 @@ export async function salvarLeadCalculadora(input: LeadCalculadoraInput): Promis
     return { success: true, id: data?.id, protocolo: data?.protocolo }
   } catch (err: any) {
     console.error('Exceção ao enviar lead da calculadora:', err)
+    return {
+      success: false,
+      error:
+        err?.message ||
+        'Falha de conexão ao salvar os dados. Verifique sua rede e tente novamente.',
+    }
+  }
+}
+
+export async function salvarLeadSimuladorInvestidor(
+  input: LeadSimuladorInvestidorInput,
+): Promise<LeadResult> {
+  try {
+    // Abordagem segura via RPC Security Definer (retorna ID + protocolo KX-XXXX gerado pelo trigger)
+    const { data: rpcData, error: rpcError } = await (supabase.rpc as any)(
+      'fn_submit_lead_simulador_investidor',
+      {
+        p_cidade: input.cidade.trim(),
+        p_telefone: input.telefone.trim(),
+        p_sim_valor_compra: input.valor_compra ? input.valor_compra.trim() : null,
+        p_sim_custo_reforma: input.custo_reforma ? input.custo_reforma.trim() : null,
+        p_sim_aluguel_mensal: input.aluguel_mensal ? input.aluguel_mensal.trim() : null,
+        p_sim_prazo_revenda_meses: input.prazo_revenda_meses ?? null,
+        p_sim_valorizacao_anual: input.valorizacao_anual ?? null,
+        p_sim_capital_investido: input.capital_investido ? input.capital_investido.trim() : null,
+        p_sim_rentabilidade_mensal: input.rentabilidade_mensal ?? null,
+        p_sim_retorno_total: input.retorno_total ?? null,
+        p_rota: input.rota || 'investidor',
+      },
+    )
+
+    if (!rpcError && rpcData) {
+      const row = Array.isArray(rpcData) ? rpcData[0] : rpcData
+      return { success: true, id: row?.id, protocolo: row?.protocolo }
+    }
+
+    // Fallback defensivo com insert direto se RPC falhar
+    const { data, error } = await (supabase.from as any)('leads_investidor')
+      .insert([
+        {
+          cidades_interesse: input.cidade.trim(),
+          telefone: input.telefone.trim(),
+          rota: input.rota || 'investidor',
+          sim_valor_compra: input.valor_compra ? input.valor_compra.trim() : null,
+          sim_custo_reforma: input.custo_reforma ? input.custo_reforma.trim() : null,
+          sim_aluguel_mensal: input.aluguel_mensal ? input.aluguel_mensal.trim() : null,
+          sim_prazo_revenda_meses: input.prazo_revenda_meses ?? null,
+          sim_valorizacao_anual: input.valorizacao_anual ?? null,
+          sim_capital_investido: input.capital_investido ? input.capital_investido.trim() : null,
+          sim_rentabilidade_mensal: input.rentabilidade_mensal ?? null,
+          sim_retorno_total: input.retorno_total ?? null,
+        },
+      ])
+      .select('id, protocolo')
+      .single()
+
+    if (error) {
+      console.error('Erro ao salvar lead do simulador de investidor:', error || rpcError)
+      return {
+        success: false,
+        error:
+          error.message ||
+          rpcError?.message ||
+          'Não foi possível registrar seu interesse no momento. Tente novamente.',
+      }
+    }
+
+    return { success: true, id: data?.id, protocolo: data?.protocolo }
+  } catch (err: any) {
+    console.error('Exceção ao enviar lead do simulador:', err)
     return {
       success: false,
       error:

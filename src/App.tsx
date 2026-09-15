@@ -7,6 +7,7 @@ import Index from './pages/Index'
 import NotFound from './pages/NotFound'
 import PoliticaPrivacidade from './pages/PoliticaPrivacidade'
 import CalculadoraImovelParado from './pages/CalculadoraImovelParado'
+import SimuladorRetornoInvestidor from './pages/SimuladorRetornoInvestidor'
 import Layout from './components/Layout'
 
 // ONLY IMPORT AND RENDER WORKING PAGES, NEVER ADD PLACEHOLDER COMPONENTS OR PAGES IN THIS FILE
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/politica-de-privacidade" element={<PoliticaPrivacidade />} />
           <Route path="/calculadora" element={<CalculadoraImovelParado />} />
+          <Route path="/simulador-de-retorno" element={<SimuladorRetornoInvestidor />} />
           {/* ADD ALL CUSTOM ROUTES MUST BE ADDED HERE */}
         </Route>
         <Route path="*" element={<NotFound />} />
