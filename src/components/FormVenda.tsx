@@ -523,11 +523,11 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
           {/* Mensagem / Observações */}
           <div className="space-y-1.5">
             <label className="text-xs font-semibold uppercase tracking-wider text-slate-300">
-              Mensagem ou detalhes adicionais (opcional)
+              DESCRIÇÃO DETALHADA DO IMÓVEL E MENSAGENS ADICIONAIS
             </label>
             <textarea
               rows={isInModal ? 2 : 3}
-              placeholder="Ex.: Bairro, metragem aproximada, condomínio ou particularidades..."
+              placeholder="Quanto mais precisas as informações maiores a chances de uma negociação assertiva: localização, metragem, descrição dos cômodos, IPTU, condomínio, etc."
               value={mensagem}
               onChange={(e) => setMensagem(e.target.value)}
               disabled={loading}
