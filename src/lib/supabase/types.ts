@@ -9,6 +9,104 @@ export type Database = {
   }
   public: {
     Tables: {
+      compatibilidade_imovel_tese: {
+        Row: {
+          atualizado_em: string
+          criado_em: string
+          criterios_atendidos: Json
+          criterios_nao_atendidos: Json
+          id: string
+          lead_investidor_id: string
+          lead_venda_id: string
+          percentual: number
+        }
+        Insert: {
+          atualizado_em?: string
+          criado_em?: string
+          criterios_atendidos?: Json
+          criterios_nao_atendidos?: Json
+          id?: string
+          lead_investidor_id: string
+          lead_venda_id: string
+          percentual?: number
+        }
+        Update: {
+          atualizado_em?: string
+          criado_em?: string
+          criterios_atendidos?: Json
+          criterios_nao_atendidos?: Json
+          id?: string
+          lead_investidor_id?: string
+          lead_venda_id?: string
+          percentual?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'compatibilidade_imovel_tese_lead_investidor_id_fkey'
+            columns: ['lead_investidor_id']
+            isOneToOne: false
+            referencedRelation: 'leads_investidor'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'compatibilidade_imovel_tese_lead_venda_id_fkey'
+            columns: ['lead_venda_id']
+            isOneToOne: false
+            referencedRelation: 'leads_venda'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      lead_arquivos: {
+        Row: {
+          criado_em: string
+          id: string
+          lead_id: string
+          mime_type: string | null
+          nome_original: string | null
+          ordem: number
+          rotulo: string | null
+          storage_path: string
+          tamanho_bytes: number | null
+          tipo: string
+          user_id: string
+        }
+        Insert: {
+          criado_em?: string
+          id?: string
+          lead_id: string
+          mime_type?: string | null
+          nome_original?: string | null
+          ordem?: number
+          rotulo?: string | null
+          storage_path: string
+          tamanho_bytes?: number | null
+          tipo: string
+          user_id: string
+        }
+        Update: {
+          criado_em?: string
+          id?: string
+          lead_id?: string
+          mime_type?: string | null
+          nome_original?: string | null
+          ordem?: number
+          rotulo?: string | null
+          storage_path?: string
+          tamanho_bytes?: number | null
+          tipo?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'lead_arquivos_lead_id_fkey'
+            columns: ['lead_id']
+            isOneToOne: false
+            referencedRelation: 'leads_venda'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       leads_investidor: {
         Row: {
           cidades_interesse: string | null
@@ -182,6 +280,31 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      fn_calcular_compatibilidade: {
+        Args: { p_lead_investidor_id: string; p_lead_venda_id: string }
+        Returns: {
+          criterios_atendidos: Json
+          criterios_nao_atendidos: Json
+          percentual: number
+        }[]
+      }
+      fn_compat_extrair_valor_numerico: {
+        Args: { p_valor_texto: string }
+        Returns: number
+      }
+      fn_compat_normalizar_texto: { Args: { p_input: string }; Returns: string }
+      fn_recalcular_compatibilidade_lead_investidor: {
+        Args: { p_lead_investidor_id: string }
+        Returns: number
+      }
+      fn_recalcular_compatibilidade_lead_venda: {
+        Args: { p_lead_venda_id: string }
+        Returns: number
+      }
+      fn_recalcular_compatibilidade_par: {
+        Args: { p_lead_investidor_id: string; p_lead_venda_id: string }
+        Returns: number
+      }
       fn_submit_lead_calculadora: {
         Args: {
           p_cidade: string
@@ -290,6 +413,10 @@ export type Database = {
           protocolos: string[]
           total_vinculados: number
         }[]
+      }
+      v_tipo_imovel_norm_ponto_safe: {
+        Args: { p_val: number }
+        Returns: number
       }
     }
     Enums: {
