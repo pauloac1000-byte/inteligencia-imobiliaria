@@ -31,7 +31,7 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
                 Para quem quer vender
               </div>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white leading-tight">
-                Venda seu imóvel com velocidade, sem queimar valor de mercado
+                Venda seu imóvel com rapidez velocidade e pelo valor justo de mercado
               </h2>
               <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
                 Esqueça dezenas de visitas desqualificadas e meses sem proposta. Conectamos seu
