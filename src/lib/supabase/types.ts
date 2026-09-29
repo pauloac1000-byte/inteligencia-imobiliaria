@@ -68,6 +68,7 @@ export type Database = {
           lead_investidor_id: string
           lead_venda_id: string
           percentual: number
+          status: string
         }
         Insert: {
           atualizado_em?: string
@@ -79,6 +80,7 @@ export type Database = {
           lead_investidor_id: string
           lead_venda_id: string
           percentual?: number
+          status?: string
         }
         Update: {
           atualizado_em?: string
@@ -90,6 +92,7 @@ export type Database = {
           lead_investidor_id?: string
           lead_venda_id?: string
           percentual?: number
+          status?: string
         }
         Relationships: [
           {
@@ -407,6 +410,84 @@ export type Database = {
         Returns: number
       }
       fn_compat_normalizar_texto: { Args: { p_input: string }; Returns: string }
+      fn_gestor_atualizar_status_lead: {
+        Args: { p_lead_id: string; p_novo_status: string }
+        Returns: {
+          atualizado_em: string
+          id: string
+          protocolo: string
+          status: string
+        }[]
+      }
+      fn_gestor_decidir_match: {
+        Args: { p_acao: string; p_compatibilidade_id: string }
+        Returns: {
+          atualizado_em: string
+          id: string
+          status: string
+        }[]
+      }
+      fn_gestor_listar_leads: {
+        Args: never
+        Returns: {
+          cidade: string
+          cidades_interesse: string
+          criado_em: string
+          email: string
+          id: string
+          mensagem: string
+          motivo_venda: string
+          nome: string
+          objetivo: string
+          perfil: string
+          prazo_decisao: string
+          prazo_desejado: string
+          protocolo: string
+          rota: string
+          status: string
+          telefone: string
+          ticket: string
+          tipo_imovel: string
+          user_id: string
+          valor_estimado: string
+        }[]
+      }
+      fn_gestor_listar_matches: {
+        Args: never
+        Returns: {
+          atualizado_em: string
+          compatibilidade_id: string
+          criado_em: string
+          criterios: Json
+          criterios_atendidos: Json
+          criterios_nao_atendidos: Json
+          imovel_cidade: string
+          imovel_motivo_venda: string
+          imovel_prazo_desejado: string
+          imovel_protocolo: string
+          imovel_status: string
+          imovel_tipo: string
+          imovel_valor: string
+          interesse_status: string
+          investidor_cidades: string
+          investidor_email: string
+          investidor_nome: string
+          investidor_objetivo: string
+          investidor_prazo: string
+          investidor_protocolo: string
+          investidor_telefone: string
+          investidor_ticket: string
+          ja_tem_interesse: boolean
+          lead_investidor_id: string
+          lead_venda_id: string
+          percentual: number
+          proprietario_email: string
+          proprietario_nome: string
+          proprietario_telefone: string
+          status_match: string
+        }[]
+      }
+      fn_is_gestor: { Args: never; Returns: boolean }
       fn_listar_oportunidades_investidor: {
         Args: never
         Returns: {

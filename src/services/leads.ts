@@ -124,31 +124,30 @@ export async function salvarLeadVendaEtapa1(input: LeadVendaEtapa1Input): Promis
       return { success: true, id: row?.id, protocolo: row?.protocolo }
     }
 
-    // Fallback defensivo com insert direto se RPC não estiver disponível
-    const { data, error } = await (supabase.from as any)('leads_venda')
-      .insert([
-        {
-          cidade: input.cidade.trim(),
-          tipo_imovel: input.tipo_imovel,
-          telefone: input.telefone.trim(),
-          rota: input.rota || 'proprietario',
-        },
-      ])
-      .select('id, protocolo')
-      .single()
+    // Fallback defensivo com insert direto se RPC não estiver disponível (sem .select() para anônimos devido ao RLS)
+    console.warn('RPC fn_submit_lead_venda_etapa1 falhou ou indisponível:', rpcError)
 
-    if (error) {
-      console.error('Erro ao salvar lead de venda (etapa 1):', error || rpcError)
+    const { error: insertError } = await (supabase.from as any)('leads_venda').insert([
+      {
+        cidade: input.cidade.trim(),
+        tipo_imovel: input.tipo_imovel,
+        telefone: input.telefone.trim(),
+        rota: input.rota || 'proprietario',
+      },
+    ])
+
+    if (insertError) {
+      console.error('Erro ao salvar lead de venda (etapa 1):', insertError || rpcError)
       return {
         success: false,
         error:
-          error.message ||
+          insertError.message ||
           rpcError?.message ||
-          'Não foi possível registrar seu imóvel. Tente novamente.',
+          'Não foi possível registrar seu imóvel no momento. Tente novamente.',
       }
     }
 
-    return { success: true, id: data?.id, protocolo: data?.protocolo }
+    return { success: true }
   } catch (err: any) {
     console.error('Exceção ao enviar etapa 1 de venda:', err)
     return {
@@ -181,8 +180,10 @@ export async function atualizarLeadVendaEtapa2(input: LeadVendaEtapa2Input): Pro
       return { success: true, id: row?.id || input.id, protocolo: row?.protocolo }
     }
 
-    // Fallback defensivo com update direto
-    const { data, error } = await (supabase.from as any)('leads_venda')
+    // Fallback defensivo com update direto sem .select() (RLS não permite select para anônimos)
+    console.warn('RPC fn_submit_lead_venda_etapa2 falhou ou indisponível:', rpcError)
+
+    const { error: updateError } = await (supabase.from as any)('leads_venda')
       .update({
         nome: input.nome.trim(),
         email: input.email.trim().toLowerCase(),
@@ -192,21 +193,19 @@ export async function atualizarLeadVendaEtapa2(input: LeadVendaEtapa2Input): Pro
         mensagem: input.mensagem ? input.mensagem.trim() : null,
       })
       .eq('id', input.id)
-      .select('id, protocolo')
-      .single()
 
-    if (error) {
-      console.error('Erro ao atualizar lead de venda (etapa 2):', error || rpcError)
+    if (updateError) {
+      console.error('Erro ao atualizar lead de venda (etapa 2):', updateError || rpcError)
       return {
         success: false,
         error:
-          error.message ||
+          updateError.message ||
           rpcError?.message ||
-          'Não foi possível atualizar as informações. Tente novamente.',
+          'Não foi possível atualizar as informações no momento. Tente novamente.',
       }
     }
 
-    return { success: true, id: input.id, protocolo: data?.protocolo }
+    return { success: true, id: input.id }
   } catch (err: any) {
     console.error('Exceção ao enviar etapa 2 de venda:', err)
     return {
@@ -258,21 +257,14 @@ export async function salvarLeadVenda(input: LeadVendaInput): Promise<LeadResult
     let error: any
     let data: any
 
+    console.warn('RPC fn_submit_lead_venda falhou ou indisponível:', rpcError)
+
     if (input.id) {
-      const res = await (supabase.from as any)('leads_venda')
-        .update(payload)
-        .eq('id', input.id)
-        .select('id, protocolo')
-        .single()
+      const res = await (supabase.from as any)('leads_venda').update(payload).eq('id', input.id)
       error = res.error
-      data = res.data
     } else {
-      const res = await (supabase.from as any)('leads_venda')
-        .insert([payload])
-        .select('id, protocolo')
-        .single()
+      const res = await (supabase.from as any)('leads_venda').insert([payload])
       error = res.error
-      data = res.data
     }
 
     if (error) {
@@ -282,11 +274,11 @@ export async function salvarLeadVenda(input: LeadVendaInput): Promise<LeadResult
         error:
           error.message ||
           rpcError?.message ||
-          'Não foi possível registrar seu imóvel. Tente novamente.',
+          'Não foi possível registrar seu imóvel no momento. Tente novamente.',
       }
     }
 
-    return { success: true, id: data?.id || input.id, protocolo: data?.protocolo }
+    return { success: true, id: input.id }
   } catch (err: any) {
     console.error('Exceção ao enviar lead de venda:', err)
     return {
@@ -325,43 +317,40 @@ export async function salvarLeadCalculadora(input: LeadCalculadoraInput): Promis
       return { success: true, id: row?.id, protocolo: row?.protocolo }
     }
 
-    // Fallback defensivo com insert direto
-    const { data, error } = await (supabase.from as any)('leads_venda')
-      .insert([
-        {
-          cidade: input.cidade.trim(),
-          telefone: input.telefone.trim(),
-          valor_estimado: input.valor_imovel ? input.valor_imovel.trim() : null,
-          rota: input.rota || 'proprietario',
-          calc_iptu_anual: input.iptu_anual ? input.iptu_anual.trim() : null,
-          calc_condominio_mensal: input.condominio_mensal ? input.condominio_mensal.trim() : null,
-          calc_manutencao_mensal: input.manutencao_mensal ? input.manutencao_mensal.trim() : null,
-          calc_meses_parado: input.meses_parado ?? null,
-          calc_taxa_mensal: input.taxa_mensal ?? null,
-          calc_custo_mensal_total: input.custo_mensal_total
-            ? input.custo_mensal_total.trim()
-            : null,
-          calc_custo_acumulado_total: input.custo_acumulado_total
-            ? input.custo_acumulado_total.trim()
-            : null,
-          mensagem: 'Lead originado da Calculadora de Custo de Imóvel Parado (/calculadora)',
-        },
-      ])
-      .select('id, protocolo')
-      .single()
+    // Fallback defensivo com insert direto sem .select() (RLS não permite leitura para anônimos)
+    console.warn('RPC fn_submit_lead_calculadora falhou ou indisponível:', rpcError)
 
-    if (error) {
-      console.error('Erro ao salvar lead da calculadora:', error || rpcError)
+    const { error: insertError } = await (supabase.from as any)('leads_venda').insert([
+      {
+        cidade: input.cidade.trim(),
+        telefone: input.telefone.trim(),
+        valor_estimado: input.valor_imovel ? input.valor_imovel.trim() : null,
+        rota: input.rota || 'proprietario',
+        calc_iptu_anual: input.iptu_anual ? input.iptu_anual.trim() : null,
+        calc_condominio_mensal: input.condominio_mensal ? input.condominio_mensal.trim() : null,
+        calc_manutencao_mensal: input.manutencao_mensal ? input.manutencao_mensal.trim() : null,
+        calc_meses_parado: input.meses_parado ?? null,
+        calc_taxa_mensal: input.taxa_mensal ?? null,
+        calc_custo_mensal_total: input.custo_mensal_total ? input.custo_mensal_total.trim() : null,
+        calc_custo_acumulado_total: input.custo_acumulado_total
+          ? input.custo_acumulado_total.trim()
+          : null,
+        mensagem: 'Lead originado da Calculadora de Custo de Imóvel Parado (/calculadora)',
+      },
+    ])
+
+    if (insertError) {
+      console.error('Erro ao salvar lead da calculadora:', insertError || rpcError)
       return {
         success: false,
         error:
-          error.message ||
+          insertError.message ||
           rpcError?.message ||
-          'Não foi possível registrar seus dados. Tente novamente.',
+          'Não foi possível registrar seus dados no momento. Tente novamente.',
       }
     }
 
-    return { success: true, id: data?.id, protocolo: data?.protocolo }
+    return { success: true }
   } catch (err: any) {
     console.error('Exceção ao enviar lead da calculadora:', err)
     return {
@@ -400,38 +389,39 @@ export async function salvarLeadSimuladorInvestidor(
       return { success: true, id: row?.id, protocolo: row?.protocolo }
     }
 
-    // Fallback defensivo com insert direto se RPC falhar
-    const { data, error } = await (supabase.from as any)('leads_investidor')
-      .insert([
-        {
-          cidades_interesse: input.cidade.trim(),
-          telefone: input.telefone.trim(),
-          rota: input.rota || 'investidor',
-          sim_valor_compra: input.valor_compra ? input.valor_compra.trim() : null,
-          sim_custo_reforma: input.custo_reforma ? input.custo_reforma.trim() : null,
-          sim_aluguel_mensal: input.aluguel_mensal ? input.aluguel_mensal.trim() : null,
-          sim_prazo_revenda_meses: input.prazo_revenda_meses ?? null,
-          sim_valorizacao_anual: input.valorizacao_anual ?? null,
-          sim_capital_investido: input.capital_investido ? input.capital_investido.trim() : null,
-          sim_rentabilidade_mensal: input.rentabilidade_mensal ?? null,
-          sim_retorno_total: input.retorno_total ?? null,
-        },
-      ])
-      .select('id, protocolo')
-      .single()
+    // Se a chamada RPC falhou, reportamos erro amigável ao usuário.
+    // Fallback defensivo com insert direto sem .select() (para visitantes anônimos o RLS bloqueia SELECT)
+    console.warn('RPC fn_submit_lead_simulador_investidor falhou ou indisponível:', rpcError)
 
-    if (error) {
-      console.error('Erro ao salvar lead do simulador de investidor:', error || rpcError)
+    const { error: insertError } = await (supabase.from as any)('leads_investidor').insert([
+      {
+        cidades_interesse: input.cidade.trim(),
+        telefone: input.telefone.trim(),
+        rota: input.rota || 'investidor',
+        sim_valor_compra: input.valor_compra ? input.valor_compra.trim() : null,
+        sim_custo_reforma: input.custo_reforma ? input.custo_reforma.trim() : null,
+        sim_aluguel_mensal: input.aluguel_mensal ? input.aluguel_mensal.trim() : null,
+        sim_prazo_revenda_meses: input.prazo_revenda_meses ?? null,
+        sim_valorizacao_anual: input.valorizacao_anual ?? null,
+        sim_capital_investido: input.capital_investido ? input.capital_investido.trim() : null,
+        sim_rentabilidade_mensal: input.rentabilidade_mensal ?? null,
+        sim_retorno_total: input.retorno_total ?? null,
+      },
+    ])
+
+    if (insertError) {
+      console.error('Erro ao salvar lead do simulador de investidor no fallback:', insertError)
       return {
         success: false,
         error:
-          error.message ||
           rpcError?.message ||
+          insertError?.message ||
           'Não foi possível registrar seu interesse no momento. Tente novamente.',
       }
     }
 
-    return { success: true, id: data?.id, protocolo: data?.protocolo }
+    // Lead gravado via insert direto sem retorno de leitura por RLS
+    return { success: true }
   } catch (err: any) {
     console.error('Exceção ao enviar lead do simulador:', err)
     return {
@@ -471,7 +461,10 @@ export async function salvarLeadInvestidor(input: LeadInvestidorInput): Promise<
       return { success: true, id: row?.id, protocolo: row?.protocolo }
     }
 
-    // Fallback defensivo direto
+    // Se a chamada RPC falhou, reportamos erro amigável ao usuário.
+    // Fallback defensivo com insert direto sem .select() (para visitantes anônimos o RLS bloqueia SELECT)
+    console.warn('RPC fn_submit_lead_investidor falhou ou indisponível:', rpcError)
+
     const payload: Record<string, any> = {
       telefone: input.telefone.trim(),
       ticket: input.ticket,
@@ -486,23 +479,23 @@ export async function salvarLeadInvestidor(input: LeadInvestidorInput): Promise<
     if (input.perfil) payload.perfil = input.perfil
     if (input.faixa_valor) payload.faixa_valor = input.faixa_valor
 
-    const { data, error } = await (supabase.from as any)('leads_investidor')
-      .insert([payload])
-      .select('id, protocolo')
-      .single()
+    const { error: insertError } = await (supabase.from as any)('leads_investidor').insert([
+      payload,
+    ])
 
-    if (error) {
-      console.error('Erro ao salvar lead de investidor:', error || rpcError)
+    if (insertError) {
+      console.error('Erro ao salvar lead de investidor no fallback:', insertError)
       return {
         success: false,
         error:
-          error.message ||
           rpcError?.message ||
-          'Não foi possível registrar sua tese de investimento. Tente novamente.',
+          insertError?.message ||
+          'Não foi possível registrar sua tese de investimento no momento. Tente novamente.',
       }
     }
 
-    return { success: true, id: data?.id, protocolo: data?.protocolo }
+    // Lead gravado via insert direto sem retorno de leitura por RLS
+    return { success: true }
   } catch (err: any) {
     console.error('Exceção ao enviar lead de investidor:', err)
     return {
