@@ -10,14 +10,13 @@ import {
   AlertCircle,
   ArrowLeft,
   CheckCircle2,
-  Shield,
   User,
   TrendingUp,
 } from 'lucide-react'
 import korbixLogo from '@/assets/5.2-logo-sem-fundo-e9820.png'
 
 const OPCOES_PERFIL: {
-  value: UserRole
+  value: Extract<UserRole, 'proprietario' | 'investidor'>
   title: string
   subtitle: string
   icon: React.FC<{ className?: string }>
@@ -33,12 +32,6 @@ const OPCOES_PERFIL: {
     title: 'Investidor',
     subtitle: 'Quero ter acesso a oportunidades qualificadas com alto retorno.',
     icon: TrendingUp,
-  },
-  {
-    value: 'gestor',
-    title: 'Gestor',
-    subtitle: 'Painel operacional para gestão analítica de carteira e rede.',
-    icon: Shield,
   },
 ]
 
@@ -172,7 +165,7 @@ export default function Cadastro() {
                   <label className="text-xs font-semibold uppercase tracking-wider text-slate-300 block">
                     Tipo de Perfil *
                   </label>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {OPCOES_PERFIL.map((op) => {
                       const isSelected = tipo === op.value
                       const IconComp = op.icon
