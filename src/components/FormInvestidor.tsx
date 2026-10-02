@@ -6,10 +6,17 @@ import {
   ObjetivoInvestidor,
   PrazoDecisaoInvestidor,
 } from '@/services/leads'
-import { ArrowRight, Loader2, AlertCircle, Compass, Check } from 'lucide-react'
+import { ArrowRight, Loader2, AlertCircle, Compass, Check, Sparkles, Building2 } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ConfirmationProtocolo } from './ConfirmationProtocolo'
 import { registrarEvento } from '@/services/eventos'
+import {
+  listarDiferenciais,
+  filtrarDiferenciaisPorTiposInvestidor,
+  DiferencialItem,
+  DIFERENCIAIS_PADRAO,
+  PreferenciaDiferencial,
+} from '@/services/diferenciais'
 
 interface FormInvestidorProps {
   onSuccess?: () => void
@@ -51,6 +58,14 @@ const CIDADES_DISPONIVEIS = [
   'Circuito das Águas Paulista',
 ]
 
+// Tipos de imóvel de interesse para o investidor
+const TIPOS_IMOVEL_INVESTIDOR: { value: string; label: string }[] = [
+  { value: 'apartamento', label: 'Apartamento' },
+  { value: 'casa', label: 'Casa' },
+  { value: 'comercial', label: 'Comercial' },
+  { value: 'terreno', label: 'Terreno / Lote' },
+]
+
 // Máscara e formatação em tempo real de telefone/WhatsApp brasileiro (mínimo 10 dígitos com DDD)
 function formatarTelefone(valor: string): string {
   const digits = valor.replace(/\D/g, '').slice(0, 11)
@@ -72,6 +87,11 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
   const [ticket, setTicket] = useState<TicketInvestidor>('300_600k')
   const [objetivo, setObjetivo] = useState<ObjetivoInvestidor>('renda_aluguel')
   const [prazoDecisao, setPrazoDecisao] = useState<PrazoDecisaoInvestidor>('30_dias')
+  const [tiposImovel, setTiposImovel] = useState<string[]>(['apartamento', 'casa'])
+  const [diferenciaisInvestidor, setDiferenciaisInvestidor] = useState<
+    Record<string, PreferenciaDiferencial>
+  >({})
+  const [todosDiferenciais, setTodosDiferenciais] = useState<DiferencialItem[]>(DIFERENCIAIS_PADRAO)
   const [cidadesSelecionadas, setCidadesSelecionadas] = useState<string[]>(['São Paulo - Capital'])
   const [outraCidade, setOutraCidade] = useState('')
 
@@ -82,6 +102,55 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const [sucesso, setSucesso] = useState(false)
+
+  // Carrega diferenciais da tabela no Supabase
+  React.useEffect(() => {
+    listarDiferenciais().then((itens) => {
+      if (itens && itens.length > 0) {
+        setTodosDiferenciais(itens)
+      }
+    })
+  }, [])
+
+  // Diferenciais ajustados dinamicamente com base nos tipos de imóvel escolhidos pelo investidor
+  const diferenciaisAplicaveis = React.useMemo(() => {
+    return filtrarDiferenciaisPorTiposInvestidor(todosDiferenciais, tiposImovel)
+  }, [todosDiferenciais, tiposImovel])
+
+  // Agrupamento por grupo
+  const gruposDiferenciais = React.useMemo(() => {
+    const mapa = new Map<string, DiferencialItem[]>()
+    for (const item of diferenciaisAplicaveis) {
+      const g = item.grupo || 'Outros'
+      if (!mapa.has(g)) mapa.set(g, [])
+      mapa.get(g)!.push(item)
+    }
+    return Array.from(mapa.entries())
+  }, [diferenciaisAplicaveis])
+
+  const toggleTipoImovel = (tipo: string) => {
+    if (errorMsg) setErrorMsg('')
+    setTiposImovel((prev) => {
+      const existe = prev.includes(tipo)
+      if (existe) {
+        // Garante que não fique sem nenhum
+        if (prev.length === 1) return prev
+        return prev.filter((t) => t !== tipo)
+      } else {
+        return [...prev, tipo]
+      }
+    })
+  }
+
+  const setPreferenciaDiferencial = (codigo: string, pref: PreferenciaDiferencial) => {
+    setDiferenciaisInvestidor((prev) => {
+      // Se 'indiferente', pode manter explícito ou apagar para padrão
+      return {
+        ...prev,
+        [codigo]: pref,
+      }
+    })
+  }
 
   const handleTelefoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value
@@ -152,6 +221,15 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
     setErrorMsg('')
     setLoading(true)
 
+    // Prepara o mapa de diferenciais apenas para os itens que se aplicam aos tipos escolhidos
+    const codigosValidos = new Set(diferenciaisAplicaveis.map((d) => d.codigo))
+    const diferenciaisFiltrados: Record<string, PreferenciaDiferencial> = {}
+    for (const [cod, pref] of Object.entries(diferenciaisInvestidor)) {
+      if (codigosValidos.has(cod)) {
+        diferenciaisFiltrados[cod] = pref
+      }
+    }
+
     const res = await salvarLeadInvestidor({
       telefone,
       ticket,
@@ -159,6 +237,8 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
       cidades_interesse: todasCidades,
       prazo_decisao: prazoDecisao,
       rota: 'investidor',
+      tipos_imovel: tiposImovel,
+      diferenciais: diferenciaisFiltrados,
     })
 
     setLoading(false)
@@ -185,6 +265,8 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
     setTicket('300_600k')
     setObjetivo('renda_aluguel')
     setPrazoDecisao('30_dias')
+    setTiposImovel(['apartamento', 'casa'])
+    setDiferenciaisInvestidor({})
     setCidadesSelecionadas(['São Paulo - Capital'])
     setOutraCidade('')
     setAutorizoContato(false)
@@ -285,6 +367,135 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Tipos de imóvel de interesse: Múltipla escolha */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-semibold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+            <Building2 className="w-3.5 h-3.5 text-[#22C7E0]" />
+            <span>Tipos de imóvel * (múltipla escolha)</span>
+          </label>
+          <span className="text-[11px] text-slate-400 font-mono">
+            {tiposImovel.length} selecionado{tiposImovel.length !== 1 ? 's' : ''}
+          </span>
+        </div>
+
+        <div className="flex flex-wrap gap-2 p-2.5 rounded-xl bg-[#081226]/80 border border-slate-800">
+          {TIPOS_IMOVEL_INVESTIDOR.map((tipo) => {
+            const isSelected = tiposImovel.includes(tipo.value)
+            return (
+              <button
+                type="button"
+                key={tipo.value}
+                onClick={() => toggleTipoImovel(tipo.value)}
+                disabled={loading}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer border ${
+                  isSelected
+                    ? 'bg-[#1A3A75] border-[#22C7E0] text-white shadow-sm shadow-[#22C7E0]/20'
+                    : 'bg-[#070B14] border-slate-700 text-slate-300 hover:border-slate-500 hover:text-white'
+                }`}
+              >
+                <div
+                  className={`w-3.5 h-3.5 rounded flex items-center justify-center border transition-colors ${
+                    isSelected
+                      ? 'bg-[#22C7E0] border-[#22C7E0] text-[#070B14]'
+                      : 'border-slate-600 bg-transparent'
+                  }`}
+                >
+                  {isSelected && <Check className="w-2.5 h-2.5 stroke-[3]" />}
+                </div>
+                <span>{tipo.label}</span>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* ========================================================
+          DIFERENCIAIS DO IMÓVEL (Busca do Comprador / Tese)
+          Apresenta 3 opções por item: Obrigatório, Desejável, Indiferente (padrão).
+          A lista se ajusta dinamicamente conforme os tipos marcados.
+          ======================================================== */}
+      {diferenciaisAplicaveis.length > 0 && (
+        <div className="space-y-2.5 pt-1">
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-semibold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-[#22C7E0]" />
+              <span>Diferenciais desejados na tese</span>
+            </label>
+            <span className="text-[11px] text-slate-400">
+              Padrão: <strong className="text-slate-300">Indiferente</strong>
+            </span>
+          </div>
+
+          <div className="p-3 sm:p-3.5 rounded-xl bg-[#081226]/80 border border-slate-800 space-y-3 max-h-72 overflow-y-auto">
+            {gruposDiferenciais.map(([grupoNome, itensDoGrupo]) => (
+              <div key={grupoNome} className="space-y-1.5">
+                <span className="text-[10px] uppercase font-bold tracking-wider text-[#22C7E0]/90 block">
+                  {grupoNome}
+                </span>
+
+                <div className="space-y-1.5">
+                  {itensDoGrupo.map((item) => {
+                    const prefAtual: PreferenciaDiferencial =
+                      diferenciaisInvestidor[item.codigo] || 'indiferente'
+                    return (
+                      <div
+                        key={item.codigo}
+                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2 rounded-lg bg-[#070B14] border border-slate-800/80 hover:border-slate-700 transition-colors"
+                      >
+                        <span className="text-xs text-slate-200 select-none leading-snug">
+                          {item.nome}
+                        </span>
+
+                        {/* 3 Opções por item: Indiferente (padrão) | Desejável | Obrigatório */}
+                        <div className="flex items-center gap-1 bg-[#081226] p-0.5 rounded-lg border border-slate-800 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => setPreferenciaDiferencial(item.codigo, 'indiferente')}
+                            disabled={loading}
+                            className={`px-2 py-1 rounded text-[11px] font-medium transition-all cursor-pointer ${
+                              prefAtual === 'indiferente'
+                                ? 'bg-slate-700/80 text-white'
+                                : 'text-slate-400 hover:text-white'
+                            }`}
+                          >
+                            Indiferente
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setPreferenciaDiferencial(item.codigo, 'desejavel')}
+                            disabled={loading}
+                            className={`px-2 py-1 rounded text-[11px] font-medium transition-all cursor-pointer ${
+                              prefAtual === 'desejavel'
+                                ? 'bg-[#1A3A75] text-[#22C7E0] border border-[#22C7E0]/40'
+                                : 'text-slate-400 hover:text-white'
+                            }`}
+                          >
+                            Desejável
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setPreferenciaDiferencial(item.codigo, 'obrigatorio')}
+                            disabled={loading}
+                            className={`px-2 py-1 rounded text-[11px] font-medium transition-all cursor-pointer ${
+                              prefAtual === 'obrigatorio'
+                                ? 'bg-[#22C7E0] text-[#070B14] font-semibold'
+                                : 'text-slate-400 hover:text-white'
+                            }`}
+                          >
+                            Obrigatório
+                          </button>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Cidades de interesse: Múltipla escolha com badges/chips interativos */}
       <div className="space-y-2">

@@ -104,6 +104,9 @@ export const SimuladorRetornoInvestidor: React.FC = () => {
   const [cidadeLead, setCidadeLead] = useState<string>('')
   const [telefoneLead, setTelefoneLead] = useState<string>('')
   const [leadLoading, setLeadLoading] = useState<boolean>(false)
+  const [leadDiferenciais, setLeadDiferenciais] = useState<
+    Record<string, 'indiferente' | 'desejavel' | 'obrigatorio'>
+  >({})
   const [leadError, setLeadError] = useState<string>('')
   const [leadProtocolo, setLeadProtocolo] = useState<string>('')
   const [leadSucesso, setLeadSucesso] = useState<boolean>(false)
@@ -243,6 +246,7 @@ export const SimuladorRetornoInvestidor: React.FC = () => {
       rentabilidade_mensal: Number(rentabilidadeMensalPercent.toFixed(2)),
       retorno_total: Number(retornoTotalPercent.toFixed(2)),
       rota: 'investidor',
+      diferenciais: leadDiferenciais,
     })
 
     setLeadLoading(false)
@@ -266,6 +270,7 @@ export const SimuladorRetornoInvestidor: React.FC = () => {
     setLeadProtocolo('')
     setCidadeLead('')
     setTelefoneLead('')
+    setLeadDiferenciais({})
     setLeadError('')
     setShowLeadForm(false)
   }

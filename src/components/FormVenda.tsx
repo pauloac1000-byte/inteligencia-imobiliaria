@@ -1,10 +1,24 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { salvarLeadVendaEtapa1, atualizarLeadVendaEtapa2 } from '@/services/leads'
-import { ArrowRight, ArrowLeft, Loader2, AlertCircle, Building2, Check } from 'lucide-react'
+import {
+  ArrowRight,
+  ArrowLeft,
+  Loader2,
+  AlertCircle,
+  Building2,
+  Check,
+  Sparkles,
+} from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ConfirmationProtocolo } from './ConfirmationProtocolo'
 import { registrarEvento } from '@/services/eventos'
+import {
+  listarDiferenciais,
+  filtrarDiferenciaisPorTipoImovel,
+  DiferencialItem,
+  DIFERENCIAIS_PADRAO,
+} from '@/services/diferenciais'
 
 interface FormVendaProps {
   onSuccess?: () => void
@@ -45,10 +59,43 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
   const [leadId, setLeadId] = useState<string | null>(null)
   const [protocolo, setProtocolo] = useState<string>('')
 
-  // Etapa 1: apenas 3 campos obrigatórios
+  // Etapa 1: apenas 3 campos obrigatórios + diferenciais ("o imóvel tem")
   const [cidade, setCidade] = useState('')
   const [tipoImovel, setTipoImovel] = useState<string>('apartamento')
+  const [diferenciaisSelecionados, setDiferenciaisSelecionados] = useState<string[]>([])
+  const [todosDiferenciais, setTodosDiferenciais] = useState<DiferencialItem[]>(DIFERENCIAIS_PADRAO)
   const [telefone, setTelefone] = useState('')
+
+  // Carrega diferenciais do banco na inicialização
+  React.useEffect(() => {
+    listarDiferenciais().then((itens) => {
+      if (itens && itens.length > 0) {
+        setTodosDiferenciais(itens)
+      }
+    })
+  }, [])
+
+  // Diferenciais filtrados para o tipo de imóvel atual (oculto para Terreno)
+  const diferenciaisAplicaveis = React.useMemo(() => {
+    return filtrarDiferenciaisPorTipoImovel(todosDiferenciais, tipoImovel)
+  }, [todosDiferenciais, tipoImovel])
+
+  // Agrupa diferenciais por grupo para organização visual limpa
+  const gruposDiferenciais = React.useMemo(() => {
+    const mapa = new Map<string, DiferencialItem[]>()
+    for (const item of diferenciaisAplicaveis) {
+      const g = item.grupo || 'Outros'
+      if (!mapa.has(g)) mapa.set(g, [])
+      mapa.get(g)!.push(item)
+    }
+    return Array.from(mapa.entries())
+  }, [diferenciaisAplicaveis])
+
+  const toggleDiferencial = (codigo: string) => {
+    setDiferenciaisSelecionados((prev) =>
+      prev.includes(codigo) ? prev.filter((c) => c !== codigo) : [...prev, codigo],
+    )
+  }
 
   // Etapa 2: nome, email, valor estimado, motivo da venda, prazo desejado (+ mensagem opcional mantida)
   const [nome, setNome] = useState('')
@@ -94,12 +141,17 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
     setErrorMsg('')
     setLoading(true)
 
+    // Filtra para garantir que apenas diferenciais aplicáveis ao tipo atual sejam enviados
+    const codigosValidos = new Set(diferenciaisAplicaveis.map((d) => d.codigo))
+    const diferenciaisFinal = diferenciaisSelecionados.filter((c) => codigosValidos.has(c))
+
     // Grava imediatamente o lead no Supabase na etapa 1
     const res = await salvarLeadVendaEtapa1({
       cidade,
       tipo_imovel: tipoImovel,
       telefone,
       rota: 'proprietario',
+      diferenciais: diferenciaisFinal,
     })
 
     setLoading(false)
@@ -160,6 +212,9 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
 
     let protocoloFinal = protocolo
 
+    const codigosValidos = new Set(diferenciaisAplicaveis.map((d) => d.codigo))
+    const diferenciaisFinal = diferenciaisSelecionados.filter((c) => codigosValidos.has(c))
+
     if (leadId) {
       const res = await atualizarLeadVendaEtapa2({
         id: leadId,
@@ -169,6 +224,7 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
         motivo_venda: motivoVenda,
         prazo_desejado: prazoDesejado,
         mensagem: mensagem || undefined,
+        diferenciais: diferenciaisFinal,
       })
 
       setLoading(false)
@@ -194,6 +250,7 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
         prazo_desejado: prazoDesejado,
         mensagem: mensagem || undefined,
         rota: 'proprietario',
+        diferenciais: diferenciaisFinal,
       })
 
       setLoading(false)
@@ -222,6 +279,7 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
     setProtocolo('')
     setCidade('')
     setTipoImovel('apartamento')
+    setDiferenciaisSelecionados([])
     setTelefone('')
     setNome('')
     setEmail('')
@@ -361,6 +419,69 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
               />
             </div>
           </div>
+
+          {/* ========================================================
+              DIFERENCIAIS DO IMÓVEL (O imóvel tem)
+              Mostra caixas de marcar para os diferenciais aplicáveis ao tipo selecionado.
+              Quando for Terreno, NÃO mostra a lista.
+              ======================================================== */}
+          {diferenciaisAplicaveis.length > 0 && (
+            <div className="space-y-2.5 pt-1">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-semibold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-[#22C7E0]" />
+                  <span>O imóvel tem</span>
+                </label>
+                <span className="text-[11px] text-slate-400 font-mono">
+                  {
+                    diferenciaisSelecionados.filter((c) =>
+                      diferenciaisAplicaveis.some((d) => d.codigo === c),
+                    ).length
+                  }{' '}
+                  marcado{diferenciaisSelecionados.length !== 1 ? 's' : ''}
+                </span>
+              </div>
+
+              <div className="p-3 sm:p-3.5 rounded-xl bg-[#081226]/80 border border-slate-800 space-y-3 max-h-60 overflow-y-auto">
+                {gruposDiferenciais.map(([grupoNome, itensDoGrupo]) => (
+                  <div key={grupoNome} className="space-y-1.5">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-[#22C7E0]/90 block">
+                      {grupoNome}
+                    </span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {itensDoGrupo.map((item) => {
+                        const isChecked = diferenciaisSelecionados.includes(item.codigo)
+                        return (
+                          <button
+                            type="button"
+                            key={item.codigo}
+                            onClick={() => toggleDiferencial(item.codigo)}
+                            disabled={loading}
+                            className={`flex items-center gap-2 p-2 rounded-lg text-xs text-left transition-all cursor-pointer border ${
+                              isChecked
+                                ? 'bg-[#1A3A75]/50 border-[#22C7E0] text-white shadow-sm'
+                                : 'bg-[#070B14] border-slate-800 text-slate-300 hover:border-slate-700 hover:text-white'
+                            }`}
+                          >
+                            <div
+                              className={`w-4 h-4 rounded flex items-center justify-center border shrink-0 transition-colors ${
+                                isChecked
+                                  ? 'bg-[#22C7E0] border-[#22C7E0] text-[#070B14]'
+                                  : 'border-slate-600 bg-transparent'
+                              }`}
+                            >
+                              {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
+                            </div>
+                            <span className="leading-snug select-none">{item.nome}</span>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="p-3 rounded-lg bg-[#081226]/60 border border-slate-800 text-slate-300 text-xs leading-relaxed flex items-center gap-2.5">
             <div className="w-2 h-2 rounded-full bg-[#22C7E0] shrink-0 animate-pulse" />

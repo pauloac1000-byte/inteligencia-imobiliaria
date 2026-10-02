@@ -5,6 +5,7 @@ export interface LeadVendaEtapa1Input {
   tipo_imovel: 'casa' | 'apartamento' | 'terreno' | 'comercial' | string
   telefone: string
   rota?: 'proprietario' | string
+  diferenciais?: string[] // Lista de códigos de diferenciais selecionados: ['PISCINA', 'PORTARIA', ...]
 }
 
 export interface LeadVendaEtapa2Input {
@@ -21,6 +22,7 @@ export interface LeadVendaEtapa2Input {
     | string
   prazo_desejado: 'até 60 dias' | 'até 6 meses' | 'sem pressa' | string
   mensagem?: string
+  diferenciais?: string[]
 }
 
 export interface LeadVendaInput {
@@ -35,6 +37,7 @@ export interface LeadVendaInput {
   prazo_desejado?: string
   mensagem?: string
   rota?: 'proprietario' | string
+  diferenciais?: string[]
 }
 
 export type TicketInvestidor = 'ate_300k' | '300_600k' | 'acima_600k' | string
@@ -52,6 +55,10 @@ export interface LeadInvestidorInput {
   perfil?: string
   faixa_valor?: string
   rota?: 'investidor' | string
+  tipos_imovel?: string[]
+  diferenciais?:
+    | Record<string, 'indiferente' | 'desejavel' | 'obrigatorio'>
+    | Record<string, string>
 }
 
 export interface LeadCalculadoraInput {
@@ -80,6 +87,9 @@ export interface LeadSimuladorInvestidorInput {
   rentabilidade_mensal?: number
   retorno_total?: number
   rota?: 'investidor' | string
+  diferenciais?:
+    | Record<string, 'indiferente' | 'desejavel' | 'obrigatorio'>
+    | Record<string, string>
 }
 
 // Constantes centralizadas para atendimento KORBIX
@@ -116,6 +126,7 @@ export async function salvarLeadVendaEtapa1(input: LeadVendaEtapa1Input): Promis
         p_tipo_imovel: input.tipo_imovel,
         p_telefone: input.telefone.trim(),
         p_rota: input.rota || 'proprietario',
+        p_diferenciais: input.diferenciais || [],
       },
     )
 
@@ -133,6 +144,7 @@ export async function salvarLeadVendaEtapa1(input: LeadVendaEtapa1Input): Promis
         tipo_imovel: input.tipo_imovel,
         telefone: input.telefone.trim(),
         rota: input.rota || 'proprietario',
+        diferenciais: input.diferenciais || [],
       },
     ])
 
@@ -172,6 +184,7 @@ export async function atualizarLeadVendaEtapa2(input: LeadVendaEtapa2Input): Pro
         p_prazo_desejado: input.prazo_desejado,
         p_valor_estimado: input.valor_estimado ? input.valor_estimado.trim() : null,
         p_mensagem: input.mensagem ? input.mensagem.trim() : null,
+        p_diferenciais: input.diferenciais ?? null,
       },
     )
 
@@ -183,15 +196,20 @@ export async function atualizarLeadVendaEtapa2(input: LeadVendaEtapa2Input): Pro
     // Fallback defensivo com update direto sem .select() (RLS não permite select para anônimos)
     console.warn('RPC fn_submit_lead_venda_etapa2 falhou ou indisponível:', rpcError)
 
+    const updatePayload: Record<string, any> = {
+      nome: input.nome.trim(),
+      email: input.email.trim().toLowerCase(),
+      valor_estimado: input.valor_estimado ? input.valor_estimado.trim() : null,
+      motivo_venda: input.motivo_venda,
+      prazo_desejado: input.prazo_desejado,
+      mensagem: input.mensagem ? input.mensagem.trim() : null,
+    }
+    if (input.diferenciais !== undefined) {
+      updatePayload.diferenciais = input.diferenciais
+    }
+
     const { error: updateError } = await (supabase.from as any)('leads_venda')
-      .update({
-        nome: input.nome.trim(),
-        email: input.email.trim().toLowerCase(),
-        valor_estimado: input.valor_estimado ? input.valor_estimado.trim() : null,
-        motivo_venda: input.motivo_venda,
-        prazo_desejado: input.prazo_desejado,
-        mensagem: input.mensagem ? input.mensagem.trim() : null,
-      })
+      .update(updatePayload)
       .eq('id', input.id)
 
     if (updateError) {
@@ -232,6 +250,7 @@ export async function salvarLeadVenda(input: LeadVendaInput): Promise<LeadResult
       p_motivo_venda: input.motivo_venda || null,
       p_prazo_desejado: input.prazo_desejado || null,
       p_mensagem: input.mensagem ? input.mensagem.trim() : null,
+      p_diferenciais: input.diferenciais || [],
     })
 
     if (!rpcError && rpcData) {
@@ -245,6 +264,7 @@ export async function salvarLeadVenda(input: LeadVendaInput): Promise<LeadResult
       tipo_imovel: input.tipo_imovel,
       cidade: input.cidade.trim(),
       rota: input.rota || 'proprietario',
+      diferenciais: input.diferenciais || [],
     }
 
     if (input.nome) payload.nome = input.nome.trim()
@@ -381,6 +401,7 @@ export async function salvarLeadSimuladorInvestidor(
         p_sim_rentabilidade_mensal: input.rentabilidade_mensal ?? null,
         p_sim_retorno_total: input.retorno_total ?? null,
         p_rota: input.rota || 'investidor',
+        p_diferenciais: input.diferenciais || {},
       },
     )
 
@@ -406,6 +427,7 @@ export async function salvarLeadSimuladorInvestidor(
         sim_capital_investido: input.capital_investido ? input.capital_investido.trim() : null,
         sim_rentabilidade_mensal: input.rentabilidade_mensal ?? null,
         sim_retorno_total: input.retorno_total ?? null,
+        diferenciais: input.diferenciais || {},
       },
     ])
 
@@ -448,11 +470,13 @@ export async function salvarLeadInvestidor(input: LeadInvestidorInput): Promise<
         p_objetivo: input.objetivo,
         p_cidades_interesse: cidadesFormatadas,
         p_prazo_decisao: input.prazo_decisao,
-        p_rota: 'investidor',
+        p_rota: input.rota || 'investidor',
         p_nome: input.nome ? input.nome.trim() : null,
         p_email: input.email ? input.email.trim().toLowerCase() : null,
         p_perfil: input.perfil ? input.perfil.trim() : null,
         p_faixa_valor: input.faixa_valor ? input.faixa_valor.trim() : null,
+        p_diferenciais: input.diferenciais || {},
+        p_tipos_imovel: input.tipos_imovel || [],
       },
     )
 
@@ -471,7 +495,9 @@ export async function salvarLeadInvestidor(input: LeadInvestidorInput): Promise<
       objetivo: input.objetivo,
       cidades_interesse: cidadesFormatadas,
       prazo_decisao: input.prazo_decisao,
-      rota: 'investidor',
+      rota: input.rota || 'investidor',
+      diferenciais: input.diferenciais || {},
+      tipos_imovel: input.tipos_imovel || [],
     }
 
     if (input.nome) payload.nome = input.nome.trim()
