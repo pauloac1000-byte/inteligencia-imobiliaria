@@ -35,7 +35,7 @@ export const ProofStrip: React.FC = () => {
             <div className="space-y-1 min-w-0">
               <div className="flex items-center gap-2">
                 <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#22C7E0] font-mono">
-                  Auditada
+                  QUALIFICADA
                 </span>
                 <span className="h-1.5 w-6 rounded-full bg-[#22C7E0]/50" />
               </div>

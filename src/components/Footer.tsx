@@ -209,9 +209,9 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
             </div>
 
             <p className="text-xs text-slate-400 max-w-sm leading-relaxed">
-              Nossa mecânica de dados cruza perfil do imóvel com objetivo de compra de milhares de
-              investidores. A compatibilidade precisa guia a ponte entre você e a oportunidade
-              certa.
+              Nossa mecânica de dados cruza perfil do imóvel com objetivo de compra de compradores e
+              investidores com busca registrada. A compatibilidade precisa guia a ponte entre você e
+              a oportunidade certa.
             </p>
 
             <div className="pt-1 flex items-center gap-2 text-xs text-slate-400">
@@ -384,7 +384,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
           </div>
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#22C7E0] shrink-0 shadow-[0_0_6px_#22C7E0]" />
-            <span>Compatibilidade calculada com 48 variáveis analíticas</span>
+            <span>calculada por critérios objetivos e auditáveis</span>
           </div>
         </div>
       </div>

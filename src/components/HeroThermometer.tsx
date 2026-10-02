@@ -119,7 +119,7 @@ export const HeroThermometer: React.FC = () => {
       <div className="mt-7 sm:mt-8 text-center max-w-[290px] px-2 py-1 rounded-lg bg-[#070B14]/90 backdrop-blur-sm border border-slate-800">
         <p className="text-xs sm:text-sm text-slate-300 flex items-center justify-center gap-1.5 font-medium leading-relaxed">
           <Sparkles className="w-3.5 h-3.5 text-[#22C7E0] shrink-0 animate-pulse" />
-          <span>calculada em tempo real com base em 48 variáveis de investimento</span>
+          <span>calculada por critérios objetivos e auditáveis</span>
         </p>
       </div>
     </div>

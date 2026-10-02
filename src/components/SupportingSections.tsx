@@ -94,7 +94,7 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
               </h3>
               <p className="text-sm text-slate-300 leading-relaxed">
                 Nada de curiosos. Cada investidor conectado possui tese de investimento alinhada,
-                capacidade financeira auditada e real interesse de compra documentado.
+                capacidade financeira informada e real interesse de compra documentado.
               </p>
             </div>
           </div>
@@ -172,8 +172,8 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
                 Segurança jurídica completa
               </h3>
               <p className="text-sm text-slate-300 leading-relaxed">
-                Imóveis com documentação pré-auditada (certidões, ônus e histórico registral) para
-                garantir fechamento ágil e blindagem do seu patrimônio.
+                Imóveis com documentação conferida antes da apresentação (certidões, ônus e
+                histórico registral) para garantir fechamento ágil e blindagem do seu patrimônio.
               </p>
             </div>
           </div>

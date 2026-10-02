@@ -37,11 +37,11 @@ const CASE_STUDIES: CaseStudy[] = [
     criteria: [
       'Faixa de precificação racional alinhada ao m² da região',
       'Liquidez projetada compatível com a tese do comprador',
-      'Perfil tipológico (3 dormitórios) e documentação pré-auditada',
+      'Perfil tipológico (3 dormitórios) e documentação conferida antes da apresentação',
     ],
     metrics: [
       { label: 'Tipologia', value: '3 dorms (1 suíte)' },
-      { label: 'Status documental', value: '100% auditado' },
+      { label: 'Status documental', value: 'em conferência' },
       { label: 'Índice de liquidez', value: 'Alta demanda local' },
     ],
   },
