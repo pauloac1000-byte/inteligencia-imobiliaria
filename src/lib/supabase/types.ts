@@ -454,6 +454,17 @@ export type Database = {
           status: string
         }[]
       }
+      fn_gestor_funil: {
+        Args: { p_dias?: number }
+        Returns: {
+          etapa_id: string
+          etapa_nome: string
+          etapa_ordem: number
+          rota_filtro: string
+          sessoes_unicas: number
+          total_eventos: number
+        }[]
+      }
       fn_gestor_listar_leads: {
         Args: never
         Returns: {

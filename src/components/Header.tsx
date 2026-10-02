@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Menu, X, ArrowRight } from 'lucide-react'
+import { Menu, X, ArrowRight, User } from 'lucide-react'
 import korbixLogo from '@/assets/5.2-logo-sem-fundo-e9820.png'
 
 interface HeaderProps {
@@ -82,6 +82,12 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
     }
   }
 
+  const handleAreaClienteClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    setMobileMenuOpen(false)
+    navigate('/login')
+  }
+
   const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
     setMobileMenuOpen(false)
@@ -144,6 +150,18 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
               </a>
             )
           })}
+
+          {/* Área do Cliente (posicionado logo após Diferenciais) */}
+          <a
+            href="/login"
+            onClick={handleAreaClienteClick}
+            className="relative py-2 text-sm font-medium transition-colors duration-200 whitespace-nowrap group text-slate-300 hover:text-white inline-flex items-center gap-1.5"
+          >
+            <User className="w-4 h-4 stroke-[1.75] text-slate-300 group-hover:text-[#22C7E0] transition-colors" />
+            <span>Área do Cliente</span>
+            {/* Animated underline */}
+            <span className="absolute bottom-0 left-0 h-[2px] bg-[#22C7E0] transition-all duration-200 w-0 group-hover:w-full" />
+          </a>
         </nav>
 
         {/* CTA Right Button (Desktop) & Mobile Hamburger */}
@@ -193,6 +211,16 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
                     {item.label}
                   </a>
                 ))}
+
+                {/* Área do Cliente no menu mobile (logo após Diferenciais) */}
+                <a
+                  href="/login"
+                  onClick={handleAreaClienteClick}
+                  className="text-base font-medium transition-colors py-3 px-2 rounded-lg border-b border-slate-900 min-h-[44px] flex items-center gap-2 text-slate-200 hover:text-[#22C7E0] active:bg-white/5"
+                >
+                  <User className="w-4 h-4 stroke-[1.75] text-slate-300" />
+                  <span>Área do Cliente</span>
+                </a>
               </nav>
             </div>
 
