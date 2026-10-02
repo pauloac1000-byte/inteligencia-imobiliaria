@@ -35,6 +35,21 @@ export interface GestorLeadItem {
 
 export type StatusMatch = 'pendente' | 'aprovado' | 'descartado'
 
+export interface GestorFunilEtapaItem {
+  rota_filtro: 'geral' | 'proprietario' | 'investidor' | string
+  etapa_id:
+    | 'visitantes'
+    | 'cliques_cta'
+    | 'formularios_iniciados'
+    | 'etapa1_concluida'
+    | 'cadastros_completos'
+    | string
+  etapa_ordem: number
+  etapa_nome: string
+  sessoes_unicas: number
+  total_eventos: number
+}
+
 export interface GestorMatchItem {
   compatibilidade_id: string
   percentual: number
@@ -179,6 +194,36 @@ export async function gestorDecidirMatch(
 /**
  * Exporta a lista de leads em formato CSV no navegador (download imediato)
  */
+/**
+ * Busca as métricas agregadas do funil de conversão por período e rota
+ */
+export async function gestorObterMetricasFunil(
+  dias: 7 | 30 | 90 = 30,
+): Promise<GestorFunilEtapaItem[]> {
+  try {
+    const { data, error } = await (supabase.rpc as any)('fn_gestor_funil', {
+      p_dias: dias,
+    })
+
+    if (error) {
+      console.error('Erro ao buscar métricas do funil via RPC:', error.message)
+      throw new Error(error.message)
+    }
+
+    return (data || []).map((item: any) => ({
+      rota_filtro: item.rota_filtro,
+      etapa_id: item.etapa_id,
+      etapa_ordem: Number(item.etapa_ordem),
+      etapa_nome: item.etapa_nome,
+      sessoes_unicas: Number(item.sessoes_unicas || 0),
+      total_eventos: Number(item.total_eventos || 0),
+    }))
+  } catch (err: any) {
+    console.error('Falha ao carregar métricas do funil:', err)
+    throw err
+  }
+}
+
 export function exportarLeadsCSV(leads: GestorLeadItem[]): void {
   if (!leads || leads.length === 0) {
     throw new Error('Nenhum lead disponível para exportação.')

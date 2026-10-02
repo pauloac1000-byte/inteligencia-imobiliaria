@@ -13,12 +13,14 @@ import {
 import { StatusImovelLead } from '@/services/profiles'
 import { GestorLeadsTab } from '@/components/GestorLeadsTab'
 import { GestorMatchesTab } from '@/components/GestorMatchesTab'
+import { GestorFunilTab } from '@/components/GestorFunilTab'
 import {
   Shield,
   Users,
   GitCompare,
   TrendingUp,
   Building,
+  Filter,
   RefreshCw,
   LogOut,
   ArrowLeft,
@@ -35,7 +37,7 @@ export default function PainelGestor() {
   const navigate = useNavigate()
   const { toast } = useToast()
 
-  const [abaAtiva, setAbaAtiva] = useState<'leads' | 'matches'>('leads')
+  const [abaAtiva, setAbaAtiva] = useState<'leads' | 'matches' | 'funil'>('leads')
   const [leads, setLeads] = useState<GestorLeadItem[]>([])
   const [matches, setMatches] = useState<GestorMatchItem[]>([])
   const [loadingDados, setLoadingDados] = useState(true)
@@ -323,12 +325,12 @@ export default function PainelGestor() {
           </div>
         </div>
 
-        {/* Navegação por Abas (Leads vs Matches) */}
-        <div className="flex items-center gap-2 border-b border-slate-800">
+        {/* Navegação por Abas (Leads vs Matches vs Funil) */}
+        <div className="flex items-center gap-2 border-b border-slate-800 overflow-x-auto">
           <button
             type="button"
             onClick={() => setAbaAtiva('leads')}
-            className={`flex items-center gap-2 px-5 py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-5 py-3 text-sm font-bold border-b-2 transition-all cursor-pointer shrink-0 ${
               abaAtiva === 'leads'
                 ? 'border-[#22C7E0] text-[#22C7E0] bg-[#22C7E0]/5'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
@@ -341,7 +343,7 @@ export default function PainelGestor() {
           <button
             type="button"
             onClick={() => setAbaAtiva('matches')}
-            className={`flex items-center gap-2 px-5 py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-5 py-3 text-sm font-bold border-b-2 transition-all cursor-pointer shrink-0 ${
               abaAtiva === 'matches'
                 ? 'border-[#22C7E0] text-[#22C7E0] bg-[#22C7E0]/5'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
@@ -349,6 +351,19 @@ export default function PainelGestor() {
           >
             <GitCompare className="w-4 h-4" />
             <span>Matches Imóvel × Investidor ({matches.length})</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setAbaAtiva('funil')}
+            className={`flex items-center gap-2 px-5 py-3 text-sm font-bold border-b-2 transition-all cursor-pointer shrink-0 ${
+              abaAtiva === 'funil'
+                ? 'border-[#22C7E0] text-[#22C7E0] bg-[#22C7E0]/5'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Filter className="w-4 h-4 text-[#22C7E0]" />
+            <span>Métricas do Funil</span>
           </button>
         </div>
 
@@ -370,6 +385,8 @@ export default function PainelGestor() {
             onRecarregar={carregarDados}
           />
         )}
+
+        {abaAtiva === 'funil' && <GestorFunilTab onRecarregar={carregarDados} />}
       </main>
 
       {/* Footer do Painel */}

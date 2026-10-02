@@ -111,6 +111,33 @@ export type Database = {
           },
         ]
       }
+      eventos_funil: {
+        Row: {
+          criado_em: string
+          detalhe: Json | null
+          id: string
+          rota: string
+          sessao_id: string
+          tipo_evento: string
+        }
+        Insert: {
+          criado_em?: string
+          detalhe?: Json | null
+          id?: string
+          rota: string
+          sessao_id: string
+          tipo_evento: string
+        }
+        Update: {
+          criado_em?: string
+          detalhe?: Json | null
+          id?: string
+          rota?: string
+          sessao_id?: string
+          tipo_evento?: string
+        }
+        Relationships: []
+      }
       interesses_investidor: {
         Row: {
           atualizado_em: string
