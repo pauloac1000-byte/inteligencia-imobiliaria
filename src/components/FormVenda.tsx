@@ -4,6 +4,7 @@ import { salvarLeadVendaEtapa1, atualizarLeadVendaEtapa2 } from '@/services/lead
 import { ArrowRight, ArrowLeft, Loader2, AlertCircle, Building2, Check } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ConfirmationProtocolo } from './ConfirmationProtocolo'
+import { registrarEvento } from '@/services/eventos'
 
 interface FormVendaProps {
   onSuccess?: () => void
@@ -115,6 +116,11 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
       setProtocolo(res.protocolo)
     }
 
+    // Dispara evento de etapa 1 concluída com sucesso
+    registrarEvento('etapa1_concluida', window.location.pathname || '/', {
+      origem: 'modal_proprietario',
+    })
+
     // Avança para etapa 2
     setEtapa(2)
   }
@@ -203,6 +209,11 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
 
     setProtocolo(protocoloFinal || 'KX-0001')
     setSucesso(true)
+
+    // Dispara evento de cadastro completo do proprietário
+    registrarEvento('cadastro_completo', window.location.pathname || '/', {
+      origem: 'modal_proprietario',
+    })
   }
 
   const handleReset = () => {

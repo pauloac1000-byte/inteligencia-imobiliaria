@@ -560,44 +560,25 @@ export type Database = {
           protocolo: string
         }[]
       }
-      fn_submit_lead_investidor:
-        | {
-            Args: {
-              p_cidades_interesse: string
-              p_email?: string
-              p_faixa_valor?: string
-              p_nome?: string
-              p_objetivo: string
-              p_perfil?: string
-              p_prazo_decisao: string
-              p_rota?: string
-              p_telefone: string
-              p_ticket: string
-            }
-            Returns: {
-              id: string
-              protocolo: string
-            }[]
-          }
-        | {
-            Args: {
-              p_cidades_interesse: string
-              p_email?: string
-              p_faixa_valor?: string
-              p_nome?: string
-              p_objetivo: string
-              p_perfil?: string
-              p_prazo_decisao: string
-              p_rota?: string
-              p_telefone: string
-              p_ticket: string
-              p_user_id?: string
-            }
-            Returns: {
-              id: string
-              protocolo: string
-            }[]
-          }
+      fn_submit_lead_investidor: {
+        Args: {
+          p_cidades_interesse: string
+          p_email?: string
+          p_faixa_valor?: string
+          p_nome?: string
+          p_objetivo: string
+          p_perfil?: string
+          p_prazo_decisao: string
+          p_rota?: string
+          p_telefone: string
+          p_ticket: string
+          p_user_id?: string
+        }
+        Returns: {
+          id: string
+          protocolo: string
+        }[]
+      }
       fn_submit_lead_simulador_investidor: {
         Args: {
           p_cidade: string

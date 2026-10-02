@@ -1,5 +1,6 @@
 import React from 'react'
 import { ArrowRight, Building, TrendingUp, ShieldCheck } from 'lucide-react'
+import { registrarEvento } from '@/services/eventos'
 
 interface FinalCtaSectionProps {
   onOpenModal: (intent: 'vender' | 'investir') => void
@@ -8,11 +9,13 @@ interface FinalCtaSectionProps {
 export const FinalCtaSection: React.FC<FinalCtaSectionProps> = ({ onOpenModal }) => {
   const handleVenderClick = (e: React.MouseEvent) => {
     e.preventDefault()
+    registrarEvento('clique_quero_vender', '/', { origem: 'final_cta_vender' })
     onOpenModal('vender')
   }
 
   const handleInvestirClick = (e: React.MouseEvent) => {
     e.preventDefault()
+    registrarEvento('clique_quero_investir', '/', { origem: 'final_cta_investir' })
     onOpenModal('investir')
   }
 

@@ -9,6 +9,7 @@ import {
 import { ArrowRight, Loader2, AlertCircle, Compass, Check } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ConfirmationProtocolo } from './ConfirmationProtocolo'
+import { registrarEvento } from '@/services/eventos'
 
 interface FormInvestidorProps {
   onSuccess?: () => void
@@ -171,6 +172,11 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
 
     setProtocolo(res.protocolo || 'KX-0001')
     setSucesso(true)
+
+    // Dispara evento de cadastro completo do investidor ("Registrar minha tese")
+    registrarEvento('cadastro_completo', window.location.pathname || '/', {
+      origem: 'modal_investidor',
+    })
   }
 
   const handleReset = () => {

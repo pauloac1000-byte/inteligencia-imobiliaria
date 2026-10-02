@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { CheckCircle2, Clock, MessageSquare, Copy, Check, ArrowRight } from 'lucide-react'
 import { buildWhatsAppLink } from '@/services/leads'
+import { registrarEvento } from '@/services/eventos'
 
 export interface ConfirmationProtocoloProps {
   protocolo: string
@@ -196,6 +197,12 @@ export const ConfirmationProtocolo: React.FC<ConfirmationProtocoloProps> = ({
           href={whatsAppLink}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => {
+            registrarEvento('clique_whatsapp', window.location.pathname || '/', {
+              origem: 'confirmacao_protocolo',
+              rota_lead: rota,
+            })
+          }}
           className="w-full inline-flex items-center justify-center gap-2.5 py-3.5 px-4 min-h-[48px] rounded-xl bg-[#25D366] hover:bg-[#20bd5a] active:bg-[#1caa51] text-[#070B14] font-bold text-sm shadow-lg shadow-[#25D366]/20 transition-all transform active:scale-[0.99] cursor-pointer"
         >
           <MessageSquare className="w-4 h-4 fill-current shrink-0" />

@@ -11,6 +11,7 @@ import {
   Layers,
   ArrowRight,
 } from 'lucide-react'
+import { registrarEvento } from '@/services/eventos'
 
 interface SupportingSectionsProps {
   onOpenModal: (intent: 'vender' | 'investir') => void
@@ -41,7 +42,10 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
 
             <button
               type="button"
-              onClick={() => onOpenModal('vender')}
+              onClick={() => {
+                registrarEvento('clique_quero_vender', '/', { origem: 'secao_para_vender' })
+                onOpenModal('vender')
+              }}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[48px] rounded-xl bg-[#1A3A75] hover:bg-[#142E5E] active:bg-[#0F2347] text-white text-sm font-semibold shadow-inner border border-white/10 hover:border-white/20 transition-all shrink-0 cursor-pointer"
             >
               <span>Cadastrar imóvel</span>
@@ -119,7 +123,10 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
 
             <button
               type="button"
-              onClick={() => onOpenModal('investir')}
+              onClick={() => {
+                registrarEvento('clique_quero_investir', '/', { origem: 'secao_para_investir' })
+                onOpenModal('investir')
+              }}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[48px] rounded-xl bg-[#1A3A75] hover:bg-[#142E5E] active:bg-[#0F2347] text-white text-sm font-semibold shadow-inner border border-white/10 hover:border-white/20 transition-all shrink-0 cursor-pointer"
             >
               <span>Definir tese de investimento</span>

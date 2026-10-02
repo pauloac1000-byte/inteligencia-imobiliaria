@@ -1,5 +1,6 @@
 import React from 'react'
 import { Building, TrendingUp, ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { registrarEvento } from '@/services/eventos'
 
 interface TwoPathsSectionProps {
   onOpenModal: (intent: 'vender' | 'investir') => void
@@ -9,12 +10,14 @@ export const TwoPathsSection: React.FC<TwoPathsSectionProps> = ({ onOpenModal })
   const handleVenderClick = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
+    registrarEvento('clique_quero_vender', '/', { origem: 'dois_caminhos_vender' })
     onOpenModal('vender')
   }
 
   const handleInvestirClick = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
+    registrarEvento('clique_quero_investir', '/', { origem: 'dois_caminhos_investir' })
     onOpenModal('investir')
   }
 

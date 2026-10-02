@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { LeadVinculado, StatusImovelLead } from '@/services/profiles'
 import { KORBIX_WHATSAPP_NUMBER } from '@/services/leads'
+import { registrarEvento } from '@/services/eventos'
 import { LeadArquivo, listarArquivosDoLead, RotuloDocumento } from '@/services/arquivos'
 import { UploadFotos } from './UploadFotos'
 import { UploadDocumentos } from './UploadDocumentos'
@@ -554,14 +555,19 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
             </p>
           </div>
           <a
-            href={montarLinkWhatsApp('Dúvidas gerais sobre a documentação do imóvel')}
+            href={montarLinkWhatsApp('Dúvidas e pendências do imóvel')}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-xs text-[#22C7E0] hover:text-[#5eead4] hover:underline cursor-pointer"
+            onClick={() => {
+              registrarEvento('clique_whatsapp', window.location.pathname || '/minha-area', {
+                origem: 'detalhes_imovel',
+              })
+            }}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[#25D366] hover:bg-[#20bd5a] text-[#070B14] font-semibold text-xs transition-all shadow-md"
           >
             <MessageCircle className="w-3.5 h-3.5" />
-            <span>Falar com especialista KORBIX</span>
-          </a>
+            <span>Falar com o corretor da KORBIX</span>
+          </a>{' '}
         </div>
 
         {/* Grupos de pendências */}

@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { KORBIX_WHATSAPP_NUMBER, KORBIX_WHATSAPP_DISPLAY } from '@/services/leads'
 import korbixLogo from '@/assets/5-contorno-e238f.png'
+import { registrarEvento } from '@/services/eventos'
 
 interface FooterProps {
   onOpenModal?: (intent?: 'vender' | 'investir') => void
@@ -308,6 +309,11 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
                   href={`https://wa.me/${KORBIX_WHATSAPP_NUMBER}?text=${encodeURIComponent('Olá! Gostaria de falar com a equipe da KORBIX.')}`}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => {
+                    registrarEvento('clique_whatsapp', location.pathname || '/', {
+                      origem: 'rodape_credibilidade_texto',
+                    })
+                  }}
                   className="font-mono text-white font-medium hover:text-[#22C7E0] transition-colors"
                 >
                   {KORBIX_WHATSAPP_DISPLAY}
@@ -328,6 +334,11 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
               href={`https://wa.me/${KORBIX_WHATSAPP_NUMBER}?text=${encodeURIComponent('Olá! Gostaria de falar com um especialista da KORBIX sobre oportunidades e imóveis.')}`}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => {
+                registrarEvento('clique_whatsapp', location.pathname || '/', {
+                  origem: 'rodape_cta_falar_whatsapp',
+                })
+              }}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 min-h-[44px] rounded-lg bg-[#1A3A75] hover:bg-[#142E5E] active:bg-[#0F2347] text-white text-xs sm:text-sm font-semibold shadow-inner border border-white/10 transition-all cursor-pointer"
             >
               <span>Falar no WhatsApp</span>

@@ -1,20 +1,36 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ArrowRight, Building, TrendingUp } from 'lucide-react'
 import { HeroThermometer } from './HeroThermometer'
 import heroBridgeBg from '@/assets/geminigeneratedimagebrcru6brcru6brcr-58806.jpeg'
+import { registrarEvento } from '@/services/eventos'
 
 interface HeroSectionProps {
   onOpenModal: (intent: 'vender' | 'investir') => void
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenModal }) => {
+  // Disparar exibição do hero uma vez por sessão
+  useEffect(() => {
+    try {
+      const heroExibido = sessionStorage.getItem('korbix_hero_exibido')
+      if (!heroExibido) {
+        sessionStorage.setItem('korbix_hero_exibido', 'true')
+        registrarEvento('hero_exibicao', '/', { origem: 'hero_landing' })
+      }
+    } catch {
+      registrarEvento('hero_exibicao', '/', { origem: 'hero_landing' })
+    }
+  }, [])
+
   const handleVenderClick = (e: React.MouseEvent) => {
     e.preventDefault()
+    registrarEvento('clique_quero_vender', '/', { origem: 'hero_cta_primario' })
     onOpenModal('vender')
   }
 
   const handleInvestirClick = (e: React.MouseEvent) => {
     e.preventDefault()
+    registrarEvento('clique_quero_investir', '/', { origem: 'hero_cta_secundario' })
     onOpenModal('investir')
   }
 

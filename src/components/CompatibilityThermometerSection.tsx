@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { registrarEvento } from '@/services/eventos'
 import {
   ShieldCheck,
   CheckCircle2,
@@ -414,7 +415,12 @@ export const CompatibilityThermometerSection: React.FC<CompatibilityThermometerS
                 <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
                   <button
                     type="button"
-                    onClick={() => onOpenModal('vender')}
+                    onClick={() => {
+                      registrarEvento('clique_quero_vender', '/', {
+                        origem: 'termometro_medir_compatibilidade',
+                      })
+                      onOpenModal('vender')
+                    }}
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 min-h-[48px] rounded-xl bg-[#1A3A75] hover:bg-[#142E5E] active:bg-[#0F2347] text-white text-xs sm:text-sm font-semibold shadow-inner border border-white/10 hover:border-white/20 transition-all cursor-pointer"
                   >
                     <span>Medir compatibilidade do meu imóvel</span>
@@ -422,7 +428,12 @@ export const CompatibilityThermometerSection: React.FC<CompatibilityThermometerS
                   </button>
                   <button
                     type="button"
-                    onClick={() => onOpenModal('investir')}
+                    onClick={() => {
+                      registrarEvento('clique_quero_investir', '/', {
+                        origem: 'termometro_configurar_tese',
+                      })
+                      onOpenModal('investir')
+                    }}
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 min-h-[48px] rounded-xl border border-[#1A3A75] bg-[#070B14] hover:bg-[#1A3A75]/35 active:bg-[#1A3A75]/50 text-white hover:text-white text-xs sm:text-sm font-semibold transition-all cursor-pointer hover:border-[#22C7E0]/60 shadow-lg shadow-black/40"
                   >
                     <TrendingUp className="w-4 h-4 text-[#22C7E0] shrink-0" />

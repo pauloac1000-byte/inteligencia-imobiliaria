@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import { X } from 'lucide-react'
 import { KORBIX_WHATSAPP_NUMBER } from '@/services/leads'
+import { registrarEvento } from '@/services/eventos'
 
 type WhatsAppSectionIntent = 'proprietario' | 'investidor' | 'geral'
 
@@ -181,6 +182,12 @@ export const FloatingWhatsApp: React.FC = () => {
         rel="noopener noreferrer"
         aria-label={`Falar no WhatsApp KORBIX (${currentConfig.badge}): ${currentConfig.message}`}
         onMouseEnter={() => !dismissedTooltip && setShowTooltip(true)}
+        onClick={() => {
+          registrarEvento('clique_whatsapp', window.location.pathname || '/', {
+            origem: 'botao_flutuante',
+            secao_ativa: activeIntent,
+          })
+        }}
         className="pointer-events-auto group relative flex items-center justify-center w-14 h-14 sm:w-15 sm:h-15 rounded-full bg-[#25D366] hover:bg-[#20bd5a] active:bg-[#1caa51] text-white shadow-[0_8px_24px_rgba(37,211,102,0.35),0_0_12px_rgba(37,211,102,0.25)] hover:shadow-[0_12px_28px_rgba(37,211,102,0.5),0_0_20px_rgba(37,211,102,0.4)] transition-all duration-300 transform hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#25D366]/50"
       >
         {/* Glow suave escuro coerente com tech-midnight */}

@@ -10,6 +10,7 @@ import { FormVenda } from './FormVenda'
 import { FormInvestidor } from './FormInvestidor'
 
 import { Building, TrendingUp, ArrowRight, ArrowLeft } from 'lucide-react'
+import { registrarEvento } from '@/services/eventos'
 
 interface ModalComecarAgoraProps {
   open: boolean
@@ -29,6 +30,12 @@ export const ModalComecarAgora: React.FC<ModalComecarAgoraProps> = ({
   useEffect(() => {
     if (open) {
       setSelectedRoute(initialIntent || null)
+      if (initialIntent) {
+        registrarEvento('formulario_iniciado', window.location.pathname || '/', {
+          origem: initialIntent === 'vender' ? 'modal_proprietario' : 'modal_investidor',
+          disparo: 'abertura_direta',
+        })
+      }
     } else {
       setSelectedRoute(null)
     }
@@ -93,7 +100,16 @@ export const ModalComecarAgora: React.FC<ModalComecarAgoraProps> = ({
             {/* Opção 1: Quero vender meu imóvel (rota proprietário) */}
             <button
               type="button"
-              onClick={() => setSelectedRoute('vender')}
+              onClick={() => {
+                registrarEvento('clique_quero_vender', window.location.pathname || '/', {
+                  origem: 'modal_selecao',
+                })
+                registrarEvento('formulario_iniciado', window.location.pathname || '/', {
+                  origem: 'modal_proprietario',
+                  disparo: 'selecao_modal',
+                })
+                setSelectedRoute('vender')
+              }}
               className="group relative w-full text-left p-4 sm:p-5 rounded-xl bg-[#081226] hover:bg-[#0c1a36] border border-slate-800 hover:border-[#22C7E0]/60 transition-all duration-200 cursor-pointer shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 overflow-hidden flex items-center justify-between gap-3 sm:gap-4"
             >
               <div className="absolute top-0 left-0 bottom-0 w-1 bg-[#1A3A75] group-hover:bg-[#22C7E0] transition-colors" />
@@ -124,7 +140,16 @@ export const ModalComecarAgora: React.FC<ModalComecarAgoraProps> = ({
             {/* Opção 2: Quero investir (rota investidor) */}
             <button
               type="button"
-              onClick={() => setSelectedRoute('investir')}
+              onClick={() => {
+                registrarEvento('clique_quero_investir', window.location.pathname || '/', {
+                  origem: 'modal_selecao',
+                })
+                registrarEvento('formulario_iniciado', window.location.pathname || '/', {
+                  origem: 'modal_investidor',
+                  disparo: 'selecao_modal',
+                })
+                setSelectedRoute('investir')
+              }}
               className="group relative w-full text-left p-4 sm:p-5 rounded-xl bg-[#081226] hover:bg-[#0c1a36] border border-slate-800 hover:border-[#22C7E0]/60 transition-all duration-200 cursor-pointer shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 overflow-hidden flex items-center justify-between gap-3 sm:gap-4"
             >
               <div className="absolute top-0 left-0 bottom-0 w-1 bg-[#22C7E0] shadow-[0_0_8px_#22C7E0]" />

@@ -29,6 +29,7 @@ import {
 } from '@/services/leads'
 import { ConfirmationProtocolo } from '@/components/ConfirmationProtocolo'
 import { Footer } from '@/components/Footer'
+import { registrarEvento } from '@/services/eventos'
 
 interface LayoutContextType {
   onOpenModal?: (intent?: 'vender' | 'investir') => void
@@ -253,6 +254,11 @@ export const SimuladorRetornoInvestidor: React.FC = () => {
 
     setLeadProtocolo(res.protocolo || 'KX-0001')
     setLeadSucesso(true)
+
+    // Disparar cadastro_completo para o lead do simulador
+    registrarEvento('cadastro_completo', '/simulador-de-retorno', {
+      origem: 'simulador',
+    })
   }
 
   const handleResetLead = () => {
@@ -783,7 +789,13 @@ export const SimuladorRetornoInvestidor: React.FC = () => {
                     {!showLeadForm ? (
                       <button
                         type="button"
-                        onClick={() => setShowLeadForm(true)}
+                        onClick={() => {
+                          registrarEvento('formulario_iniciado', '/simulador-de-retorno', {
+                            origem: 'simulador',
+                            disparo: 'abrir_formulario_tese',
+                          })
+                          setShowLeadForm(true)
+                        }}
                         className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-5 min-h-[48px] rounded-xl bg-gradient-to-r from-[#22C7E0] to-[#1BA8BD] hover:from-[#35d0e8] hover:to-[#22C7E0] active:brightness-95 text-[#070B14] font-bold text-sm shadow-[0_0_20px_rgba(34,199,224,0.35)] transition-all transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
                       >
                         <CheckCircle2 className="w-4 h-4 shrink-0 text-[#070B14]" />
@@ -900,6 +912,11 @@ export const SimuladorRetornoInvestidor: React.FC = () => {
                     href={whatsappUrl}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => {
+                      registrarEvento('clique_whatsapp', '/simulador-de-retorno', {
+                        origem: 'simulador_lateral',
+                      })
+                    }}
                     className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-5 min-h-[48px] rounded-xl bg-[#081226] hover:bg-[#0a1733] active:bg-[#070e1f] text-slate-200 hover:text-white font-medium text-sm border border-slate-700 hover:border-[#22C7E0]/40 transition-all cursor-pointer"
                   >
                     <span>Falar no WhatsApp com curador de investimentos</span>
