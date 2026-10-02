@@ -10,6 +10,7 @@ import PoliticaPrivacidade from './pages/PoliticaPrivacidade'
 import CalculadoraImovelParado from './pages/CalculadoraImovelParado'
 import SimuladorRetornoInvestidor from './pages/SimuladorRetornoInvestidor'
 import Login from './pages/Login'
+import AdminLogin from './pages/AdminLogin'
 import Cadastro from './pages/Cadastro'
 import MinhaArea from './pages/MinhaArea'
 import PainelGestor from './pages/PainelGestor'
@@ -33,6 +34,8 @@ const App = () => (
           </Route>
           {/* Rotas de Autenticação e Áreas de Usuário sem o Header/Footer padrão da landing */}
           <Route path="/login" element={<Login />} />
+          <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/acesso-restrito" element={<AdminLogin />} />
           <Route path="/cadastro" element={<Cadastro />} />
           <Route path="/minha-area" element={<MinhaArea />} />
           <Route path="/painel" element={<PainelGestor />} />

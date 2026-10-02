@@ -365,10 +365,22 @@ export const Footer: React.FC<FooterProps> = ({ onOpenModal }) => {
           </div>
         </div>
 
-        {/* Barra Inferior com Copyright Dinâmico */}
+        {/* Barra Inferior com Copyright Dinâmico e link discreto para Acesso Restrito */}
         <div className="pt-6 sm:pt-8 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 text-center sm:text-left">
-          <div>
-            © {new Date().getFullYear()} Imóveis Inteligentes. Todos os direitos reservados.
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-3 gap-y-1">
+            <span>
+              © {new Date().getFullYear()} Imóveis Inteligentes. Todos os direitos reservados.
+            </span>
+            <span className="text-slate-800 hidden sm:inline" aria-hidden="true">
+              •
+            </span>
+            <Link
+              to="/admin"
+              className="text-[11px] text-slate-700 hover:text-slate-500 transition-colors duration-200 select-none py-0.5 focus:outline-none focus-visible:text-slate-400"
+              title="Acesso restrito à administração"
+            >
+              Acesso restrito
+            </Link>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#22C7E0] shrink-0 shadow-[0_0_6px_#22C7E0]" />
