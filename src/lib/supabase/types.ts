@@ -111,6 +111,39 @@ export type Database = {
           },
         ]
       }
+      diferenciais: {
+        Row: {
+          ativo: boolean
+          codigo: string
+          criado_em: string
+          grupo: string
+          id: string
+          nome: string
+          ordem: number
+          tipos: string[]
+        }
+        Insert: {
+          ativo?: boolean
+          codigo: string
+          criado_em?: string
+          grupo: string
+          id?: string
+          nome: string
+          ordem?: number
+          tipos?: string[]
+        }
+        Update: {
+          ativo?: boolean
+          codigo?: string
+          criado_em?: string
+          grupo?: string
+          id?: string
+          nome?: string
+          ordem?: number
+          tipos?: string[]
+        }
+        Relationships: []
+      }
       eventos_funil: {
         Row: {
           criado_em: string
@@ -243,6 +276,7 @@ export type Database = {
         Row: {
           cidades_interesse: string | null
           criado_em: string | null
+          diferenciais: Json | null
           email: string | null
           faixa_valor: string | null
           id: string
@@ -262,11 +296,13 @@ export type Database = {
           sim_valorizacao_anual: number | null
           telefone: string
           ticket: string | null
+          tipos_imovel: string[] | null
           user_id: string | null
         }
         Insert: {
           cidades_interesse?: string | null
           criado_em?: string | null
+          diferenciais?: Json | null
           email?: string | null
           faixa_valor?: string | null
           id?: string
@@ -286,11 +322,13 @@ export type Database = {
           sim_valorizacao_anual?: number | null
           telefone: string
           ticket?: string | null
+          tipos_imovel?: string[] | null
           user_id?: string | null
         }
         Update: {
           cidades_interesse?: string | null
           criado_em?: string | null
+          diferenciais?: Json | null
           email?: string | null
           faixa_valor?: string | null
           id?: string
@@ -310,6 +348,7 @@ export type Database = {
           sim_valorizacao_anual?: number | null
           telefone?: string
           ticket?: string | null
+          tipos_imovel?: string[] | null
           user_id?: string | null
         }
         Relationships: []
@@ -325,6 +364,7 @@ export type Database = {
           calc_taxa_mensal: number | null
           cidade: string | null
           criado_em: string | null
+          diferenciais: Json | null
           email: string | null
           id: string
           mensagem: string | null
@@ -349,6 +389,7 @@ export type Database = {
           calc_taxa_mensal?: number | null
           cidade?: string | null
           criado_em?: string | null
+          diferenciais?: Json | null
           email?: string | null
           id?: string
           mensagem?: string | null
@@ -373,6 +414,7 @@ export type Database = {
           calc_taxa_mensal?: number | null
           cidade?: string | null
           criado_em?: string | null
+          diferenciais?: Json | null
           email?: string | null
           id?: string
           mensagem?: string | null
@@ -601,6 +643,7 @@ export type Database = {
       fn_submit_lead_investidor: {
         Args: {
           p_cidades_interesse: string
+          p_diferenciais?: Json
           p_email?: string
           p_faixa_valor?: string
           p_nome?: string
@@ -610,6 +653,7 @@ export type Database = {
           p_rota?: string
           p_telefone: string
           p_ticket: string
+          p_tipos_imovel?: string[]
           p_user_id?: string
         }
         Returns: {
@@ -620,6 +664,7 @@ export type Database = {
       fn_submit_lead_simulador_investidor: {
         Args: {
           p_cidade: string
+          p_diferenciais?: Json
           p_rota?: string
           p_sim_aluguel_mensal?: string
           p_sim_capital_investido?: string
@@ -639,6 +684,7 @@ export type Database = {
       fn_submit_lead_venda: {
         Args: {
           p_cidade: string
+          p_diferenciais?: Json
           p_email?: string
           p_id?: string
           p_mensagem?: string
@@ -658,6 +704,7 @@ export type Database = {
       fn_submit_lead_venda_etapa1: {
         Args: {
           p_cidade: string
+          p_diferenciais?: Json
           p_rota?: string
           p_telefone: string
           p_tipo_imovel: string
@@ -669,6 +716,7 @@ export type Database = {
       }
       fn_submit_lead_venda_etapa2: {
         Args: {
+          p_diferenciais?: Json
           p_email: string
           p_id: string
           p_mensagem?: string

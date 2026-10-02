@@ -14,6 +14,7 @@ import { StatusImovelLead } from '@/services/profiles'
 import { GestorLeadsTab } from '@/components/GestorLeadsTab'
 import { GestorMatchesTab } from '@/components/GestorMatchesTab'
 import { GestorFunilTab } from '@/components/GestorFunilTab'
+import { GestorRegioesTab } from '@/components/GestorRegioesTab'
 import {
   Shield,
   Users,
@@ -37,7 +38,7 @@ export default function PainelGestor() {
   const navigate = useNavigate()
   const { toast } = useToast()
 
-  const [abaAtiva, setAbaAtiva] = useState<'leads' | 'matches' | 'funil'>('leads')
+  const [abaAtiva, setAbaAtiva] = useState<'leads' | 'matches' | 'funil' | 'regioes'>('leads')
   const [leads, setLeads] = useState<GestorLeadItem[]>([])
   const [matches, setMatches] = useState<GestorMatchItem[]>([])
   const [loadingDados, setLoadingDados] = useState(true)
@@ -365,6 +366,19 @@ export default function PainelGestor() {
             <Filter className="w-4 h-4 text-[#22C7E0]" />
             <span>Métricas do Funil</span>
           </button>
+
+          <button
+            type="button"
+            onClick={() => setAbaAtiva('regioes')}
+            className={`flex items-center gap-2 px-5 py-3 text-sm font-bold border-b-2 transition-all cursor-pointer shrink-0 ${
+              abaAtiva === 'regioes'
+                ? 'border-[#22C7E0] text-[#22C7E0] bg-[#22C7E0]/5'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Sparkles className="w-4 h-4 text-[#22C7E0]" />
+            <span>Atalhos de Região</span>
+          </button>
         </div>
 
         {/* Conteúdo da Aba Selecionada */}
@@ -387,6 +401,8 @@ export default function PainelGestor() {
         )}
 
         {abaAtiva === 'funil' && <GestorFunilTab onRecarregar={carregarDados} />}
+
+        {abaAtiva === 'regioes' && <GestorRegioesTab />}
       </main>
 
       {/* Footer do Painel */}

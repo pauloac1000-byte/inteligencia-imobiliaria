@@ -41,13 +41,19 @@ export interface LeadVendaInput {
 }
 
 export type TicketInvestidor = 'ate_300k' | '300_600k' | 'acima_600k' | string
-export type ObjetivoInvestidor = 'renda_aluguel' | 'revenda' | 'reforma_venda' | string
+export type ObjetivoInvestidor = 'renda_aluguel' | 'revenda' | 'reforma_venda' | 'morar' | string
 export type PrazoDecisaoInvestidor = '30_dias' | '60_dias' | 'flexivel' | string
+export type FinalidadeComprador = 'morar' | 'renda_aluguel' | 'revenda'
+export type FormaPagamentoComprador =
+  | 'a_vista'
+  | 'financiamento_aprovado'
+  | 'financiamento_a_aprovar'
+export type PrazoMudanca = 'ate_30_dias' | 'ate_60_dias' | 'ate_90_dias'
 
 export interface LeadInvestidorInput {
   telefone: string
-  ticket: TicketInvestidor
-  objetivo: ObjetivoInvestidor
+  ticket?: TicketInvestidor
+  objetivo?: ObjetivoInvestidor
   cidades_interesse: string[] | string
   prazo_decisao: PrazoDecisaoInvestidor
   nome?: string
@@ -59,6 +65,26 @@ export interface LeadInvestidorInput {
   diferenciais?:
     | Record<string, 'indiferente' | 'desejavel' | 'obrigatorio'>
     | Record<string, string>
+
+  // Campos espelhados da expansão do comprador/investidor
+  finalidade?: FinalidadeComprador | string
+  preco_minimo?: number
+  preco_maximo?: number
+  preco_teto_absoluto?: number
+  min_area_m2?: number
+  min_quartos?: number
+  min_vagas?: number
+  min_area_terreno_m2?: number
+  forma_pagamento?: FormaPagamentoComprador | string
+  usa_fgts?: boolean
+  aceita_reforma?: boolean
+  prazo_mudanca?: PrazoMudanca | string
+  yield_minimo_mensal?: number
+  cidades_codigos_ibge?: string[]
+  atalhos_regiao?: string[]
+  bairros_preferidos?: string
+  raio_km?: number
+  ponto_referencia?: string
 }
 
 export interface LeadCalculadoraInput {
@@ -462,12 +488,19 @@ export async function salvarLeadInvestidor(input: LeadInvestidorInput): Promise<
       : input.cidades_interesse.trim()
 
     // Abordagem segura via RPC Security Definer
+    const ticketFinal =
+      input.ticket ||
+      (input.preco_maximo
+        ? `Faixa até R$ ${input.preco_maximo.toLocaleString('pt-BR')}`
+        : '300_600k')
+    const objetivoFinal = input.objetivo || input.finalidade || 'renda_aluguel'
+
     const { data: rpcData, error: rpcError } = await (supabase.rpc as any)(
       'fn_submit_lead_investidor',
       {
         p_telefone: input.telefone.trim(),
-        p_ticket: input.ticket,
-        p_objetivo: input.objetivo,
+        p_ticket: ticketFinal,
+        p_objetivo: objetivoFinal,
         p_cidades_interesse: cidadesFormatadas,
         p_prazo_decisao: input.prazo_decisao,
         p_rota: input.rota || 'investidor',
@@ -475,8 +508,27 @@ export async function salvarLeadInvestidor(input: LeadInvestidorInput): Promise<
         p_email: input.email ? input.email.trim().toLowerCase() : null,
         p_perfil: input.perfil ? input.perfil.trim() : null,
         p_faixa_valor: input.faixa_valor ? input.faixa_valor.trim() : null,
+        p_user_id: null,
         p_diferenciais: input.diferenciais || {},
         p_tipos_imovel: input.tipos_imovel || [],
+        p_finalidade: input.finalidade || 'renda_aluguel',
+        p_preco_minimo: input.preco_minimo ?? null,
+        p_preco_maximo: input.preco_maximo ?? null,
+        p_preco_teto_absoluto: input.preco_teto_absoluto ?? null,
+        p_min_area_m2: input.min_area_m2 ?? null,
+        p_min_quartos: input.min_quartos ?? null,
+        p_min_vagas: input.min_vagas ?? null,
+        p_min_area_terreno_m2: input.min_area_terreno_m2 ?? null,
+        p_forma_pagamento: input.forma_pagamento || null,
+        p_usa_fgts: input.usa_fgts ?? false,
+        p_aceita_reforma: input.aceita_reforma ?? true,
+        p_prazo_mudanca: input.prazo_mudanca || null,
+        p_yield_minimo_mensal: input.yield_minimo_mensal ?? null,
+        p_cidades_codigos_ibge: input.cidades_codigos_ibge || [],
+        p_atalhos_regiao: input.atalhos_regiao || [],
+        p_bairros_preferidos: input.bairros_preferidos || null,
+        p_raio_km: input.raio_km ?? null,
+        p_ponto_referencia: input.ponto_referencia || null,
       },
     )
 
@@ -491,13 +543,31 @@ export async function salvarLeadInvestidor(input: LeadInvestidorInput): Promise<
 
     const payload: Record<string, any> = {
       telefone: input.telefone.trim(),
-      ticket: input.ticket,
-      objetivo: input.objetivo,
+      ticket: ticketFinal,
+      objetivo: objetivoFinal,
       cidades_interesse: cidadesFormatadas,
       prazo_decisao: input.prazo_decisao,
       rota: input.rota || 'investidor',
       diferenciais: input.diferenciais || {},
       tipos_imovel: input.tipos_imovel || [],
+      finalidade: input.finalidade || 'renda_aluguel',
+      preco_minimo: input.preco_minimo ?? null,
+      preco_maximo: input.preco_maximo ?? null,
+      preco_teto_absoluto: input.preco_teto_absoluto ?? null,
+      min_area_m2: input.min_area_m2 ?? null,
+      min_quartos: input.min_quartos ?? null,
+      min_vagas: input.min_vagas ?? null,
+      min_area_terreno_m2: input.min_area_terreno_m2 ?? null,
+      forma_pagamento: input.forma_pagamento || null,
+      usa_fgts: input.usa_fgts ?? false,
+      aceita_reforma: input.aceita_reforma ?? true,
+      prazo_mudanca: input.prazo_mudanca || null,
+      yield_minimo_mensal: input.yield_minimo_mensal ?? null,
+      cidades_codigos_ibge: input.cidades_codigos_ibge || [],
+      atalhos_regiao: input.atalhos_regiao || [],
+      bairros_preferidos: input.bairros_preferidos || null,
+      raio_km: input.raio_km ?? null,
+      ponto_referencia: input.ponto_referencia || null,
     }
 
     if (input.nome) payload.nome = input.nome.trim()
