@@ -53,6 +53,33 @@ export type Database = {
           },
         ]
       }
+      auth_security_logs: {
+        Row: {
+          criado_em: string
+          detalhe: Json | null
+          email: string
+          id: string
+          resultado: string
+          tipo_evento: string
+        }
+        Insert: {
+          criado_em?: string
+          detalhe?: Json | null
+          email: string
+          id?: string
+          resultado: string
+          tipo_evento: string
+        }
+        Update: {
+          criado_em?: string
+          detalhe?: Json | null
+          email?: string
+          id?: string
+          resultado?: string
+          tipo_evento?: string
+        }
+        Relationships: []
+      }
       compatibilidade_imovel_tese: {
         Row: {
           atualizado_em: string
@@ -1115,6 +1142,32 @@ export type Database = {
           p_precisao?: string
           p_tabela: string
         }
+        Returns: boolean
+      }
+      fn_auth_check_lockout: {
+        Args: { p_email: string }
+        Returns: {
+          bloqueado: boolean
+          deve_redefinir: boolean
+          motivo: string
+          segundos_restantes: number
+          tempo_bloqueio_min: number
+          tentativas_falhas: number
+        }[]
+      }
+      fn_auth_record_attempt: {
+        Args: { p_detalhes?: Json; p_email: string; p_resultado: string }
+        Returns: {
+          bloqueado: boolean
+          deve_redefinir: boolean
+          motivo: string
+          segundos_restantes: number
+          tempo_bloqueio_min: number
+          tentativas_falhas: number
+        }[]
+      }
+      fn_auth_record_reset: {
+        Args: { p_detalhes?: Json; p_email: string; p_etapa: string }
         Returns: boolean
       }
       fn_avaliar_descarte_pre_motor: {

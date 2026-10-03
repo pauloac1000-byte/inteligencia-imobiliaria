@@ -117,19 +117,7 @@ export default function PainelGestor() {
     acao: 'aprovar' | 'descartar' | 'pendente',
   ) => {
     await gestorDecidirMatch(compatibilidadeId, acao)
-    const novoStatusMatch =
-      acao === 'aprovar' ? 'aprovado' : acao === 'descartar' ? 'descartado' : 'pendente'
-    setMatches((prev) =>
-      prev.map((m) =>
-        m.compatibilidade_id === compatibilidadeId ? { ...m, status_match: novoStatusMatch } : m,
-      ),
-    )
-    // Se aprovou, o status do lead_venda pode ter sido promovido para 'Com compatibilidade'
-    if (acao === 'aprovar') {
-      gestorListarLeads()
-        .then((l) => setLeads(l))
-        .catch(() => {})
-    }
+    await carregarDados()
   }
 
   const handleSignOut = async () => {

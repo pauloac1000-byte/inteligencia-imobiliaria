@@ -1,31 +1,48 @@
-import React, { useState } from 'react'
-import { GestorMatchItem, StatusMatch, CriterioCompatibilidadeItem } from '@/services/gestor'
+import React, { useState, useEffect } from 'react'
+import {
+  GestorMatchItem,
+  StatusMatch,
+  MotivoPerdaMatch,
+  MOTIVOS_PERDA_CONFIG,
+  GestorResumoCicloMatches,
+  gestorObterResumoCicloMatches,
+  gestorMudarEstadoMatch,
+  CriterioCompatibilidadeItem,
+} from '@/services/gestor'
 import {
   CheckCircle2,
   XCircle,
-  HelpCircle,
   Clock,
   Sparkles,
-  ArrowRight,
   TrendingUp,
   Home,
   Check,
   X,
   ChevronDown,
   ChevronUp,
-  MapPin,
-  Calendar,
-  DollarSign,
-  Tag,
   Phone,
-  Mail,
   User,
   AlertTriangle,
   Loader2,
-  Award,
-  Gauge,
   Briefcase,
+  Eye,
+  Calendar,
+  DollarSign,
+  FileCheck,
+  PhoneCall,
+  Compass,
+  Handshake,
+  Award,
 } from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog'
+import { useToast } from '@/hooks/use-toast'
 
 interface GestorMatchesTabProps {
   matches: GestorMatchItem[]
@@ -37,20 +54,107 @@ interface GestorMatchesTabProps {
   onRecarregar: () => void
 }
 
-export function GestorMatchesTab({
-  matches,
-  loading,
-  onDecidirMatch,
-  onRecarregar,
-}: GestorMatchesTabProps) {
-  const [filtroStatus, setFiltroStatus] = useState<
-    'todos' | 'pendente' | 'aprovado' | 'descartado' | 'eliminados'
-  >('todos')
+const ESTADOS_CICLO: {
+  id: StatusMatch
+  label: string
+  cor: string
+  icone: React.ComponentType<{ className?: string }>
+}[] = [
+  {
+    id: 'sugerido',
+    label: 'Sugerido',
+    cor: 'text-slate-400 bg-slate-800/80 border-slate-700',
+    icone: Clock,
+  },
+  {
+    id: 'aprovado',
+    label: 'Aprovado',
+    cor: 'text-cyan-400 bg-cyan-950/40 border-cyan-500/40',
+    icone: CheckCircle2,
+  },
+  {
+    id: 'apresentado',
+    label: 'Apresentado',
+    cor: 'text-blue-400 bg-blue-950/40 border-blue-500/40',
+    icone: Eye,
+  },
+  {
+    id: 'interesse',
+    label: 'Interesse',
+    cor: 'text-purple-400 bg-purple-950/40 border-purple-500/40',
+    icone: Sparkles,
+  },
+  {
+    id: 'ligacao',
+    label: 'Ligação',
+    cor: 'text-indigo-400 bg-indigo-950/40 border-indigo-500/40',
+    icone: PhoneCall,
+  },
+  {
+    id: 'visita',
+    label: 'Visita',
+    cor: 'text-amber-400 bg-amber-950/40 border-amber-500/40',
+    icone: Compass,
+  },
+  {
+    id: 'proposta',
+    label: 'Proposta',
+    cor: 'text-orange-400 bg-orange-950/40 border-orange-500/40',
+    icone: Handshake,
+  },
+  {
+    id: 'fechado',
+    label: 'Fechado',
+    cor: 'text-emerald-400 bg-emerald-950/40 border-emerald-500/40',
+    icone: Award,
+  },
+  {
+    id: 'perdido',
+    label: 'Perdido',
+    cor: 'text-rose-400 bg-rose-950/40 border-rose-500/40',
+    icone: XCircle,
+  },
+]
+
+export function GestorMatchesTab({ matches, loading, onRecarregar }: GestorMatchesTabProps) {
+  const { toast } = useToast()
+
+  // Resumo de contadores por estado e motivo de perda
+  const [resumo, setResumo] = useState<GestorResumoCicloMatches | null>(null)
+  const [loadingResumo, setLoadingResumo] = useState(false)
+
+  // Filtros de listagem
+  const [filtroStatus, setFiltroStatus] = useState<string>('todos')
+  const [filtroMotivoPerda, setFiltroMotivoPerda] = useState<string>('todos')
   const [ordenacao, setOrdenacao] = useState<'percentual_desc' | 'percentual_asc' | 'recentes'>(
     'percentual_desc',
   )
   const [detalhesAbertos, setDetalhesAbertos] = useState<Record<string, boolean>>({})
   const [processandoId, setProcessandoId] = useState<string | null>(null)
+
+  // Modais de Transição Fechado e Perdido
+  const [modalFechadoMatch, setModalFechadoMatch] = useState<GestorMatchItem | null>(null)
+  const [fechadoPreco, setFechadoPreco] = useState<string>('')
+  const [fechadoData, setFechadoData] = useState<string>(new Date().toISOString().split('T')[0])
+  const [fechadoObs, setFechadoObs] = useState<string>('')
+
+  const [modalPerdidoMatch, setModalPerdidoMatch] = useState<GestorMatchItem | null>(null)
+  const [perdidoMotivo, setPerdidoMotivo] = useState<MotivoPerdaMatch>('preco')
+  const [perdidoObs, setPerdidoObs] = useState<string>('')
+
+  const carregarResumo = async () => {
+    setLoadingResumo(true)
+    try {
+      const data = await gestorObterResumoCicloMatches()
+      setResumo(data)
+    } finally {
+      setLoadingResumo(false)
+    }
+  }
+
+  useEffect(() => {
+    carregarResumo()
+  }, [matches])
 
   const toggleDetalhes = (id: string) => {
     setDetalhesAbertos((prev) => ({
@@ -59,32 +163,128 @@ export function GestorMatchesTab({
     }))
   }
 
-  const handleDecidir = async (
-    compatibilidadeId: string,
-    acao: 'aprovar' | 'descartar' | 'pendente',
-  ) => {
-    setProcessandoId(compatibilidadeId)
+  // Executa mudança de estado com feedback e reload
+  const executarMudancaEstado = async ({
+    matchId,
+    novoEstado,
+    fechadoPrecoNum,
+    fechadoDataStr,
+    motivoPerdaStr,
+    observacaoStr,
+  }: {
+    matchId: string
+    novoEstado: StatusMatch
+    fechadoPrecoNum?: number | null
+    fechadoDataStr?: string | null
+    motivoPerdaStr?: MotivoPerdaMatch | string | null
+    observacaoStr?: string | null
+  }) => {
+    setProcessandoId(matchId)
     try {
-      await onDecidirMatch(compatibilidadeId, acao)
+      await gestorMudarEstadoMatch({
+        compatibilidadeId: matchId,
+        novoEstado,
+        fechadoPreco: fechadoPrecoNum,
+        fechadoData: fechadoDataStr,
+        motivoPerda: motivoPerdaStr,
+        observacao: observacaoStr,
+      })
+
+      const estadoItem = ESTADOS_CICLO.find((e) => e.id === novoEstado)
+      toast({
+        title: `Match movido para "${estadoItem?.label || novoEstado}"`,
+        description: 'Estado e auditoria atualizados com sucesso.',
+      })
+
+      await Promise.all([carregarResumo(), onRecarregar()])
+    } catch (err: any) {
+      toast({
+        title: 'Erro ao alterar estado',
+        description: err.message || 'Falha na comunicação com o servidor.',
+        variant: 'destructive',
+      })
     } finally {
       setProcessandoId(null)
     }
   }
 
-  // Filtragem
-  // Regra do Usuário:
-  // "Pares eliminados NÃO aparecem para o investidor (área do investidor) nem na lista de matches do gestor
-  // — apenas num novo filtro "Eliminados" na aba Matches do /painel, que lista os pares eliminados com o motivo visível."
+  const handleSubmeterFechado = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!modalFechadoMatch) return
+
+    const precoNum = Number(fechadoPreco.replace(/[^0-9.,]/g, '').replace(',', '.'))
+    if (!precoNum || precoNum <= 0) {
+      toast({
+        title: 'Preço final obrigatório',
+        description: 'Informe um valor numérico válido para o preço final de venda.',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    if (!fechadoData) {
+      toast({
+        title: 'Data do contrato obrigatória',
+        description: 'Selecione a data formal de assinatura do contrato.',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    const matchId = modalFechadoMatch.compatibilidade_id
+    setModalFechadoMatch(null)
+
+    await executarMudancaEstado({
+      matchId,
+      novoEstado: 'fechado',
+      fechadoPrecoNum: precoNum,
+      fechadoDataStr: fechadoData,
+      observacaoStr: fechadoObs || 'Negócio fechado e contrato assinado',
+    })
+  }
+
+  const handleSubmeterPerdido = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!modalPerdidoMatch) return
+
+    if (!perdidoMotivo) {
+      toast({
+        title: 'Motivo obrigatório',
+        description: 'Selecione o motivo da perda na lista fechada.',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    const matchId = modalPerdidoMatch.compatibilidade_id
+    setModalPerdidoMatch(null)
+
+    await executarMudancaEstado({
+      matchId,
+      novoEstado: 'perdido',
+      motivoPerdaStr: perdidoMotivo,
+      observacaoStr: perdidoObs || 'Oportunidade perdida no funil',
+    })
+  }
+
+  // Filtragem da lista
   const matchesFiltrados = matches.filter((m) => {
     const isEliminado = Boolean(m.eliminado)
     if (filtroStatus === 'eliminados') {
       return isEliminado
     }
-    // Na lista de matches padrão (todos, pendente, aprovado, descartado), pares eliminados NÃO aparecem
+    // Na listagem padrão do ciclo, eliminados não entram
     if (isEliminado) {
       return false
     }
     if (filtroStatus !== 'todos' && m.status_match !== filtroStatus) {
+      return false
+    }
+    if (
+      filtroStatus === 'perdido' &&
+      filtroMotivoPerda !== 'todos' &&
+      m.motivo_perda !== filtroMotivoPerda
+    ) {
       return false
     }
     return true
@@ -99,106 +299,198 @@ export function GestorMatchesTab({
       return a.percentual - b.percentual
     }
     if (ordenacao === 'recentes') {
-      return new Date(b.atualizado_em).getTime() - new Date(a.atualizado_em).getTime()
+      const dataA = a.status_data_mudanca || a.atualizado_em
+      const dataB = b.status_data_mudanca || b.atualizado_em
+      return new Date(dataB).getTime() - new Date(dataA).getTime()
     }
     return 0
   })
 
-  // Contadores para os filtros
-  const matchesValidos = matches.filter((m) => !m.eliminado)
-  const matchesEliminados = matches.filter((m) => Boolean(m.eliminado))
-
-  const contadores = {
-    todos: matchesValidos.length,
-    pendente: matchesValidos.filter((m) => m.status_match === 'pendente').length,
-    aprovado: matchesValidos.filter((m) => m.status_match === 'aprovado').length,
-    descartado: matchesValidos.filter((m) => m.status_match === 'descartado').length,
-    eliminados: matchesEliminados.length,
-  }
-
-  const getPercentualBadge = (pct: number) => {
-    if (pct >= 80) {
-      return {
-        bg: 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.3)]',
-        label: 'Altíssima compatibilidade',
-      }
-    }
-    if (pct >= 55) {
-      return {
-        bg: 'bg-[#22C7E0]/15 border-[#22C7E0]/40 text-[#22C7E0] shadow-[0_0_12px_rgba(34,199,224,0.3)]',
-        label: 'Boa compatibilidade',
-      }
-    }
-    if (pct >= 30) {
-      return {
-        bg: 'bg-amber-500/15 border-amber-500/40 text-amber-300',
-        label: 'Média compatibilidade',
-      }
-    }
-    return {
-      bg: 'bg-slate-800 border-slate-700 text-slate-400',
-      label: 'Baixa compatibilidade',
+  const formatarDataIso = (dataIso?: string | null) => {
+    if (!dataIso) return 'Sem registro'
+    try {
+      const d = new Date(dataIso)
+      if (isNaN(d.getTime())) return dataIso
+      return d.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    } catch {
+      return dataIso
     }
   }
 
-  const getStatusMatchBadge = (status: StatusMatch) => {
-    switch (status) {
-      case 'aprovado':
-        return {
-          label: 'Aprovado',
-          className: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40',
-          icon: CheckCircle2,
-        }
-      case 'descartado':
-        return {
-          label: 'Descartado',
-          className: 'bg-red-500/15 text-red-300 border-red-500/40',
-          icon: XCircle,
-        }
-      case 'pendente':
-      default:
-        return {
-          label: 'Pendente de decisão',
-          className: 'bg-amber-500/15 text-amber-300 border-amber-500/40',
-          icon: Clock,
-        }
-    }
+  const formatarMoeda = (val?: number | null) => {
+    if (val === null || val === undefined) return '—'
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      maximumFractionDigits: 0,
+    }).format(val)
   }
 
   return (
     <div className="space-y-6">
-      {/* Barra de Filtros e Ordenação */}
+      {/* 1. RESUMO NO TOPO: Ciclo de Vida dos Matches e Motivos de Perda */}
+      <div className="p-5 sm:p-6 rounded-2xl bg-[#081226] border border-[#1A3A75] space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-[#22C7E0]" />
+              <h3 className="text-sm sm:text-base font-bold text-white uppercase tracking-wider">
+                Resumo do Ciclo de Vida dos Matches
+              </h3>
+            </div>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Calibração do motor com dados reais do pipeline (imóvel × busca). Todo par nasce
+              sugerido e é auditável.
+            </p>
+          </div>
+          <div className="flex items-center gap-2 text-xs">
+            <span className="px-2.5 py-1 rounded-lg bg-[#070B14] border border-slate-800 text-slate-300">
+              Total ativos:{' '}
+              <strong className="text-white font-mono">
+                {resumo?.total_ativos ?? matches.filter((m) => !m.eliminado).length}
+              </strong>
+            </span>
+            <span className="px-2.5 py-1 rounded-lg bg-[#070B14] border border-rose-950 text-rose-300">
+              Eliminados no pré-filtro:{' '}
+              <strong className="text-rose-400 font-mono">
+                {resumo?.total_eliminados ?? matches.filter((m) => Boolean(m.eliminado)).length}
+              </strong>
+            </span>
+          </div>
+        </div>
+
+        {/* Linha de Cards de Contadores por Estado */}
+        <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-2">
+          {ESTADOS_CICLO.map((est) => {
+            const Icon = est.icone
+            const qtd = resumo?.estados?.[est.id as keyof typeof resumo.estados] ?? 0
+            const isAtivo = filtroStatus === est.id
+
+            return (
+              <button
+                key={est.id}
+                type="button"
+                onClick={() => setFiltroStatus(filtroStatus === est.id ? 'todos' : est.id)}
+                className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2 ${
+                  isAtivo
+                    ? 'border-[#22C7E0] bg-[#22C7E0]/10 shadow-[0_0_15px_rgba(34,199,224,0.2)]'
+                    : 'bg-[#070B14] border-slate-800 hover:border-slate-700'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span
+                    className={`text-[10px] font-bold uppercase tracking-wider ${est.cor.split(' ')[0]}`}
+                  >
+                    {est.label}
+                  </span>
+                  <Icon className={`w-3.5 h-3.5 ${est.cor.split(' ')[0]}`} />
+                </div>
+                <div className="flex items-baseline justify-between">
+                  <span className="text-lg sm:text-xl font-bold font-mono text-white">{qtd}</span>
+                  <span className="text-[10px] text-slate-500">pares</span>
+                </div>
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Linha de Contadores por Motivo de Perda */}
+        <div className="pt-3 border-t border-slate-800/80 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-rose-300 uppercase tracking-wider flex items-center gap-1.5">
+              <XCircle className="w-3.5 h-3.5 text-rose-400" />
+              <span>Detalhamento dos Motivos de Perda (Calibração do Motor)</span>
+            </span>
+            <span className="text-[11px] text-slate-400">
+              Total perdidos:{' '}
+              <strong className="text-rose-400 font-mono">{resumo?.estados?.perdido ?? 0}</strong>
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
+            {(Object.keys(MOTIVOS_PERDA_CONFIG) as MotivoPerdaMatch[]).map((motivoKey) => {
+              const cfg = MOTIVOS_PERDA_CONFIG[motivoKey]
+              const qtd = resumo?.motivos_perda?.[motivoKey] ?? 0
+              const isAtivo = filtroStatus === 'perdido' && filtroMotivoPerda === motivoKey
+
+              return (
+                <button
+                  key={motivoKey}
+                  type="button"
+                  onClick={() => {
+                    setFiltroStatus('perdido')
+                    setFiltroMotivoPerda(filtroMotivoPerda === motivoKey ? 'todos' : motivoKey)
+                  }}
+                  className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                    isAtivo
+                      ? 'border-rose-500 bg-rose-500/15 shadow-[0_0_12px_rgba(244,63,94,0.2)]'
+                      : 'bg-[#070B14] border-slate-800/90 hover:border-slate-700'
+                  }`}
+                  title={cfg.descricao}
+                >
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-sm font-bold font-mono text-white">{qtd}</span>
+                    <span className="text-[10px] text-rose-400">perdido</span>
+                  </div>
+                  <span className="text-[11px] font-semibold text-slate-300 block truncate mt-0.5">
+                    {cfg.label}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* 2. BARRA DE FILTROS E ORDENAÇÃO */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 rounded-xl bg-[#081226] border border-[#1A3A75]">
-        {/* Filtros de Status */}
         <div className="flex items-center gap-2 flex-wrap">
           <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider mr-1">
-            Status:
+            Filtro:
           </span>
-          {(
-            [
-              { id: 'todos', label: 'Todos', count: contadores.todos },
-              { id: 'pendente', label: 'Pendentes', count: contadores.pendente },
-              { id: 'aprovado', label: 'Aprovados', count: contadores.aprovado },
-              { id: 'descartado', label: 'Descartados', count: contadores.descartado },
-              { id: 'eliminados', label: 'Eliminados', count: contadores.eliminados },
-            ] as const
-          ).map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => setFiltroStatus(item.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer flex items-center gap-1.5 ${
-                filtroStatus === item.id
-                  ? 'bg-[#22C7E0]/15 text-[#22C7E0] border-[#22C7E0]/50 shadow-[0_0_12px_rgba(34,199,224,0.2)]'
-                  : 'bg-[#070B14] text-slate-400 border-slate-800 hover:border-slate-700 hover:text-white'
-              }`}
-            >
-              <span>{item.label}</span>
-              <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-slate-300">
-                {item.count}
-              </span>
-            </button>
-          ))}
+          <button
+            type="button"
+            onClick={() => {
+              setFiltroStatus('todos')
+              setFiltroMotivoPerda('todos')
+            }}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer flex items-center gap-1.5 ${
+              filtroStatus === 'todos'
+                ? 'bg-[#22C7E0]/15 text-[#22C7E0] border-[#22C7E0]/50 shadow-[0_0_12px_rgba(34,199,224,0.2)]'
+                : 'bg-[#070B14] text-slate-400 border-slate-800 hover:border-slate-700 hover:text-white'
+            }`}
+          >
+            <span>Todos Ativos</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-slate-300">
+              {matches.filter((m) => !m.eliminado).length}
+            </span>
+          </button>
+
+          {/* Botão de Eliminados (Regra KORBIX mantida) */}
+          <button
+            type="button"
+            onClick={() => {
+              setFiltroStatus('eliminados')
+              setFiltroMotivoPerda('todos')
+            }}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer flex items-center gap-1.5 ${
+              filtroStatus === 'eliminados'
+                ? 'bg-rose-500/20 text-rose-300 border-rose-500/50 shadow-[0_0_12px_rgba(244,63,94,0.2)]'
+                : 'bg-[#070B14] text-slate-400 border-slate-800 hover:border-slate-700 hover:text-white'
+            }`}
+          >
+            <AlertTriangle className="w-3.5 h-3.5 text-rose-400" />
+            <span>Eliminados</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-slate-300">
+              {matches.filter((m) => Boolean(m.eliminado)).length}
+            </span>
+          </button>
         </div>
 
         {/* Ordenação */}
@@ -209,19 +501,19 @@ export function GestorMatchesTab({
             onChange={(e) => setOrdenacao(e.target.value as any)}
             className="bg-[#070B14] border border-slate-700 text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:border-[#22C7E0] focus:outline-none"
           >
-            <option value="percentual_desc">Maior compatibilidade primeiro (%)</option>
-            <option value="percentual_asc">Menor compatibilidade primeiro (%)</option>
-            <option value="recentes">Mais recentes</option>
+            <option value="percentual_desc">Maior compatibilidade harmônica (%)</option>
+            <option value="percentual_asc">Menor compatibilidade harmônica (%)</option>
+            <option value="recentes">Data da última mudança de estado</option>
           </select>
         </div>
       </div>
 
-      {/* Lista de Matches */}
+      {/* 3. LISTA DE MATCHES COM CONTROLE DE CICLO DE VIDA */}
       {loading ? (
         <div className="p-12 rounded-2xl bg-[#081226] border border-slate-800 text-center flex flex-col items-center justify-center gap-3">
           <Loader2 className="w-6 h-6 animate-spin text-[#22C7E0]" />
           <p className="text-sm text-slate-400">
-            Calculando e carregando matches determinísticos...
+            Carregando ciclo de vida e histórico dos matches...
           </p>
         </div>
       ) : matchesOrdenados.length === 0 ? (
@@ -230,21 +522,22 @@ export function GestorMatchesTab({
             <Sparkles className="w-6 h-6 text-[#22C7E0]" />
           </div>
           <h4 className="text-base font-bold text-white">
-            Nenhum match encontrado para este filtro
+            Nenhum match encontrado para os filtros selecionados
           </h4>
           <p className="text-xs text-slate-400 max-w-md mx-auto">
-            Assim que novos imóveis e teses de investidores forem cadastrados, o motor
-            determinístico calculará as pontuações e exibirá os pares aqui.
+            {filtroStatus === 'eliminados'
+              ? 'Nenhum par foi eliminado pelas 6 regras eliminatórias pré-motor.'
+              : 'Selecione outro estado ou "Todos" para visualizar os pares calculados.'}
           </p>
         </div>
       ) : (
         <div className="space-y-4">
           {matchesOrdenados.map((match) => {
-            const pctConfig = getPercentualBadge(match.percentual)
-            const statusConfig = getStatusMatchBadge(match.status_match)
-            const StatusIcon = statusConfig.icon
             const isDetalhesAberto = Boolean(detalhesAbertos[match.compatibilidade_id])
             const isProcessando = processandoId === match.compatibilidade_id
+            const estadoCfg =
+              ESTADOS_CICLO.find((e) => e.id === match.status_match) || ESTADOS_CICLO[0]
+            const IconeEstado = estadoCfg.icone
 
             // Parsing seguro de critérios
             const atendidos: CriterioCompatibilidadeItem[] = Array.isArray(
@@ -262,91 +555,101 @@ export function GestorMatchesTab({
               <div
                 key={match.compatibilidade_id}
                 className={`rounded-2xl border transition-all ${
-                  match.status_match === 'aprovado'
-                    ? 'bg-[#081226]/90 border-emerald-500/40 shadow-[0_0_20px_rgba(16,185,129,0.1)]'
-                    : match.status_match === 'descartado'
-                      ? 'bg-[#081226]/50 border-slate-800 opacity-70'
-                      : 'bg-[#081226] border-[#1A3A75] hover:border-[#22C7E0]/40'
+                  match.status_match === 'fechado'
+                    ? 'bg-[#081226]/90 border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.15)]'
+                    : match.status_match === 'perdido'
+                      ? 'bg-[#081226]/50 border-rose-950/80 opacity-75'
+                      : match.status_match === 'aprovado'
+                        ? 'bg-[#081226] border-cyan-500/40 shadow-[0_0_15px_rgba(34,199,224,0.1)]'
+                        : 'bg-[#081226] border-[#1A3A75] hover:border-[#22C7E0]/40'
                 }`}
               >
-                {/* Linha Principal do Match */}
                 <div className="p-5 sm:p-6 space-y-4">
-                  {/* Topo do Card: Percentual, Status e Botões de Decisão */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+                  {/* Topo do Card: Nota Harmônica, Estado do Ciclo e Ações do Gestor */}
+                  <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-slate-800">
                     <div className="flex items-center gap-3">
-                      {/* Badge da Nota Final Harmônica */}
-                      <div
-                        className={`px-3 py-1.5 rounded-xl border font-mono font-bold text-xl sm:text-2xl flex items-center gap-2 ${pctConfig.bg}`}
-                      >
+                      {/* Badge Nota Final Harmônica */}
+                      <div className="px-3.5 py-2 rounded-xl border font-mono font-bold text-xl sm:text-2xl flex items-center gap-2 bg-[#070B14] border-[#22C7E0]/40 text-[#22C7E0] shadow-[0_0_15px_rgba(34,199,224,0.15)]">
                         <span>{match.nota_final ?? match.percentual}</span>
                         <span className="text-xs font-sans font-normal opacity-80">pts</span>
                       </div>
+
                       <div className="space-y-1">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-xs font-bold text-white uppercase tracking-wider">
-                            Match KORBIX
+                            Par Imóvel × Busca
                           </span>
+
+                          {/* Badge de Estado Atual */}
                           <span
-                            className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full border ${statusConfig.className}`}
+                            className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full border ${estadoCfg.cor}`}
                           >
-                            <StatusIcon className="w-3 h-3" />
-                            <span>{statusConfig.label}</span>
+                            <IconeEstado className="w-3.5 h-3.5" />
+                            <span>{estadoCfg.label}</span>
                           </span>
+
                           {match.ja_tem_interesse && (
-                            <span className="text-[10px] bg-purple-500/15 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded-full">
-                              Interesse manifestado
+                            <span className="text-[10px] bg-purple-500/15 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+                              <Sparkles className="w-3 h-3" />
+                              <span>Interesse manifestado</span>
                             </span>
                           )}
                         </div>
 
-                        {/* Badges de Notas Comprador / Vendedor, Faixa e Confiança para o Gestor */}
-                        <div className="flex items-center gap-2 flex-wrap pt-0.5">
-                          <span className="text-[11px] px-2 py-0.5 rounded-md bg-[#070B14] border border-slate-700 text-slate-300">
-                            Comprador:{' '}
-                            <strong className="text-[#22C7E0] font-mono">
-                              {match.nota_comprador ?? match.percentual} pts
+                        {/* Data da última mudança de estado */}
+                        <div className="flex items-center gap-2 text-[11px] text-slate-400">
+                          <Clock className="w-3 h-3 text-slate-500" />
+                          <span>
+                            Última atualização de estado:{' '}
+                            <strong className="text-slate-300">
+                              {formatarDataIso(match.status_data_mudanca || match.atualizado_em)}
                             </strong>
                           </span>
-                          <span className="text-[11px] px-2 py-0.5 rounded-md bg-[#070B14] border border-emerald-500/30 text-slate-300">
-                            Vendedor:{' '}
-                            <strong className="text-emerald-400 font-mono">
-                              {match.nota_vendedor ?? 0} pts
-                            </strong>
-                          </span>
-                          {match.faixa_compatibilidade && (
-                            <span className="text-[11px] px-2 py-0.5 rounded-md bg-[#070B14] border border-slate-700 text-slate-300 capitalize">
-                              Faixa:{' '}
-                              <strong className="text-white">{match.faixa_compatibilidade}</strong>
-                            </span>
-                          )}
-                          {match.confianca_classificacao && (
-                            <span className="text-[11px] px-2 py-0.5 rounded-md bg-[#070B14] border border-slate-700 text-slate-300 capitalize">
-                              Confiança:{' '}
-                              <strong
-                                className={
-                                  match.confianca_classificacao === 'alta'
-                                    ? 'text-emerald-400'
-                                    : match.confianca_classificacao === 'media'
-                                      ? 'text-amber-400'
-                                      : 'text-slate-400'
-                                }
-                              >
-                                {match.confianca_classificacao}
-                              </strong>
-                              {match.confianca_percentual ? (
-                                <span className="font-mono text-[10px] text-slate-400 ml-1">
-                                  ({Math.round(match.confianca_percentual)}%)
-                                </span>
-                              ) : null}
-                            </span>
-                          )}
                         </div>
-                        <p className="text-xs text-slate-400 mt-0.5">{pctConfig.label}</p>
+
+                        {/* Dados adicionais para fechado ou perdido */}
+                        {match.status_match === 'fechado' && (
+                          <div className="flex items-center gap-3 text-xs text-emerald-300 pt-0.5">
+                            <span className="flex items-center gap-1">
+                              <DollarSign className="w-3.5 h-3.5" />
+                              <span>
+                                Preço final:{' '}
+                                <strong>{formatarMoeda(match.fechado_preco_final)}</strong>
+                              </span>
+                            </span>
+                            {match.fechado_data_contrato && (
+                              <span className="flex items-center gap-1">
+                                <Calendar className="w-3.5 h-3.5" />
+                                <span>
+                                  Contrato:{' '}
+                                  <strong>
+                                    {new Date(match.fechado_data_contrato).toLocaleDateString(
+                                      'pt-BR',
+                                    )}
+                                  </strong>
+                                </span>
+                              </span>
+                            )}
+                          </div>
+                        )}
+
+                        {match.status_match === 'perdido' && match.motivo_perda && (
+                          <div className="flex items-center gap-1.5 text-xs text-rose-300 pt-0.5">
+                            <AlertTriangle className="w-3.5 h-3.5 text-rose-400" />
+                            <span>
+                              Motivo da perda:{' '}
+                              <strong className="capitalize">
+                                {MOTIVOS_PERDA_CONFIG[match.motivo_perda as MotivoPerdaMatch]
+                                  ?.label || match.motivo_perda}
+                              </strong>
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
 
-                    {/* Ações Rápidas: APROVAR ou DESCARTAR */}
-                    <div className="flex items-center gap-2 shrink-0">
+                    {/* BARRA DE TRANSIÇÃO DO GESTOR: Controle total do ciclo */}
+                    <div className="flex items-center gap-1.5 flex-wrap shrink-0">
                       {match.eliminado ? (
                         <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-rose-500/15 text-rose-300 border border-rose-500/30">
                           <AlertTriangle className="w-3.5 h-3.5 text-rose-400 shrink-0" />
@@ -355,50 +658,165 @@ export function GestorMatchesTab({
                       ) : isProcessando ? (
                         <div className="flex items-center gap-2 text-xs text-[#22C7E0] px-3 py-2">
                           <Loader2 className="w-4 h-4 animate-spin" />
-                          <span>Gravando...</span>
+                          <span>Atualizando estado...</span>
                         </div>
                       ) : (
                         <>
+                          {/* Botão Aprovar (sugerido -> aprovado) */}
                           <button
                             type="button"
-                            onClick={() => handleDecidir(match.compatibilidade_id, 'aprovar')}
+                            onClick={() =>
+                              executarMudancaEstado({
+                                matchId: match.compatibilidade_id,
+                                novoEstado: 'aprovado',
+                              })
+                            }
                             disabled={match.status_match === 'aprovado'}
-                            className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                            className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer flex items-center gap-1 ${
                               match.status_match === 'aprovado'
-                                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 cursor-default'
-                                : 'bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-[#070B14] shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:scale-[1.02]'
+                                ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/50 cursor-default'
+                                : 'bg-cyan-950/40 text-cyan-300 border-cyan-500/30 hover:bg-cyan-500 hover:text-[#070B14]'
                             }`}
+                            title="Aprovar match para vitrine do investidor (nota >= 75)"
                           >
-                            <Check className="w-3.5 h-3.5" />
-                            <span>
-                              {match.status_match === 'aprovado' ? 'Aprovado' : 'Aprovar'}
-                            </span>
+                            <Check className="w-3 h-3" />
+                            <span>Aprovar</span>
                           </button>
 
+                          {/* Botão Apresentar */}
                           <button
                             type="button"
-                            onClick={() => handleDecidir(match.compatibilidade_id, 'descartar')}
-                            disabled={match.status_match === 'descartado'}
-                            className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                              match.status_match === 'descartado'
-                                ? 'bg-red-500/20 text-red-300 border border-red-500/40 cursor-default'
-                                : 'bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30'
+                            onClick={() =>
+                              executarMudancaEstado({
+                                matchId: match.compatibilidade_id,
+                                novoEstado: 'apresentado',
+                              })
+                            }
+                            disabled={match.status_match === 'apresentado'}
+                            className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer flex items-center gap-1 ${
+                              match.status_match === 'apresentado'
+                                ? 'bg-blue-500/20 text-blue-300 border-blue-500/50 cursor-default'
+                                : 'bg-[#070B14] text-slate-300 border-slate-700 hover:border-blue-400 hover:text-blue-300'
                             }`}
+                            title="Registrar envio formal da oportunidade ao investidor"
                           >
-                            <X className="w-3.5 h-3.5" />
-                            <span>
-                              {match.status_match === 'descartado' ? 'Descartado' : 'Descartar'}
-                            </span>
+                            <Eye className="w-3 h-3" />
+                            <span>Apresentar</span>
                           </button>
 
-                          {match.status_match !== 'pendente' && (
+                          {/* Botão Ligação */}
+                          <button
+                            type="button"
+                            onClick={() =>
+                              executarMudancaEstado({
+                                matchId: match.compatibilidade_id,
+                                novoEstado: 'ligacao',
+                              })
+                            }
+                            disabled={match.status_match === 'ligacao'}
+                            className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer flex items-center gap-1 ${
+                              match.status_match === 'ligacao'
+                                ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/50 cursor-default'
+                                : 'bg-[#070B14] text-slate-300 border-slate-700 hover:border-indigo-400 hover:text-indigo-300'
+                            }`}
+                            title="Registrar ligação de qualificação ou alinhamento"
+                          >
+                            <PhoneCall className="w-3 h-3" />
+                            <span>Ligação</span>
+                          </button>
+
+                          {/* Botão Visita */}
+                          <button
+                            type="button"
+                            onClick={() =>
+                              executarMudancaEstado({
+                                matchId: match.compatibilidade_id,
+                                novoEstado: 'visita',
+                              })
+                            }
+                            disabled={match.status_match === 'visita'}
+                            className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer flex items-center gap-1 ${
+                              match.status_match === 'visita'
+                                ? 'bg-amber-500/20 text-amber-300 border-amber-500/50 cursor-default'
+                                : 'bg-[#070B14] text-slate-300 border-slate-700 hover:border-amber-400 hover:text-amber-300'
+                            }`}
+                            title="Agendar ou registrar visita ao imóvel"
+                          >
+                            <Compass className="w-3 h-3" />
+                            <span>Visita</span>
+                          </button>
+
+                          {/* Botão Proposta */}
+                          <button
+                            type="button"
+                            onClick={() =>
+                              executarMudancaEstado({
+                                matchId: match.compatibilidade_id,
+                                novoEstado: 'proposta',
+                              })
+                            }
+                            disabled={match.status_match === 'proposta'}
+                            className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer flex items-center gap-1 ${
+                              match.status_match === 'proposta'
+                                ? 'bg-orange-500/20 text-orange-300 border-orange-500/50 cursor-default'
+                                : 'bg-[#070B14] text-slate-300 border-slate-700 hover:border-orange-400 hover:text-orange-300'
+                            }`}
+                            title="Registrar proposta formal em negociação"
+                          >
+                            <Handshake className="w-3 h-3" />
+                            <span>Proposta</span>
+                          </button>
+
+                          {/* Botão FECHADO (Abre Modal com Preço Final e Data Contrato) */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setModalFechadoMatch(match)
+                              setFechadoPreco(
+                                match.fechado_preco_final ? String(match.fechado_preco_final) : '',
+                              )
+                              setFechadoData(
+                                match.fechado_data_contrato ||
+                                  new Date().toISOString().split('T')[0],
+                              )
+                              setFechadoObs('')
+                            }}
+                            className="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/15 hover:bg-emerald-500 hover:text-[#070B14] text-emerald-300 border border-emerald-500/40 transition-all cursor-pointer flex items-center gap-1"
+                            title="Marcar como negócio fechado (exige preço e data)"
+                          >
+                            <Award className="w-3 h-3" />
+                            <span>Fechado</span>
+                          </button>
+
+                          {/* Botão PERDIDO (Abre Modal com 7 motivos fechados) */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setModalPerdidoMatch(match)
+                              setPerdidoMotivo((match.motivo_perda as MotivoPerdaMatch) || 'preco')
+                              setPerdidoObs('')
+                            }}
+                            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 transition-all cursor-pointer flex items-center gap-1"
+                            title="Marcar como perdido e registrar motivo"
+                          >
+                            <X className="w-3 h-3" />
+                            <span>Perdido</span>
+                          </button>
+
+                          {/* Voltar para Sugerido se necessário */}
+                          {match.status_match !== 'sugerido' && (
                             <button
                               type="button"
-                              onClick={() => handleDecidir(match.compatibilidade_id, 'pendente')}
-                              title="Resetar para pendente"
-                              className="p-2 rounded-xl text-xs text-slate-400 hover:text-slate-200 border border-slate-800 hover:border-slate-700 transition-colors"
+                              onClick={() =>
+                                executarMudancaEstado({
+                                  matchId: match.compatibilidade_id,
+                                  novoEstado: 'sugerido',
+                                })
+                              }
+                              title="Resetar para sugerido"
+                              className="p-1.5 rounded-lg text-xs text-slate-400 hover:text-slate-200 border border-slate-800 hover:border-slate-700 transition-colors"
                             >
-                              <Clock className="w-3.5 h-3.5" />
+                              <Clock className="w-3 h-3" />
                             </button>
                           )}
                         </>
@@ -406,9 +824,9 @@ export function GestorMatchesTab({
                     </div>
                   </div>
 
-                  {/* Comparativo Lado a Lado: Imóvel (Venda) vs Investidor (Tese) */}
+                  {/* Comparativo: Imóvel vs Tese do Investidor */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Coluna Imóvel */}
+                    {/* Imóvel */}
                     <div className="p-4 rounded-xl bg-[#070B14] border border-slate-800/90 space-y-2.5">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
@@ -420,8 +838,7 @@ export function GestorMatchesTab({
                               Imóvel ofertado
                             </span>
                             <h5 className="text-sm font-bold text-white capitalize">
-                              {match.imovel_tipo || 'Imóvel'} —{' '}
-                              {match.imovel_cidade || 'Não informada'}
+                              {match.imovel_tipo || 'Imóvel'} — {match.imovel_cidade || 'Região'}
                             </h5>
                           </div>
                         </div>
@@ -447,19 +864,15 @@ export function GestorMatchesTab({
                             {match.imovel_prazo_desejado || 'Não especificado'}
                           </span>
                         </div>
-                        <div>
-                          <span className="text-[11px] text-slate-500 block">Motivo da venda:</span>
-                          <span className="text-slate-300 truncate block">
-                            {match.imovel_motivo_venda || 'Não informado'}
+                        <div className="col-span-2">
+                          <span className="text-[11px] text-slate-500 block">
+                            Status do imóvel:
                           </span>
-                        </div>
-                        <div>
-                          <span className="text-[11px] text-slate-500 block">Status atual:</span>
                           <span className="text-slate-300 font-medium">{match.imovel_status}</span>
                         </div>
                       </div>
 
-                      {/* Contato do Proprietário */}
+                      {/* Contato Proprietário */}
                       <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between text-xs text-slate-400">
                         <span className="flex items-center gap-1.5">
                           <User className="w-3 h-3 text-slate-500" />
@@ -476,7 +889,7 @@ export function GestorMatchesTab({
                       </div>
                     </div>
 
-                    {/* Coluna Investidor */}
+                    {/* Investidor */}
                     <div className="p-4 rounded-xl bg-[#070B14] border border-slate-800/90 space-y-2.5">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
@@ -522,7 +935,7 @@ export function GestorMatchesTab({
                         </div>
                       </div>
 
-                      {/* Contato do Investidor */}
+                      {/* Contato Investidor */}
                       <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between text-xs text-slate-400">
                         <span className="flex items-center gap-1.5">
                           <User className="w-3 h-3 text-slate-500" />
@@ -540,18 +953,18 @@ export function GestorMatchesTab({
                     </div>
                   </div>
 
-                  {/* Bloco de Auditoria: Motivo da Eliminação (quando par eliminado) OU Resumo dos 5 critérios */}
+                  {/* Auditoria / Critérios */}
                   {match.eliminado ? (
                     <div className="p-3.5 rounded-xl bg-rose-950/30 border border-rose-500/40 text-xs space-y-1">
                       <div className="flex items-center gap-2">
                         <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
                         <span className="font-bold text-rose-300 uppercase tracking-wider text-[11px]">
-                          Motivo da Eliminação Pré-Motor (Auditoria Korbix)
+                          Motivo da Eliminação Pré-Motor (Auditoria KORBIX)
                         </span>
                       </div>
                       <p className="text-slate-200 text-xs leading-relaxed pl-6 font-medium">
                         {match.motivo_eliminacao ||
-                          'Par descartado automaticamente por não cumprir os requisitos objetivos de compatibilidade.'}
+                          'Par descartado automaticamente por não cumprir os requisitos objetivos de mercado.'}
                       </p>
                     </div>
                   ) : (
@@ -565,6 +978,16 @@ export function GestorMatchesTab({
                           <X className="w-4 h-4" />
                           <span>{naoAtendidos.length} não atendidos</span>
                         </span>
+                        <span className="text-slate-400">
+                          Comprador:{' '}
+                          <strong className="text-white font-mono">
+                            {match.nota_comprador ?? match.percentual} pts
+                          </strong>{' '}
+                          • Vendedor:{' '}
+                          <strong className="text-emerald-400 font-mono">
+                            {match.nota_vendedor ?? 0} pts
+                          </strong>
+                        </span>
                       </div>
 
                       <button
@@ -574,8 +997,8 @@ export function GestorMatchesTab({
                       >
                         <span>
                           {isDetalhesAberto
-                            ? 'Ocultar critérios de comprador e vendedor'
-                            : 'Ver critérios de comprador e vendedor'}
+                            ? 'Ocultar critérios detalhados'
+                            : 'Ver critérios detalhados'}
                         </span>
                         {isDetalhesAberto ? (
                           <ChevronUp className="w-4 h-4" />
@@ -585,26 +1008,19 @@ export function GestorMatchesTab({
                       </button>
                     </div>
                   )}
-                  {/* Painel Expansível de Critérios Auditáveis (Visão Gestor: Comprador + Vendedor) */}
-                  {isDetalhesAberto && (
-                    <div className="pt-3 border-t border-slate-800 space-y-4 animate-fade-in">
-                      {/* Bloco 1: Critérios da Visão do Comprador */}
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <h6 className="text-xs font-bold text-[#22C7E0] uppercase tracking-wider flex items-center gap-1.5">
-                            <Sparkles className="w-3.5 h-3.5" />
-                            <span>
-                              Critérios do Comprador (Nota:{' '}
-                              {match.nota_comprador ?? match.percentual} pts)
-                            </span>
-                          </h6>
-                          <span className="text-[11px] text-slate-400">
-                            {atendidos.length} atendidos • {naoAtendidos.length} não atendidos
-                          </span>
-                        </div>
 
+                  {/* Painel Expansível de Critérios */}
+                  {isDetalhesAberto && !match.eliminado && (
+                    <div className="pt-3 border-t border-slate-800 space-y-4 animate-fade-in">
+                      <div className="space-y-2">
+                        <h6 className="text-xs font-bold text-[#22C7E0] uppercase tracking-wider flex items-center gap-1.5">
+                          <Sparkles className="w-3.5 h-3.5" />
+                          <span>
+                            Critérios do Comprador (Nota: {match.nota_comprador ?? match.percentual}{' '}
+                            pts)
+                          </span>
+                        </h6>
                         <div className="grid grid-cols-1 gap-2">
-                          {/* Lista Completa de Critérios do Comprador com Pontos, Pesos, Fatores e Explicação */}
                           {(Array.isArray(match.criterios) && match.criterios.length > 0
                             ? match.criterios
                             : [...atendidos, ...naoAtendidos]
@@ -612,7 +1028,7 @@ export function GestorMatchesTab({
                             const isAtendido = Boolean(crit.atendido)
                             return (
                               <div
-                                key={`crit-comprador-${idx}`}
+                                key={`crit-c-${idx}`}
                                 className={`p-3 rounded-xl border text-xs space-y-1 ${
                                   isAtendido
                                     ? 'bg-emerald-950/20 border-emerald-500/30'
@@ -655,57 +1071,48 @@ export function GestorMatchesTab({
                         </div>
                       </div>
 
-                      {/* Bloco 2: Critérios da Visão do Vendedor (Exclusivo Gestor) */}
+                      {/* Critérios do Vendedor */}
                       <div className="pt-3 border-t border-slate-800/80 space-y-2">
-                        <div className="flex items-center justify-between">
-                          <h6 className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
-                            <Briefcase className="w-3.5 h-3.5" />
-                            <span>
-                              Critérios do Vendedor (Nota: {match.nota_vendedor ?? 0} pts)
-                            </span>
-                          </h6>
-                          <span className="text-[11px] text-slate-400">
-                            Visão interna do gestor
+                        <h6 className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                          <Briefcase className="w-3.5 h-3.5" />
+                          <span>
+                            Critérios do Vendedor (Nota: {match.nota_vendedor ?? 0} pts — Visão
+                            Gestor)
                           </span>
-                        </div>
-
+                        </h6>
                         <div className="grid grid-cols-1 gap-2">
                           {Array.isArray(match.detalhamento_vendedor) &&
                           match.detalhamento_vendedor.length > 0 ? (
-                            match.detalhamento_vendedor.map((item: any, idx: number) => {
-                              const pontos = item.pontos ?? 0
-                              const peso = item.peso ?? 0
-                              return (
-                                <div
-                                  key={`crit-vendedor-${idx}`}
-                                  className="p-3 rounded-xl bg-slate-900/70 border border-slate-800 text-xs space-y-1"
-                                >
-                                  <div className="flex items-center justify-between flex-wrap gap-2">
-                                    <div className="flex items-center gap-2">
-                                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                                      <span className="font-bold text-white">{item.nome}</span>
-                                      {typeof item.fator === 'number' && (
-                                        <span className="text-[11px] text-slate-400 font-mono">
-                                          (fator {item.fator.toFixed(2)})
-                                        </span>
-                                      )}
-                                      <span className="text-[11px] text-slate-500 font-normal">
-                                        peso {peso}
+                            match.detalhamento_vendedor.map((item: any, idx: number) => (
+                              <div
+                                key={`crit-v-${idx}`}
+                                className="p-3 rounded-xl bg-slate-900/70 border border-slate-800 text-xs space-y-1"
+                              >
+                                <div className="flex items-center justify-between flex-wrap gap-2">
+                                  <div className="flex items-center gap-2">
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                                    <span className="font-bold text-white">{item.nome}</span>
+                                    {typeof item.fator === 'number' && (
+                                      <span className="text-[11px] text-slate-400 font-mono">
+                                        (fator {item.fator.toFixed(2)})
                                       </span>
-                                    </div>
-                                    <span className="font-mono font-bold text-emerald-400">
-                                      {pontos} pts
+                                    )}
+                                    <span className="text-[11px] text-slate-500 font-normal">
+                                      peso {item.peso}
                                     </span>
                                   </div>
-                                  <p className="text-slate-300 pl-6 text-[11px] leading-relaxed">
-                                    {item.explicacao}
-                                  </p>
+                                  <span className="font-mono font-bold text-emerald-400">
+                                    {item.pontos ?? 0} pts
+                                  </span>
                                 </div>
-                              )
-                            })
+                                <p className="text-slate-300 pl-6 text-[11px] leading-relaxed">
+                                  {item.explicacao}
+                                </p>
+                              </div>
+                            ))
                           ) : (
                             <p className="text-slate-400 text-xs pl-2">
-                              Detalhamento do vendedor ainda não gravado para este par.
+                              Detalhamento do vendedor ainda não calculado para este par.
                             </p>
                           )}
                         </div>
@@ -718,6 +1125,167 @@ export function GestorMatchesTab({
           })}
         </div>
       )}
+
+      {/* 4. MODAL TRANSIÇÃO: MARCAR COMO FECHADO (Exige Preço e Data) */}
+      <Dialog
+        open={Boolean(modalFechadoMatch)}
+        onOpenChange={(aberto) => !aberto && setModalFechadoMatch(null)}
+      >
+        <DialogContent className="w-[calc(100%-1.5rem)] sm:max-w-[480px] bg-[#070B14] border border-emerald-500/40 text-white shadow-2xl p-6 rounded-2xl">
+          <DialogHeader className="text-left space-y-2">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+              <Award className="w-5 h-5" />
+            </div>
+            <DialogTitle className="text-lg font-bold text-white">
+              Marcar Match como Fechado
+            </DialogTitle>
+            <DialogDescription className="text-xs text-slate-300 leading-relaxed">
+              Obrigatório registrar os dados contratuais reais para calibração do motor de mercado:
+              imóvel <strong className="text-white">{modalFechadoMatch?.imovel_protocolo}</strong>{' '}
+              com investidor{' '}
+              <strong className="text-white">{modalFechadoMatch?.investidor_protocolo}</strong>.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleSubmeterFechado} className="space-y-4 pt-2">
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Preço Final da Venda (R$) *</span>
+              </label>
+              <input
+                type="text"
+                required
+                placeholder="Ex: 580000"
+                value={fechadoPreco}
+                onChange={(e) => setFechadoPreco(e.target.value)}
+                className="w-full px-3 py-2 rounded-xl bg-[#081226] border border-slate-700 focus:border-emerald-500 text-sm text-white font-mono outline-none"
+              />
+              <span className="text-[11px] text-slate-400">
+                Valor bruto acordado no fechamento formal do negócio.
+              </span>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Data do Contrato / Fechamento *</span>
+              </label>
+              <input
+                type="date"
+                required
+                value={fechadoData}
+                onChange={(e) => setFechadoData(e.target.value)}
+                className="w-full px-3 py-2 rounded-xl bg-[#081226] border border-slate-700 focus:border-emerald-500 text-sm text-white outline-none"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                Observações de Fechamento (opcional)
+              </label>
+              <textarea
+                rows={2}
+                placeholder="Condições especiais, parcelamento ou termos da escritura..."
+                value={fechadoObs}
+                onChange={(e) => setFechadoObs(e.target.value)}
+                className="w-full px-3 py-2 rounded-xl bg-[#081226] border border-slate-700 focus:border-emerald-500 text-xs text-white outline-none resize-none"
+              />
+            </div>
+
+            <DialogFooter className="pt-2 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setModalFechadoMatch(null)}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white border border-slate-800 transition-colors cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={processandoId !== null}
+                className="px-5 py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-[#070B14] shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all cursor-pointer flex items-center gap-1.5"
+              >
+                <Award className="w-3.5 h-3.5" />
+                <span>Confirmar Fechamento</span>
+              </button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* 5. MODAL TRANSIÇÃO: MARCAR COMO PERDIDO (Exige 1 dos 7 motivos fechados) */}
+      <Dialog
+        open={Boolean(modalPerdidoMatch)}
+        onOpenChange={(aberto) => !aberto && setModalPerdidoMatch(null)}
+      >
+        <DialogContent className="w-[calc(100%-1.5rem)] sm:max-w-[480px] bg-[#070B14] border border-rose-500/40 text-white shadow-2xl p-6 rounded-2xl">
+          <DialogHeader className="text-left space-y-2">
+            <div className="w-10 h-10 rounded-xl bg-rose-500/15 border border-rose-500/40 flex items-center justify-center text-rose-400">
+              <XCircle className="w-5 h-5" />
+            </div>
+            <DialogTitle className="text-lg font-bold text-white">
+              Marcar Match como Perdido
+            </DialogTitle>
+            <DialogDescription className="text-xs text-slate-300 leading-relaxed">
+              Obrigatório selecionar o motivo exato da perda para alimentar os relatórios analíticos
+              e a calibração estatística do motor KORBIX.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleSubmeterPerdido} className="space-y-4 pt-2">
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                Motivo da Perda (Lista Fechada KORBIX) *
+              </label>
+              <select
+                required
+                value={perdidoMotivo}
+                onChange={(e) => setPerdidoMotivo(e.target.value as MotivoPerdaMatch)}
+                className="w-full px-3 py-2.5 rounded-xl bg-[#081226] border border-slate-700 focus:border-rose-500 text-xs text-white outline-none cursor-pointer"
+              >
+                {(Object.keys(MOTIVOS_PERDA_CONFIG) as MotivoPerdaMatch[]).map((motivoKey) => (
+                  <option key={motivoKey} value={motivoKey}>
+                    {MOTIVOS_PERDA_CONFIG[motivoKey].label} —{' '}
+                    {MOTIVOS_PERDA_CONFIG[motivoKey].descricao}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                Detalhamento / Feedback do Lead (opcional)
+              </label>
+              <textarea
+                rows={3}
+                placeholder="Ex: Investidor fechou apartamento no bairro vizinho; vendedor não aceitou contraproposta..."
+                value={perdidoObs}
+                onChange={(e) => setPerdidoObs(e.target.value)}
+                className="w-full px-3 py-2 rounded-xl bg-[#081226] border border-slate-700 focus:border-rose-500 text-xs text-white outline-none resize-none"
+              />
+            </div>
+
+            <DialogFooter className="pt-2 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setModalPerdidoMatch(null)}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white border border-slate-800 transition-colors cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={processandoId !== null}
+                className="px-5 py-2 rounded-xl text-xs font-bold bg-rose-500 hover:bg-rose-400 text-white shadow-[0_0_15px_rgba(244,63,94,0.3)] transition-all cursor-pointer flex items-center gap-1.5"
+              >
+                <XCircle className="w-3.5 h-3.5" />
+                <span>Registrar Perda</span>
+              </button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

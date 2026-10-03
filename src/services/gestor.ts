@@ -56,7 +56,63 @@ export interface GestorLeadItem {
   total_docs_conferidos?: number | null
   apto_para_ativar?: boolean | null
 }
-export type StatusMatch = 'pendente' | 'aprovado' | 'descartado'
+export type StatusMatch =
+  | 'sugerido'
+  | 'aprovado'
+  | 'apresentado'
+  | 'interesse'
+  | 'ligacao'
+  | 'visita'
+  | 'proposta'
+  | 'fechado'
+  | 'perdido'
+  | 'pendente'
+  | 'descartado'
+
+export type MotivoPerdaMatch =
+  | 'preco'
+  | 'localizacao'
+  | 'documentacao'
+  | 'credito_negado'
+  | 'desistencia'
+  | 'comprou_outro'
+  | 'outro'
+
+export const MOTIVOS_PERDA_CONFIG: Record<MotivoPerdaMatch, { label: string; descricao: string }> =
+  {
+    preco: { label: 'Preço', descricao: 'Preço desalinhado da margem do investidor' },
+    localizacao: { label: 'Localização', descricao: 'Bairro ou microrregião não aceita' },
+    documentacao: { label: 'Documentação', descricao: 'Imbróglio documental, certidões ou posse' },
+    credito_negado: { label: 'Crédito negado', descricao: 'Financiamento ou consórcio recusado' },
+    desistencia: { label: 'Desistência', descricao: 'Comprador ou proprietário desistiu' },
+    comprou_outro: { label: 'Comprou outro', descricao: 'Investidor optou por outra oportunidade' },
+    outro: { label: 'Outro', descricao: 'Outro motivo identificado' },
+  }
+
+export interface GestorResumoCicloMatches {
+  estados: {
+    sugerido: number
+    aprovado: number
+    apresentado: number
+    interesse: number
+    ligacao: number
+    visita: number
+    proposta: number
+    fechado: number
+    perdido: number
+  }
+  motivos_perda: {
+    preco: number
+    localizacao: number
+    documentacao: number
+    credito_negado: number
+    desistencia: number
+    comprou_outro: number
+    outro: number
+  }
+  total_ativos: number
+  total_eliminados: number
+}
 
 export interface GestorFunilEtapaItem {
   rota_filtro: 'geral' | 'proprietario' | 'investidor' | string
@@ -117,6 +173,10 @@ export interface GestorMatchItem {
   confianca_detalhes?: DetalheConfiancaPar | any
   detalhamento_vendedor?: any[]
   status_match: StatusMatch
+  status_data_mudanca?: string
+  fechado_preco_final?: number | null
+  fechado_data_contrato?: string | null
+  motivo_perda?: MotivoPerdaMatch | string | null
   criterios: CriterioCompatibilidadeItem[] | any
   criterios_atendidos: CriterioCompatibilidadeItem[] | any
   criterios_nao_atendidos: CriterioCompatibilidadeItem[] | any
@@ -373,6 +433,100 @@ export async function gestorListarMatches(): Promise<GestorMatchItem[]> {
 /**
  * Aprova ou descarta um match (par imóvel x investidor)
  */
+export async function gestorMudarEstadoMatch({
+  compatibilidadeId,
+  novoEstado,
+  fechadoPreco,
+  fechadoData,
+  motivoPerda,
+  observacao,
+}: {
+  compatibilidadeId: string
+  novoEstado: StatusMatch
+  fechadoPreco?: number | null
+  fechadoData?: string | null
+  motivoPerda?: MotivoPerdaMatch | string | null
+  observacao?: string | null
+}): Promise<{
+  id: string
+  status: StatusMatch
+  status_data_mudanca: string
+  fechado_preco_final?: number | null
+  fechado_data_contrato?: string | null
+  motivo_perda?: string | null
+}> {
+  try {
+    const { data, error } = await (supabase.rpc as any)('fn_gestor_mudar_estado_match', {
+      p_compatibilidade_id: compatibilidadeId,
+      p_novo_estado: novoEstado,
+      p_fechado_preco: fechadoPreco ?? null,
+      p_fechado_data: fechadoData ?? null,
+      p_motivo_perda: motivoPerda ?? null,
+      p_observacao: observacao ?? null,
+    })
+
+    if (error) {
+      console.error('Erro ao mudar estado do match via RPC:', error.message)
+      throw new Error(error.message)
+    }
+
+    if (Array.isArray(data) && data.length > 0) {
+      return data[0]
+    }
+    return {
+      id: compatibilidadeId,
+      status: novoEstado,
+      status_data_mudanca: new Date().toISOString(),
+    }
+  } catch (err: any) {
+    console.error('Falha ao mudar estado do match:', err)
+    throw err
+  }
+}
+
+/**
+ * Consulta o resumo do ciclo de vida dos matches (contadores por estado e motivos de perda)
+ */
+export async function gestorObterResumoCicloMatches(): Promise<GestorResumoCicloMatches> {
+  try {
+    const { data, error } = await (supabase.rpc as any)('fn_gestor_resumo_ciclo_matches')
+    if (error) {
+      console.error('Erro ao obter resumo do ciclo de matches via RPC:', error.message)
+      throw new Error(error.message)
+    }
+    return data as GestorResumoCicloMatches
+  } catch (err: any) {
+    console.error('Falha ao carregar resumo do ciclo de matches:', err)
+    return {
+      estados: {
+        sugerido: 0,
+        aprovado: 0,
+        apresentado: 0,
+        interesse: 0,
+        ligacao: 0,
+        visita: 0,
+        proposta: 0,
+        fechado: 0,
+        perdido: 0,
+      },
+      motivos_perda: {
+        preco: 0,
+        localizacao: 0,
+        documentacao: 0,
+        credito_negado: 0,
+        desistencia: 0,
+        comprou_outro: 0,
+        outro: 0,
+      },
+      total_ativos: 0,
+      total_eliminados: 0,
+    }
+  }
+}
+
+/**
+ * Aprova ou descarta um match (par imóvel x investidor) - atalho rápido
+ */
 export async function gestorDecidirMatch(
   compatibilidadeId: string,
   acao: 'aprovar' | 'descartar' | 'pendente',
@@ -391,7 +545,7 @@ export async function gestorDecidirMatch(
     if (Array.isArray(data) && data.length > 0) {
       return data[0]
     }
-    return { id: compatibilidadeId, status: acao === 'aprovar' ? 'aprovado' : 'descartado' }
+    return { id: compatibilidadeId, status: acao === 'aprovar' ? 'aprovado' : 'perdido' }
   } catch (err: any) {
     console.error('Falha ao decidir match:', err)
     throw err

@@ -55,8 +55,8 @@ export const InvestorArea: React.FC<InvestorAreaProps> = ({
   loading,
   onRefresh,
 }) => {
-  // Filtros
-  const [minPercentual, setMinPercentual] = useState<number>(50)
+  // Filtros - o filtro de percentual mínimo da área do comprador oferece 75, 85 e 90
+  const [minPercentual, setMinPercentual] = useState<number>(75)
   const [filtroCidade, setFiltroCidade] = useState<string>('todas')
   const [filtroObjetivo, setFiltroObjetivo] = useState<string>('todos')
 
@@ -342,13 +342,11 @@ export const InvestorArea: React.FC<InvestorAreaProps> = ({
               <select
                 value={minPercentual}
                 onChange={(e) => setMinPercentual(Number(e.target.value))}
-                className="w-full px-3 py-2 rounded-lg bg-[#081226] border border-slate-700 focus:border-[#22C7E0] text-xs text-white outline-none cursor-pointer appearance-none transition-colors"
+                className="w-full px-3 py-2 rounded-lg bg-[#081226] border border-slate-700 focus:border-[#22C7E0] text-xs text-white outline-none cursor-pointer appearance-none transition-colors font-medium"
               >
-                <option value={0}>Todas as compatibilidades (0%+)</option>
-                <option value={40}>A partir de 40%</option>
-                <option value={50}>A partir de 50% (Recomendado)</option>
-                <option value={70}>Alta compatibilidade (70%+)</option>
-                <option value={90}>Super Match (90%+)</option>
+                <option value={75}>Alta compatibilidade (75%+)</option>
+                <option value={85}>Excelente compatibilidade (85%+)</option>
+                <option value={90}>Super Match KORBIX (90%+)</option>
               </select>
               <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-xs">
                 ▼

@@ -39,6 +39,8 @@ export interface OportunidadeInvestidor {
   ja_manifestou_interesse: boolean
   interesse_id?: string | null
   interesse_status?: string | null
+  status_match?: string | null
+  status_data_mudanca?: string | null
 }
 
 export interface ManifestarInteresseResult {
@@ -126,6 +128,8 @@ export async function buscarOportunidadesInvestidor(): Promise<OportunidadeInves
       ja_manifestou_interesse: Boolean(item.ja_manifestou_interesse),
       interesse_id: item.interesse_id || null,
       interesse_status: item.interesse_status || null,
+      status_match: item.status_match || null,
+      status_data_mudanca: item.status_data_mudanca || null,
     }))
   } catch (err) {
     console.warn('Exceção ao listar oportunidades do investidor:', err)
