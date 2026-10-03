@@ -14,6 +14,8 @@ import AdminLogin from './pages/AdminLogin'
 import Cadastro from './pages/Cadastro'
 import MinhaArea from './pages/MinhaArea'
 import PainelGestor from './pages/PainelGestor'
+import EsqueciSenha from './pages/EsqueciSenha'
+import RedefinirSenha from './pages/RedefinirSenha'
 import Layout from './components/Layout'
 
 // ONLY IMPORT AND RENDER WORKING PAGES, NEVER ADD PLACEHOLDER COMPONENTS OR PAGES IN THIS FILE
@@ -37,6 +39,8 @@ const App = () => (
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/acesso-restrito" element={<AdminLogin />} />
           <Route path="/cadastro" element={<Cadastro />} />
+          <Route path="/esqueci-senha" element={<EsqueciSenha />} />
+          <Route path="/redefinir-senha" element={<RedefinirSenha />} />
           <Route path="/minha-area" element={<MinhaArea />} />
           <Route path="/painel" element={<PainelGestor />} />
           <Route path="*" element={<NotFound />} />
