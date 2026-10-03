@@ -62,9 +62,9 @@ export const ModalComecarAgora: React.FC<ModalComecarAgoraProps> = ({
       }
     }
     return {
-      title: 'Quero investir',
+      title: 'Quero comprar',
       description:
-        'Defina sua tese de alocação de capital e receba oportunidades filtradas antes de chegarem aos portais abertos.',
+        'Defina sua busca ou tese e receba oportunidades filtradas antes de chegarem aos portais abertos.',
     }
   }
 
@@ -160,10 +160,10 @@ export const ModalComecarAgora: React.FC<ModalComecarAgoraProps> = ({
                 </div>
                 <div className="min-w-0 space-y-0.5 sm:space-y-1">
                   <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-[#22C7E0] block">
-                    Para investidores
+                    Para investidores e compradores
                   </span>
                   <div className="text-base sm:text-lg font-bold text-white group-hover:text-white tracking-tight leading-snug">
-                    Quero investir
+                    Quero comprar
                   </div>
                   <p className="text-xs sm:text-[13px] text-slate-300 line-clamp-2 leading-relaxed">
                     Acesso exclusivo a oportunidades pré-auditadas antes de chegarem aos portais

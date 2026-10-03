@@ -437,7 +437,7 @@ export const CompatibilityThermometerSection: React.FC<CompatibilityThermometerS
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 min-h-[48px] rounded-xl border border-[#1A3A75] bg-[#070B14] hover:bg-[#1A3A75]/35 active:bg-[#1A3A75]/50 text-white hover:text-white text-xs sm:text-sm font-semibold transition-all cursor-pointer hover:border-[#22C7E0]/60 shadow-lg shadow-black/40"
                   >
                     <TrendingUp className="w-4 h-4 text-[#22C7E0] shrink-0" />
-                    <span>Configurar tese de investimento</span>
+                    <span>Configurar minha busca</span>
                   </button>
                 </div>
               )}

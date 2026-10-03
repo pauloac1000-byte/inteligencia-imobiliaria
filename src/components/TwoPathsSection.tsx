@@ -134,7 +134,7 @@ export const TwoPathsSection: React.FC<TwoPathsSectionProps> = ({ onOpenModal })
                     Para investidores
                   </span>
                   <h3 className="text-lg sm:text-2xl font-bold text-white tracking-tight leading-tight">
-                    Quero oportunidade de investimento
+                    Quero comprar
                   </h3>
                 </div>
               </div>
@@ -171,7 +171,7 @@ export const TwoPathsSection: React.FC<TwoPathsSectionProps> = ({ onOpenModal })
                 onClick={handleInvestirClick}
                 className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 sm:px-5 min-h-[48px] rounded-xl bg-[#1A3A75] hover:bg-[#142E5E] active:bg-[#0F2347] text-white text-sm sm:text-base font-semibold shadow-inner border border-white/10 group-hover:border-white/20 transition-all duration-200 cursor-pointer leading-snug text-center"
               >
-                <span>Quero oportunidade de investimento</span>
+                <span>Quero comprar</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-[#22C7E0] shrink-0" />
               </button>
             </div>

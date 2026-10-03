@@ -34,21 +34,31 @@ const FAQ_PROPRIETARIO: FaqItem[] = [
   },
 ]
 
-const FAQ_INVESTIDOR: FaqItem[] = [
+const FAQ_COMPRADOR: FaqItem[] = [
   {
-    id: 'inv-oportunidades',
+    id: 'comp-oportunidades',
     question: 'Como recebo as oportunidades de investimento compatíveis?',
     answer:
       'Após o registro da sua tese (faixa de aporte, região de interesse, tipologia e expectativa de cap rate ou valorização), nosso algoritmo analisa os ativos cadastrados e envia apenas oportunidades com alto índice de compatibilidade diretamente para você, antes de chegarem ao mercado aberto.',
   },
   {
-    id: 'inv-exclusividade',
+    id: 'comp-financiamento-fgts',
+    question: 'Posso comprar para morar usando financiamento ou FGTS?',
+    answer: '[PREENCHER: resposta sobre financiamento e FGTS]',
+  },
+  {
+    id: 'comp-prazo-mudanca',
+    question: 'Em quanto tempo consigo me mudar depois da compra?',
+    answer: '[PREENCHER: resposta sobre o prazo para mudar]',
+  },
+  {
+    id: 'comp-exclusividade',
     question: 'As oportunidades apresentadas possuem exclusividade de negociação?',
     answer:
       'Sim. Estabelecemos uma conexão direta com os proprietários verificados na nossa base. As oportunidades filtradas não passam pelo ruído de leilões informais em redes sociais ou múltiplos anúncios concorrentes nos portais, preservando sua margem analítica e poder de negociação.',
   },
   {
-    id: 'inv-seguranca',
+    id: 'comp-seguranca',
     question: 'Qual a segurança jurídica das transações estruturadas pela plataforma?',
     answer:
       'Toda transação conta com auditoria documental rigorosa: levantamento de certidões forenses, regularidade fiscal, análise de matrículas, ônus reais e histórico da titularidade. O processo é integralmente conduzido e respaldado por corretores credenciados perante os órgãos reguladores competentes.',
@@ -104,7 +114,7 @@ export const FaqSection: React.FC = () => {
                 }`}
               >
                 <TrendingUp className="w-4 h-4 text-[#22C7E0] shrink-0" />
-                <span className="whitespace-nowrap">Sou investidor</span>
+                <span className="whitespace-nowrap">Sou comprador</span>
               </button>
             </div>
           </div>
@@ -118,7 +128,7 @@ export const FaqSection: React.FC = () => {
               <span>
                 {tab === 'venda'
                   ? 'Perguntas selecionadas para proprietários'
-                  : 'Perguntas selecionadas para investidores'}
+                  : 'Perguntas selecionadas para compradores'}
               </span>
             </span>
             <span className="text-[11px] font-mono text-[#22C7E0]">1 item aberto por vez</span>
@@ -148,7 +158,7 @@ export const FaqSection: React.FC = () => {
             </Accordion>
           ) : (
             <Accordion type="single" collapsible className="w-full">
-              {FAQ_INVESTIDOR.map((item) => (
+              {FAQ_COMPRADOR.map((item) => (
                 <AccordionItem
                   key={item.id}
                   value={item.id}

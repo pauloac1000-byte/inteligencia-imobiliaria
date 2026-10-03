@@ -85,7 +85,7 @@ export const FinalCtaSection: React.FC<FinalCtaSectionProps> = ({ onOpenModal })
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-5 sm:px-7 py-3.5 sm:py-4 min-h-[48px] rounded-xl border border-[#1A3A75] bg-[#070B14] hover:bg-[#1A3A75]/35 active:bg-[#1A3A75]/50 text-white text-sm sm:text-base font-semibold backdrop-blur-sm transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer hover:border-[#22C7E0]/60 text-center leading-snug shadow-xl"
             >
               <TrendingUp className="w-5 h-5 text-[#22C7E0] shrink-0" />
-              <span>Quero oportunidade de investimento</span>
+              <span>Quero comprar</span>
             </button>
           </div>
         </div>
