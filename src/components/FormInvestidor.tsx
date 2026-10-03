@@ -193,6 +193,7 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const [sucesso, setSucesso] = useState(false)
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
   // Carrega diferenciais, cidades de SP e atalhos de região do Supabase
   useEffect(() => {
@@ -300,9 +301,12 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
   // Navegação entre etapas com validações
   const avancarEtapa1 = (e: React.FormEvent) => {
     e.preventDefault()
+    setFieldErrors({})
     const digits = telefone.replace(/\D/g, '')
     if (!digits || digits.length < 10) {
-      setErrorMsg('Por favor, informe um WhatsApp válido com DDD (mínimo 10 dígitos).')
+      const msg = 'Por favor, informe um WhatsApp válido no formato +55 com DDD.'
+      setFieldErrors({ telefone: msg })
+      setErrorMsg(msg)
       return
     }
     setErrorMsg('')
@@ -315,6 +319,18 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
 
   const avancarEtapa2 = (e: React.FormEvent) => {
     e.preventDefault()
+    setFieldErrors({})
+
+    const precoMin = parseMoedaParaNumero(precoMinimoStr)
+    const precoMax = parseMoedaParaNumero(precoMaximoStr)
+
+    if (precoMin !== undefined && precoMax !== undefined && precoMin >= precoMax) {
+      const msg = 'O valor mínimo da faixa deve ser estritamente menor que o valor máximo.'
+      setFieldErrors({ precoMinimo: msg })
+      setErrorMsg(msg)
+      return
+    }
+
     if (tiposImovel.length === 0) {
       setErrorMsg('Selecione pelo menos um tipo de imóvel aceito.')
       return
@@ -342,10 +358,24 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
   // Submissão Final (Etapa 5)
   const handleSubmitFinal = async (e: React.FormEvent) => {
     e.preventDefault()
+    setFieldErrors({})
 
     if (!autorizoContato) {
       setAutorizoTouched(true)
       setErrorMsg('É necessário autorizar o contato para enviar o formulário.')
+      return
+    }
+
+    // Parse de valores numéricos
+    const precoMin = parseMoedaParaNumero(precoMinimoStr)
+    const precoMax = parseMoedaParaNumero(precoMaximoStr)
+    const precoTeto = parseMoedaParaNumero(precoTetoStr)
+
+    if (precoMin !== undefined && precoMax !== undefined && precoMin >= precoMax) {
+      const msg = 'O valor mínimo da faixa deve ser estritamente menor que o valor máximo.'
+      setFieldErrors({ precoMinimo: msg })
+      setErrorMsg(msg)
+      setEtapa(2)
       return
     }
 
@@ -354,11 +384,6 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
 
     // Prepara nomes das cidades para manter retrocompatibilidade com cidades_interesse texto
     const nomesCidades = cidadesCodigos.map((cod) => mapaMunicipios.get(cod) || cod)
-
-    // Parse de valores numéricos
-    const precoMin = parseMoedaParaNumero(precoMinimoStr)
-    const precoMax = parseMoedaParaNumero(precoMaximoStr)
-    const precoTeto = parseMoedaParaNumero(precoTetoStr)
 
     // Mínimos
     const minArea = temResidencial
@@ -435,7 +460,20 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
     setLoading(false)
 
     if (!res.success) {
-      setErrorMsg(res.error || 'Ocorreu um erro ao registrar sua busca de imóvel. Tente novamente.')
+      const err = res.error || 'Ocorreu um erro ao registrar sua busca de imóvel. Tente novamente.'
+      const msgLow = err.toLowerCase()
+      if (
+        msgLow.includes('mínimo da faixa') ||
+        msgLow.includes('minimo da faixa') ||
+        msgLow.includes('preco')
+      ) {
+        setFieldErrors({ precoMinimo: err })
+        setEtapa(2)
+      } else if (msgLow.includes('whatsapp') || msgLow.includes('+55')) {
+        setFieldErrors({ telefone: err })
+        setEtapa(1)
+      }
+      setErrorMsg(err)
       return
     }
 
@@ -694,9 +732,26 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
                 onChange={(e) => {
                   setTelefone(formatarTelefone(e.target.value))
                   if (errorMsg) setErrorMsg('')
+                  if (fieldErrors.telefone) {
+                    setFieldErrors((prev) => {
+                      const n = { ...prev }
+                      delete n.telefone
+                      return n
+                    })
+                  }
                 }}
-                className="w-full px-3.5 py-2.5 rounded-lg bg-[#081226] border border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0] text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all min-h-[44px]"
+                className={`w-full px-3.5 py-2.5 rounded-lg bg-[#081226] border text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all min-h-[44px] ${
+                  fieldErrors.telefone
+                    ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500'
+                    : 'border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0]'
+                }`}
               />
+              {fieldErrors.telefone && (
+                <p className="text-[11px] text-red-400 mt-1 flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3 text-red-400 shrink-0" />
+                  <span>{fieldErrors.telefone}</span>
+                </p>
+              )}
               <p className="text-[11px] text-slate-400">
                 Canal prioritário onde você receberá oportunidades compatíveis.
               </p>
@@ -755,9 +810,28 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
                   type="text"
                   placeholder="Ex.: 250.000"
                   value={precoMinimoStr}
-                  onChange={(e) => setPrecoMinimoStr(formatarMoedaInput(e.target.value))}
-                  className="w-full px-3 py-2 rounded-lg bg-[#081226] border border-slate-700 focus:border-[#22C7E0] text-white placeholder-slate-500 text-sm outline-none"
+                  onChange={(e) => {
+                    setPrecoMinimoStr(formatarMoedaInput(e.target.value))
+                    if (fieldErrors.precoMinimo) {
+                      setFieldErrors((prev) => {
+                        const n = { ...prev }
+                        delete n.precoMinimo
+                        return n
+                      })
+                    }
+                  }}
+                  className={`w-full px-3 py-2 rounded-lg bg-[#081226] border text-white placeholder-slate-500 text-sm outline-none ${
+                    fieldErrors.precoMinimo
+                      ? 'border-red-500 focus:border-red-500'
+                      : 'border-slate-700 focus:border-[#22C7E0]'
+                  }`}
                 />
+                {fieldErrors.precoMinimo && (
+                  <p className="text-[11px] text-red-400 mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3 text-red-400 shrink-0" />
+                    <span>{fieldErrors.precoMinimo}</span>
+                  </p>
+                )}
               </div>
 
               <div className="space-y-1">

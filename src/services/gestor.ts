@@ -14,25 +14,30 @@ export interface GestorLeadItem {
   id: string
   rota: 'proprietario' | 'investidor' | string
   protocolo: string
-  nome: string | null
-  telefone: string | null
-  email: string | null
-  motivo_venda: string | null
-  prazo_desejado: string | null
-  status: StatusImovelLead | string
-  tipo_imovel: string | null
-  cidade: string | null
-  valor_estimado: string | null
-  mensagem: string | null
-  ticket: string | null
-  objetivo: string | null
-  prazo_decisao: string | null
-  cidades_interesse: string | null
-  perfil: string | null
-  user_id: string | null
-  criado_em: string | null
+  nome?: string | null
+  telefone?: string | null
+  email?: string | null
+  motivo_venda?: string | null
+  prazo_desejado?: string | null
+  status?: string | null
+  tipo_imovel?: string | null
+  cidade?: string | null
+  valor_estimado?: string | null
+  mensagem?: string | null
+  ticket?: string | null
+  objetivo?: string | null
+  prazo_decisao?: string | null
+  cidades_interesse?: string | null
+  perfil?: string | null
+  user_id?: string | null
+  criado_em: string
+  alerta_valor?: string | null
+  alerta_motivo?: string | null
+  preco_pedido?: number | null
+  area_util?: number | null
+  area_terreno?: number | null
+  quartos?: number | null
 }
-
 export type StatusMatch = 'pendente' | 'aprovado' | 'descartado'
 
 export interface GestorFunilEtapaItem {

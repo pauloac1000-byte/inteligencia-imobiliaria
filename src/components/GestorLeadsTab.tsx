@@ -15,6 +15,7 @@ import {
   Mail,
   Calendar,
   AlertCircle,
+  AlertTriangle,
   Loader2,
   Edit2,
   Sparkles,
@@ -324,6 +325,20 @@ export function GestorLeadsTab({
                       )}
                     </span>
 
+                    {/* Alerta de coerência / mediana de valor para o gestor */}
+                    {lead.alerta_valor === 'revisar valor' && (
+                      <span
+                        title={
+                          lead.alerta_motivo ||
+                          'Preço por m² fora da faixa mediana de 50% regional.'
+                        }
+                        className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold border bg-amber-500/20 text-amber-300 border-amber-500/50 shadow-sm animate-pulse"
+                      >
+                        <AlertTriangle className="w-3 h-3 text-amber-400" />
+                        <span>revisar valor</span>
+                      </span>
+                    )}
+
                     {/* Data de cadastro */}
                     {lead.criado_em && (
                       <span className="text-[11px] text-slate-400 flex items-center gap-1">
@@ -467,9 +482,9 @@ export function GestorLeadsTab({
                   </div>
                 </div>
 
-                {/* Feedback de impacto do status para o gestor */}
+                {/* Feedback de impacto do status para o gestor e motivo do alerta */}
                 {isProprietario && (
-                  <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between text-[11px] text-slate-400">
+                  <div className="pt-2 border-t border-slate-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] text-slate-400">
                     <span className="flex items-center gap-1.5">
                       <Sparkles className="w-3 h-3 text-[#22C7E0]" />
                       <span>
@@ -478,6 +493,13 @@ export function GestorLeadsTab({
                         privada.
                       </span>
                     </span>
+
+                    {lead.alerta_valor === 'revisar valor' && lead.alerta_motivo && (
+                      <span className="text-amber-400/90 text-[11px] bg-amber-950/40 border border-amber-800/40 px-2 py-0.5 rounded-md">
+                        {lead.alerta_motivo}
+                      </span>
+                    )}
+
                     <span className="font-mono text-slate-500">ID: {lead.id.slice(0, 8)}...</span>
                   </div>
                 )}

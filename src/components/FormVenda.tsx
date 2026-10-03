@@ -106,6 +106,13 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
     )
   }
 
+  // Campos de coerência do imóvel (especificação do motor de compatibilidade)
+  const [precoPedido, setPrecoPedido] = useState('')
+  const [precoMinimo, setPrecoMinimo] = useState('')
+  const [areaUtil, setAreaUtil] = useState('')
+  const [areaTerreno, setAreaTerreno] = useState('')
+  const [quartos, setQuartos] = useState('')
+
   // Etapa 2: nome, email, valor estimado, motivo da venda, prazo desejado (+ mensagem opcional mantida)
   const [nome, setNome] = useState('')
   const [email, setEmail] = useState('')
@@ -116,6 +123,9 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
   const [autorizoContato, setAutorizoContato] = useState(false)
   const [autorizoTouched, setAutorizoTouched] = useState(false)
 
+  // Erros por campo para exibição em português junto de cada campo
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
+
   // Estados de UI
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
@@ -125,6 +135,39 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
     const raw = e.target.value
     setTelefone(formatarTelefone(raw))
     if (errorMsg) setErrorMsg('')
+    if (fieldErrors.telefone) {
+      setFieldErrors((prev) => {
+        const next = { ...prev }
+        delete next.telefone
+        return next
+      })
+    }
+  }
+
+  const mapearErroBanco = (mensagemErro: string) => {
+    const novosErros: Record<string, string> = {}
+    const msg = mensagemErro.toLowerCase()
+
+    if (msg.includes('whatsapp') || msg.includes('+55') || msg.includes('telefone')) {
+      novosErros.telefone = mensagemErro
+    } else if (msg.includes('preço mínimo') || msg.includes('preco minimo')) {
+      novosErros.precoMinimo = mensagemErro
+    } else if (msg.includes('área útil') || msg.includes('area util')) {
+      novosErros.areaUtil = mensagemErro
+    } else if (msg.includes('área do terreno') || msg.includes('area do terreno')) {
+      novosErros.areaTerreno = mensagemErro
+    } else if (msg.includes('quarto')) {
+      novosErros.quartos = mensagemErro
+    } else if (msg.includes('cidade')) {
+      novosErros.cidade = mensagemErro
+    } else if (msg.includes('e-mail') || msg.includes('email')) {
+      novosErros.email = mensagemErro
+    } else if (msg.includes('nome')) {
+      novosErros.nome = mensagemErro
+    }
+
+    setFieldErrors(novosErros)
+    return mensagemErro
   }
 
   // Consulta automática do ViaCEP ao digitar 8 dígitos
@@ -181,20 +224,66 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
   // Avançar da Etapa 1 para Etapa 2 (Persistência imediata no banco)
   const handleAvancarEtapa1 = async (e: React.FormEvent) => {
     e.preventDefault()
+    setFieldErrors({})
+
+    const errosLocais: Record<string, string> = {}
 
     if (!cidade.trim()) {
-      setErrorMsg('Informe a cidade do imóvel.')
-      return
+      errosLocais.cidade = 'Informe a cidade do imóvel.'
     }
 
     if (!tipoImovel) {
-      setErrorMsg('Selecione o tipo de imóvel.')
-      return
+      errosLocais.tipoImovel = 'Selecione o tipo de imóvel.'
     }
 
     const digits = telefone.replace(/\D/g, '')
     if (!digits || digits.length < 10) {
-      setErrorMsg('Por favor, informe um WhatsApp válido com DDD (mínimo 10 dígitos).')
+      errosLocais.telefone = 'Por favor, informe um WhatsApp válido no formato +55 com DDD.'
+    }
+
+    // Validações locais adicionais conforme especificação
+    const numPrecoPedido = precoPedido
+      ? parseFloat(precoPedido.replace(/\./g, '').replace(',', '.'))
+      : undefined
+    const numPrecoMinimo = precoMinimo
+      ? parseFloat(precoMinimo.replace(/\./g, '').replace(',', '.'))
+      : undefined
+    const numAreaUtil = areaUtil ? parseFloat(areaUtil.replace(',', '.')) : undefined
+    const numAreaTerreno = areaTerreno ? parseFloat(areaTerreno.replace(',', '.')) : undefined
+    const numQuartos = quartos !== '' ? parseInt(quartos, 10) : undefined
+
+    if (
+      numPrecoMinimo !== undefined &&
+      numPrecoPedido !== undefined &&
+      numPrecoMinimo > numPrecoPedido
+    ) {
+      errosLocais.precoMinimo = 'O preço mínimo não pode ser maior que o preço pedido.'
+    }
+
+    if (
+      ['apartamento', 'casa', 'comercial'].includes(tipoImovel) &&
+      numAreaUtil !== undefined &&
+      numAreaUtil <= 0
+    ) {
+      errosLocais.areaUtil =
+        'A área útil deve ser maior que zero nos tipos residencial e comercial.'
+    }
+
+    if (tipoImovel === 'terreno' && numAreaTerreno !== undefined && numAreaTerreno <= 0) {
+      errosLocais.areaTerreno = 'A área do terreno deve ser maior que zero em terreno.'
+    }
+
+    if (
+      ['apartamento', 'casa'].includes(tipoImovel) &&
+      numQuartos !== undefined &&
+      (numQuartos < 0 || numQuartos > 10)
+    ) {
+      errosLocais.quartos = 'O número de quartos deve estar entre 0 e 10 nos residenciais.'
+    }
+
+    if (Object.keys(errosLocais).length > 0) {
+      setFieldErrors(errosLocais)
+      setErrorMsg(Object.values(errosLocais)[0])
       return
     }
 
@@ -216,12 +305,19 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
       logradouro: logradouro || undefined,
       bairro: bairro || undefined,
       codigo_ibge: codigoIbge || undefined,
+      preco_pedido: numPrecoPedido,
+      preco_minimo: numPrecoMinimo,
+      area_util: numAreaUtil,
+      quartos: numQuartos,
+      area_terreno: numAreaTerreno,
     })
 
     setLoading(false)
 
     if (!res.success) {
-      setErrorMsg(res.error || 'Não foi possível registrar seu imóvel. Tente novamente.')
+      const err = res.error || 'Não foi possível registrar seu imóvel. Tente novamente.'
+      mapearErroBanco(err)
+      setErrorMsg(err)
       return
     }
 
@@ -244,30 +340,54 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
   // Envio final da Etapa 2 (Atualiza o lead já criado)
   const handleSubmitEtapa2 = async (e: React.FormEvent) => {
     e.preventDefault()
+    setFieldErrors({})
+
+    const errosLocais: Record<string, string> = {}
 
     if (!nome.trim()) {
-      setErrorMsg('Por favor, informe seu nome completo.')
-      return
+      errosLocais.nome = 'Por favor, informe seu nome completo.'
     }
 
     if (!email.trim() || !email.includes('@') || !email.includes('.')) {
-      setErrorMsg('Por favor, insira um endereço de e-mail válido.')
-      return
+      errosLocais.email = 'Por favor, insira um endereço de e-mail válido.'
     }
 
     if (!motivoVenda) {
-      setErrorMsg('Selecione o motivo da venda.')
-      return
+      errosLocais.motivoVenda = 'Selecione o motivo da venda.'
     }
 
     if (!prazoDesejado) {
-      setErrorMsg('Selecione o prazo desejado para a venda.')
-      return
+      errosLocais.prazoDesejado = 'Selecione o prazo desejado para a venda.'
     }
 
     if (!autorizoContato) {
       setAutorizoTouched(true)
-      setErrorMsg('É necessário autorizar o contato para concluir o cadastro.')
+      errosLocais.autorizo = 'É necessário autorizar o contato para concluir o cadastro.'
+    }
+
+    const numPrecoPedido = precoPedido
+      ? parseFloat(precoPedido.replace(/\./g, '').replace(',', '.'))
+      : valorEstimado
+        ? parseFloat(valorEstimado.replace(/\D/g, ''))
+        : undefined
+    const numPrecoMinimo = precoMinimo
+      ? parseFloat(precoMinimo.replace(/\./g, '').replace(',', '.'))
+      : undefined
+    const numAreaUtil = areaUtil ? parseFloat(areaUtil.replace(',', '.')) : undefined
+    const numAreaTerreno = areaTerreno ? parseFloat(areaTerreno.replace(',', '.')) : undefined
+    const numQuartos = quartos !== '' ? parseInt(quartos, 10) : undefined
+
+    if (
+      numPrecoMinimo !== undefined &&
+      numPrecoPedido !== undefined &&
+      numPrecoMinimo > numPrecoPedido
+    ) {
+      errosLocais.precoMinimo = 'O preço mínimo não pode ser maior que o preço pedido.'
+    }
+
+    if (Object.keys(errosLocais).length > 0) {
+      setFieldErrors(errosLocais)
+      setErrorMsg(Object.values(errosLocais)[0])
       return
     }
 
@@ -284,7 +404,9 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
         id: leadId,
         nome,
         email,
-        valor_estimado: valorEstimado || undefined,
+        valor_estimado:
+          valorEstimado ||
+          (numPrecoPedido ? `R$ ${numPrecoPedido.toLocaleString('pt-BR')}` : undefined),
         motivo_venda: motivoVenda,
         prazo_desejado: prazoDesejado,
         mensagem: mensagem || undefined,
@@ -294,12 +416,19 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
         bairro: bairro || undefined,
         cidade: cidade || undefined,
         codigo_ibge: codigoIbge || undefined,
+        preco_pedido: numPrecoPedido,
+        preco_minimo: numPrecoMinimo,
+        area_util: numAreaUtil,
+        quartos: numQuartos,
+        area_terreno: numAreaTerreno,
       })
 
       setLoading(false)
 
       if (!res.success) {
-        setErrorMsg(res.error || 'Ocorreu um erro ao atualizar suas informações. Tente novamente.')
+        const err = res.error || 'Ocorreu um erro ao atualizar suas informações. Tente novamente.'
+        mapearErroBanco(err)
+        setErrorMsg(err)
         return
       }
       if (res.protocolo) {
@@ -314,7 +443,9 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
         telefone,
         nome,
         email,
-        valor_estimado: valorEstimado || undefined,
+        valor_estimado:
+          valorEstimado ||
+          (numPrecoPedido ? `R$ ${numPrecoPedido.toLocaleString('pt-BR')}` : undefined),
         motivo_venda: motivoVenda,
         prazo_desejado: prazoDesejado,
         mensagem: mensagem || undefined,
@@ -324,12 +455,19 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
         logradouro: logradouro || undefined,
         bairro: bairro || undefined,
         codigo_ibge: codigoIbge || undefined,
+        preco_pedido: numPrecoPedido,
+        preco_minimo: numPrecoMinimo,
+        area_util: numAreaUtil,
+        quartos: numQuartos,
+        area_terreno: numAreaTerreno,
       })
 
       setLoading(false)
 
       if (!res.success) {
-        setErrorMsg(res.error || 'Ocorreu um erro ao registrar suas informações. Tente novamente.')
+        const err = res.error || 'Ocorreu um erro ao registrar suas informações. Tente novamente.'
+        mapearErroBanco(err)
+        setErrorMsg(err)
         return
       }
       if (res.protocolo) {
@@ -364,8 +502,14 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
     setMotivoVenda('preciso de liquidez')
     setPrazoDesejado('até 60 dias')
     setMensagem('')
+    setPrecoPedido('')
+    setPrecoMinimo('')
+    setAreaUtil('')
+    setAreaTerreno('')
+    setQuartos('')
     setAutorizoContato(false)
     setAutorizoTouched(false)
+    setFieldErrors({})
     setSucesso(false)
     setErrorMsg('')
   }
@@ -457,8 +601,18 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
                 value={cidade}
                 onChange={handleCidadeChange}
                 disabled={loading}
-                className="w-full px-3.5 py-2.5 rounded-lg bg-[#081226] border border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0] text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
+                className={`w-full px-3.5 py-2.5 rounded-lg bg-[#081226] border text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px] ${
+                  fieldErrors.cidade
+                    ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500'
+                    : 'border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0]'
+                }`}
               />
+              {fieldErrors.cidade && (
+                <p className="text-[11px] text-red-400 mt-1 flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3 text-red-400 shrink-0" />
+                  <span>{fieldErrors.cidade}</span>
+                </p>
+              )}
               {buscandoCep && (
                 <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
                   <Loader2 className="w-4 h-4 text-[#22C7E0] animate-spin" />
@@ -516,9 +670,133 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
                 value={telefone}
                 onChange={handleTelefoneChange}
                 disabled={loading}
-                className="w-full px-3.5 py-2.5 rounded-lg bg-[#081226] border border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0] text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
+                className={`w-full px-3.5 py-2.5 rounded-lg bg-[#081226] border text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px] ${
+                  fieldErrors.telefone
+                    ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500'
+                    : 'border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0]'
+                }`}
               />
+              {fieldErrors.telefone && (
+                <p className="text-[11px] text-red-400 mt-1 flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3 text-red-400 shrink-0" />
+                  <span>{fieldErrors.telefone}</span>
+                </p>
+              )}
             </div>
+          </div>
+
+          {/* Dados técnicos para coerência e motor de compatibilidade (área útil / terreno / quartos) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+            {['apartamento', 'casa', 'comercial'].includes(tipoImovel) && (
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wider text-slate-300">
+                  Área útil (m²) *
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  step="any"
+                  placeholder="Ex.: 85"
+                  value={areaUtil}
+                  onChange={(e) => {
+                    setAreaUtil(e.target.value)
+                    if (fieldErrors.areaUtil) {
+                      setFieldErrors((prev) => {
+                        const n = { ...prev }
+                        delete n.areaUtil
+                        return n
+                      })
+                    }
+                  }}
+                  disabled={loading}
+                  className={`w-full px-3.5 py-2.5 rounded-lg bg-[#081226] border text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px] ${
+                    fieldErrors.areaUtil
+                      ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500'
+                      : 'border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0]'
+                  }`}
+                />
+                {fieldErrors.areaUtil && (
+                  <p className="text-[11px] text-red-400 mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3 text-red-400 shrink-0" />
+                    <span>{fieldErrors.areaUtil}</span>
+                  </p>
+                )}
+              </div>
+            )}
+
+            {tipoImovel === 'terreno' && (
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wider text-slate-300">
+                  Área do terreno (m²) *
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  step="any"
+                  placeholder="Ex.: 300"
+                  value={areaTerreno}
+                  onChange={(e) => {
+                    setAreaTerreno(e.target.value)
+                    if (fieldErrors.areaTerreno) {
+                      setFieldErrors((prev) => {
+                        const n = { ...prev }
+                        delete n.areaTerreno
+                        return n
+                      })
+                    }
+                  }}
+                  disabled={loading}
+                  className={`w-full px-3.5 py-2.5 rounded-lg bg-[#081226] border text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px] ${
+                    fieldErrors.areaTerreno
+                      ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500'
+                      : 'border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0]'
+                  }`}
+                />
+                {fieldErrors.areaTerreno && (
+                  <p className="text-[11px] text-red-400 mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3 text-red-400 shrink-0" />
+                    <span>{fieldErrors.areaTerreno}</span>
+                  </p>
+                )}
+              </div>
+            )}
+
+            {['apartamento', 'casa'].includes(tipoImovel) && (
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wider text-slate-300">
+                  Quartos (0 a 10)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  max="10"
+                  placeholder="Ex.: 3"
+                  value={quartos}
+                  onChange={(e) => {
+                    setQuartos(e.target.value)
+                    if (fieldErrors.quartos) {
+                      setFieldErrors((prev) => {
+                        const n = { ...prev }
+                        delete n.quartos
+                        return n
+                      })
+                    }
+                  }}
+                  disabled={loading}
+                  className={`w-full px-3.5 py-2.5 rounded-lg bg-[#081226] border text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px] ${
+                    fieldErrors.quartos
+                      ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500'
+                      : 'border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0]'
+                  }`}
+                />
+                {fieldErrors.quartos && (
+                  <p className="text-[11px] text-red-400 mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3 text-red-400 shrink-0" />
+                    <span>{fieldErrors.quartos}</span>
+                  </p>
+                )}
+              </div>
+            )}
           </div>
 
           {/* ========================================================
@@ -738,19 +1016,64 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
             </div>
           </div>
 
-          {/* Valor estimado de venda */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wider text-slate-300">
-              Valor estimado de venda
-            </label>
-            <input
-              type="text"
-              placeholder="Ex.: R$ 850.000"
-              value={valorEstimado}
-              onChange={(e) => setValorEstimado(e.target.value)}
-              disabled={loading}
-              className="w-full px-3.5 py-2.5 rounded-lg bg-[#081226] border border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0] text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
-            />
+          {/* Grid: Preço Pedido e Preço Mínimo */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold uppercase tracking-wider text-slate-300">
+                Preço pedido (R$)
+              </label>
+              <input
+                type="text"
+                placeholder="Ex.: 850.000"
+                value={precoPedido || valorEstimado}
+                onChange={(e) => {
+                  setPrecoPedido(e.target.value)
+                  setValorEstimado(e.target.value)
+                  if (fieldErrors.precoPedido) {
+                    setFieldErrors((prev) => {
+                      const n = { ...prev }
+                      delete n.precoPedido
+                      return n
+                    })
+                  }
+                }}
+                disabled={loading}
+                className="w-full px-3.5 py-2.5 rounded-lg bg-[#081226] border border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0] text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold uppercase tracking-wider text-slate-300">
+                Preço mínimo aceito (R$)
+              </label>
+              <input
+                type="text"
+                placeholder="Ex.: 800.000"
+                value={precoMinimo}
+                onChange={(e) => {
+                  setPrecoMinimo(e.target.value)
+                  if (fieldErrors.precoMinimo) {
+                    setFieldErrors((prev) => {
+                      const n = { ...prev }
+                      delete n.precoMinimo
+                      return n
+                    })
+                  }
+                }}
+                disabled={loading}
+                className={`w-full px-3.5 py-2.5 rounded-lg bg-[#081226] border text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px] ${
+                  fieldErrors.precoMinimo
+                    ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500'
+                    : 'border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0]'
+                }`}
+              />
+              {fieldErrors.precoMinimo && (
+                <p className="text-[11px] text-red-400 mt-1 flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3 text-red-400 shrink-0" />
+                  <span>{fieldErrors.precoMinimo}</span>
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Mensagem / Observações */}

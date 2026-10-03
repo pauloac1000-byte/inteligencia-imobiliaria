@@ -215,13 +215,14 @@ export const CalculadoraImovelParado: React.FC = () => {
 
     const digits = telefoneLead.replace(/\D/g, '')
     if (!digits || digits.length < 10) {
-      setLeadError('Por favor, informe um WhatsApp válido com DDD (mínimo 10 dígitos).')
+      setLeadError(
+        'O WhatsApp deve estar no formato +55 com DDD de 2 dígitos e 9 dígitos (ex.: +5519998563025).',
+      )
       return
     }
 
     setLeadError('')
     setLeadLoading(true)
-
     const res = await salvarLeadCalculadora({
       cidade: cidadeLead,
       telefone: telefoneLead,
@@ -773,8 +774,18 @@ export const CalculadoraImovelParado: React.FC = () => {
                             value={telefoneLead}
                             onChange={handleTelefoneLeadChange}
                             disabled={leadLoading}
-                            className="w-full px-3.5 py-2.5 rounded-lg bg-[#070B14] border border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0] text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
+                            className={`w-full px-3.5 py-2.5 rounded-lg bg-[#070B14] border text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px] ${
+                              leadError && leadError.toLowerCase().includes('whatsapp')
+                                ? 'border-red-500 focus:border-red-500'
+                                : 'border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0]'
+                            }`}
                           />
+                          {leadError && leadError.toLowerCase().includes('whatsapp') && (
+                            <p className="text-[11px] text-red-400 mt-1 flex items-center gap-1">
+                              <AlertCircle className="w-3 h-3 text-red-400 shrink-0" />
+                              <span>{leadError}</span>
+                            </p>
+                          )}
                         </div>
 
                         <div className="p-2.5 rounded-lg bg-[#070B14]/80 border border-slate-800 text-[11px] text-slate-400 leading-snug flex items-center gap-2">

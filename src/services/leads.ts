@@ -12,6 +12,11 @@ export interface LeadVendaEtapa1Input {
   complemento?: string
   bairro?: string
   codigo_ibge?: string
+  preco_pedido?: number
+  preco_minimo?: number
+  area_util?: number
+  quartos?: number
+  area_terreno?: number
 }
 
 export interface LeadVendaEtapa2Input {
@@ -36,6 +41,11 @@ export interface LeadVendaEtapa2Input {
   bairro?: string
   cidade?: string
   codigo_ibge?: string
+  preco_pedido?: number
+  preco_minimo?: number
+  area_util?: number
+  quartos?: number
+  area_terreno?: number
 }
 
 export interface LeadVendaInput {
@@ -57,6 +67,11 @@ export interface LeadVendaInput {
   complemento?: string
   bairro?: string
   codigo_ibge?: string
+  preco_pedido?: number
+  preco_minimo?: number
+  area_util?: number
+  quartos?: number
+  area_terreno?: number
 }
 
 export type TicketInvestidor = 'ate_300k' | '300_600k' | 'acima_600k' | string
@@ -182,6 +197,11 @@ export async function salvarLeadVendaEtapa1(input: LeadVendaEtapa1Input): Promis
         p_complemento: input.complemento ? input.complemento.trim() : null,
         p_bairro: input.bairro ? input.bairro.trim() : null,
         p_codigo_ibge: input.codigo_ibge ? input.codigo_ibge.trim() : null,
+        p_preco_pedido: input.preco_pedido ?? null,
+        p_preco_minimo: input.preco_minimo ?? null,
+        p_area_util: input.area_util ?? null,
+        p_quartos: input.quartos ?? null,
+        p_area_terreno: input.area_terreno ?? null,
       },
     )
 
@@ -274,6 +294,11 @@ export async function atualizarLeadVendaEtapa2(input: LeadVendaEtapa2Input): Pro
         p_bairro: input.bairro ? input.bairro.trim() : null,
         p_cidade: input.cidade ? input.cidade.trim() : null,
         p_codigo_ibge: input.codigo_ibge ? input.codigo_ibge.trim() : null,
+        p_preco_pedido: input.preco_pedido ?? null,
+        p_preco_minimo: input.preco_minimo ?? null,
+        p_area_util: input.area_util ?? null,
+        p_quartos: input.quartos ?? null,
+        p_area_terreno: input.area_terreno ?? null,
       },
     )
 
@@ -372,6 +397,11 @@ export async function salvarLeadVenda(input: LeadVendaInput): Promise<LeadResult
       p_complemento: input.complemento ? input.complemento.trim() : null,
       p_bairro: input.bairro ? input.bairro.trim() : null,
       p_codigo_ibge: input.codigo_ibge ? input.codigo_ibge.trim() : null,
+      p_preco_pedido: input.preco_pedido ?? null,
+      p_preco_minimo: input.preco_minimo ?? null,
+      p_area_util: input.area_util ?? null,
+      p_quartos: input.quartos ?? null,
+      p_area_terreno: input.area_terreno ?? null,
     })
 
     if (!rpcError && rpcData) {
