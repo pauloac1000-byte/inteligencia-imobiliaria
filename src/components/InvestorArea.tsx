@@ -29,6 +29,9 @@ import {
   MessageCircle,
   ShieldCheck,
   Target,
+  Award,
+  Gauge,
+  HelpCircle,
 } from 'lucide-react'
 import {
   Dialog,
@@ -467,12 +470,105 @@ export const InvestorArea: React.FC<InvestorAreaProps> = ({
                       </span>
                     </div>
 
-                    {/* Destaque do Percentual com Glow Ciano */}
-                    <div className="inline-flex items-center gap-2 self-start sm:self-auto px-3.5 py-1.5 rounded-full bg-[#1A3A75]/50 border border-[#22C7E0] shadow-[0_0_18px_rgba(34,199,224,0.35)]">
-                      <Sparkles className="w-4 h-4 text-[#22C7E0] animate-pulse" />
-                      <span className="text-sm sm:text-base font-bold text-[#22C7E0] font-mono tracking-tight">
-                        {op.percentual}% Compatível
-                      </span>
+                    {/* Indicadores de Nota, Faixa e Confiança */}
+                    <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+                      {/* Nota Final */}
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#1A3A75]/50 border border-[#22C7E0] shadow-[0_0_18px_rgba(34,199,224,0.35)]">
+                        <Sparkles className="w-4 h-4 text-[#22C7E0] animate-pulse shrink-0" />
+                        <span className="text-xs text-slate-300 font-medium">Nota:</span>
+                        <span className="text-sm sm:text-base font-bold text-[#22C7E0] font-mono tracking-tight">
+                          {op.nota_final ?? op.percentual} pts
+                        </span>
+                      </div>
+
+                      {/* Faixa de Compatibilidade */}
+                      {(() => {
+                        const faixa = (op.faixa_compatibilidade || 'oculta').toLowerCase()
+                        const faixaConfig: Record<
+                          string,
+                          { label: string; bg: string; text: string; border: string }
+                        > = {
+                          excelente: {
+                            label: 'Faixa Excelente (85+)',
+                            bg: 'bg-emerald-500/15',
+                            text: 'text-emerald-300',
+                            border: 'border-emerald-500/40',
+                          },
+                          alta: {
+                            label: 'Faixa Alta (75-84)',
+                            bg: 'bg-[#22C7E0]/15',
+                            text: 'text-[#22C7E0]',
+                            border: 'border-[#22C7E0]/40',
+                          },
+                          media: {
+                            label: 'Faixa Média (50-74)',
+                            bg: 'bg-amber-500/15',
+                            text: 'text-amber-300',
+                            border: 'border-amber-500/40',
+                          },
+                          oculta: {
+                            label: 'Faixa Oculta (<50)',
+                            bg: 'bg-slate-800',
+                            text: 'text-slate-400',
+                            border: 'border-slate-700',
+                          },
+                        }
+                        const cfg = faixaConfig[faixa] || faixaConfig.alta
+                        return (
+                          <span
+                            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold border ${cfg.bg} ${cfg.text} ${cfg.border}`}
+                          >
+                            <Award className="w-3.5 h-3.5 shrink-0" />
+                            <span>{cfg.label}</span>
+                          </span>
+                        )
+                      })()}
+
+                      {/* Confiança */}
+                      {(() => {
+                        const conf = (op.confianca_classificacao || 'baixa').toLowerCase()
+                        const confConfig: Record<
+                          string,
+                          { label: string; bg: string; text: string; border: string }
+                        > = {
+                          alta: {
+                            label: 'Confiança Alta',
+                            bg: 'bg-emerald-500/10',
+                            text: 'text-emerald-400',
+                            border: 'border-emerald-500/30',
+                          },
+                          media: {
+                            label: 'Confiança Média',
+                            bg: 'bg-amber-500/10',
+                            text: 'text-amber-300',
+                            border: 'border-amber-500/30',
+                          },
+                          baixa: {
+                            label: 'Confiança Baixa',
+                            bg: 'bg-slate-800/80',
+                            text: 'text-slate-400',
+                            border: 'border-slate-700',
+                          },
+                        }
+                        const cfg = confConfig[conf] || confConfig.baixa
+                        return (
+                          <span
+                            title={
+                              op.confianca_detalhes?.explicacao ||
+                              `Índice de confiança cadastral: ${op.confianca_percentual || 0}%`
+                            }
+                            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium border ${cfg.bg} ${cfg.text} ${cfg.border}`}
+                          >
+                            <Gauge className="w-3.5 h-3.5 shrink-0" />
+                            <span>{cfg.label}</span>
+                            {op.confianca_percentual ? (
+                              <span className="font-mono text-[11px] opacity-80">
+                                ({Math.round(op.confianca_percentual)}%)
+                              </span>
+                            ) : null}
+                          </span>
+                        )
+                      })()}
                     </div>
                   </div>
 
@@ -517,9 +613,9 @@ export const InvestorArea: React.FC<InvestorAreaProps> = ({
                       <button
                         type="button"
                         onClick={() => toggleExpand(op.compatibilidade_id)}
-                        className="inline-flex items-center gap-1 text-[#22C7E0] hover:underline font-semibold cursor-pointer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#081226] border border-[#22C7E0]/40 text-[#22C7E0] hover:text-white hover:bg-[#22C7E0]/10 text-xs font-semibold transition-colors cursor-pointer"
                       >
-                        <span>{isExpanded ? 'Ocultar detalhes' : 'Ver critérios e auditoria'}</span>
+                        <span>{isExpanded ? 'Ocultar critérios' : 'Ver critérios'}</span>
                         {isExpanded ? (
                           <ChevronUp className="w-3.5 h-3.5" />
                         ) : (
@@ -554,50 +650,92 @@ export const InvestorArea: React.FC<InvestorAreaProps> = ({
                   {/* Painel Expansível de Critérios e Explicações Detalhadas */}
                   {isExpanded && (
                     <div className="p-4 rounded-xl bg-[#081226] border border-slate-800 space-y-3 animate-fade-in text-xs">
-                      <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                        Detalhamento do Motor de Compatibilidade KORBIX
+                      <div className="flex items-center justify-between pb-1 border-b border-slate-800">
+                        <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                          Detalhamento de Pontos por Critério
+                        </div>
+                        <span className="text-[11px] text-slate-500">
+                          Nota do comprador • KORBIX
+                        </span>
                       </div>
 
                       <div className="space-y-2">
                         {op.criterios && op.criterios.length > 0 ? (
-                          op.criterios.map((c, i) => (
-                            <div
-                              key={i}
-                              className={`p-2.5 rounded-lg border flex flex-col sm:flex-row sm:items-center justify-between gap-2 ${
-                                c.atendido
-                                  ? 'bg-emerald-500/5 border-emerald-500/30 text-emerald-200'
-                                  : 'bg-slate-900/60 border-slate-800 text-slate-400'
-                              }`}
-                            >
-                              <div className="flex items-start gap-2">
-                                {c.atendido ? (
-                                  <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
-                                ) : (
-                                  <XCircle className="w-4 h-4 text-slate-500 mt-0.5 shrink-0" />
-                                )}
-                                <div>
-                                  <div className="font-semibold text-white">
-                                    {c.nome}{' '}
-                                    <span className="font-normal text-slate-400">
-                                      ({c.pontos || (c.atendido ? c.peso : 0)} de {c.peso} pts)
-                                    </span>
-                                  </div>
-                                  <p className="text-[11px] text-slate-300 mt-0.5">
-                                    {c.explicacao}
-                                  </p>
-                                </div>
-                              </div>
-                              <span
-                                className={`text-[10px] font-mono px-2 py-0.5 rounded self-start sm:self-center ${
+                          op.criterios.map((c, i) => {
+                            const isPreco = c.criterio === 'preco'
+                            // Regra 2 do Investidor: Esconder o fator ligado ao preço mínimo do vendedor
+                            // e mostrar só uma classificação textual: "preço dentro / próximo / acima do seu teto".
+                            let explicacaoExibida = c.explicacao
+                            let classificacaoPrecoTexto = ''
+
+                            if (isPreco) {
+                              const fatorNum =
+                                typeof c.fator === 'number' ? c.fator : c.atendido ? 1.0 : 0.0
+                              if (c.fator_classificacao === 'dentro' || fatorNum >= 1.0) {
+                                classificacaoPrecoTexto = 'preço dentro do seu teto'
+                              } else if (c.fator_classificacao === 'proximo' || fatorNum >= 0.5) {
+                                classificacaoPrecoTexto = 'preço próximo do seu teto'
+                              } else {
+                                classificacaoPrecoTexto = 'preço acima do seu teto'
+                              }
+                              // Sanitização estrita contra qualquer vazamento de preço mínimo
+                              explicacaoExibida = `Classificação: ${classificacaoPrecoTexto}. Avaliação com base no seu teto de investimento cadastrado.`
+                            }
+
+                            return (
+                              <div
+                                key={i}
+                                className={`p-3 rounded-lg border flex flex-col sm:flex-row sm:items-center justify-between gap-2 ${
                                   c.atendido
-                                    ? 'bg-emerald-500/20 text-emerald-300'
-                                    : 'bg-slate-800 text-slate-400'
+                                    ? 'bg-emerald-500/5 border-emerald-500/30 text-emerald-200'
+                                    : 'bg-slate-900/60 border-slate-800 text-slate-400'
                                 }`}
                               >
-                                {c.atendido ? 'ATENDIDO' : 'NÃO ATENDIDO'}
-                              </span>
-                            </div>
-                          ))
+                                <div className="flex items-start gap-2.5">
+                                  {c.atendido ? (
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
+                                  ) : (
+                                    <XCircle className="w-4 h-4 text-slate-500 mt-0.5 shrink-0" />
+                                  )}
+                                  <div>
+                                    <div className="font-semibold text-white flex items-center gap-2 flex-wrap">
+                                      <span>{c.nome}</span>
+                                      <span className="font-mono text-xs text-[#22C7E0]">
+                                        {c.pontos ?? (c.atendido ? c.peso : 0)} pts
+                                      </span>
+                                      <span className="text-[11px] text-slate-500 font-normal">
+                                        (peso {c.peso})
+                                      </span>
+                                      {/* Para critérios que NÃO são o de preço com o mínimo do vendedor, exibe o fator */}
+                                      {!isPreco && typeof c.fator === 'number' && (
+                                        <span className="text-[11px] text-slate-400 font-mono">
+                                          • fator {c.fator.toFixed(2)}
+                                        </span>
+                                      )}
+                                      {/* No caso de preço, exibe apenas a classificação textual */}
+                                      {isPreco && (
+                                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-800 text-[#22C7E0] border border-slate-700 font-medium">
+                                          {classificacaoPrecoTexto}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <p className="text-[11px] text-slate-300 mt-1 leading-relaxed">
+                                      {explicacaoExibida}
+                                    </p>
+                                  </div>
+                                </div>
+                                <span
+                                  className={`text-[10px] font-mono px-2 py-0.5 rounded self-start sm:self-center ${
+                                    c.atendido
+                                      ? 'bg-emerald-500/20 text-emerald-300'
+                                      : 'bg-slate-800 text-slate-400'
+                                  }`}
+                                >
+                                  {c.atendido ? 'ATENDIDO' : 'NÃO ATENDIDO'}
+                                </span>
+                              </div>
+                            )
+                          })
                         ) : (
                           <p className="text-slate-400 text-xs">
                             Critérios auditados sem apontamentos divergentes.

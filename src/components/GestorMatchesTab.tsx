@@ -22,6 +22,9 @@ import {
   User,
   AlertTriangle,
   Loader2,
+  Award,
+  Gauge,
+  Briefcase,
 } from 'lucide-react'
 
 interface GestorMatchesTabProps {
@@ -271,14 +274,15 @@ export function GestorMatchesTab({
                   {/* Topo do Card: Percentual, Status e Botões de Decisão */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
                     <div className="flex items-center gap-3">
-                      {/* Badge do Percentual com Termômetro */}
+                      {/* Badge da Nota Final Harmônica */}
                       <div
                         className={`px-3 py-1.5 rounded-xl border font-mono font-bold text-xl sm:text-2xl flex items-center gap-2 ${pctConfig.bg}`}
                       >
-                        <span>{match.percentual}%</span>
+                        <span>{match.nota_final ?? match.percentual}</span>
+                        <span className="text-xs font-sans font-normal opacity-80">pts</span>
                       </div>
-                      <div>
-                        <div className="flex items-center gap-2">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-xs font-bold text-white uppercase tracking-wider">
                             Match KORBIX
                           </span>
@@ -291,6 +295,49 @@ export function GestorMatchesTab({
                           {match.ja_tem_interesse && (
                             <span className="text-[10px] bg-purple-500/15 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded-full">
                               Interesse manifestado
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Badges de Notas Comprador / Vendedor, Faixa e Confiança para o Gestor */}
+                        <div className="flex items-center gap-2 flex-wrap pt-0.5">
+                          <span className="text-[11px] px-2 py-0.5 rounded-md bg-[#070B14] border border-slate-700 text-slate-300">
+                            Comprador:{' '}
+                            <strong className="text-[#22C7E0] font-mono">
+                              {match.nota_comprador ?? match.percentual} pts
+                            </strong>
+                          </span>
+                          <span className="text-[11px] px-2 py-0.5 rounded-md bg-[#070B14] border border-emerald-500/30 text-slate-300">
+                            Vendedor:{' '}
+                            <strong className="text-emerald-400 font-mono">
+                              {match.nota_vendedor ?? 0} pts
+                            </strong>
+                          </span>
+                          {match.faixa_compatibilidade && (
+                            <span className="text-[11px] px-2 py-0.5 rounded-md bg-[#070B14] border border-slate-700 text-slate-300 capitalize">
+                              Faixa:{' '}
+                              <strong className="text-white">{match.faixa_compatibilidade}</strong>
+                            </span>
+                          )}
+                          {match.confianca_classificacao && (
+                            <span className="text-[11px] px-2 py-0.5 rounded-md bg-[#070B14] border border-slate-700 text-slate-300 capitalize">
+                              Confiança:{' '}
+                              <strong
+                                className={
+                                  match.confianca_classificacao === 'alta'
+                                    ? 'text-emerald-400'
+                                    : match.confianca_classificacao === 'media'
+                                      ? 'text-amber-400'
+                                      : 'text-slate-400'
+                                }
+                              >
+                                {match.confianca_classificacao}
+                              </strong>
+                              {match.confianca_percentual ? (
+                                <span className="font-mono text-[10px] text-slate-400 ml-1">
+                                  ({Math.round(match.confianca_percentual)}%)
+                                </span>
+                              ) : null}
                             </span>
                           )}
                         </div>
@@ -523,12 +570,12 @@ export function GestorMatchesTab({
                       <button
                         type="button"
                         onClick={() => toggleDetalhes(match.compatibilidade_id)}
-                        className="inline-flex items-center gap-1.5 text-[#22C7E0] hover:text-[#5eead4] font-semibold transition-colors cursor-pointer self-start sm:self-auto"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#070B14] border border-[#22C7E0]/40 text-[#22C7E0] hover:text-white hover:bg-[#22C7E0]/10 font-semibold transition-colors cursor-pointer self-start sm:self-auto text-xs"
                       >
                         <span>
                           {isDetalhesAberto
-                            ? 'Ocultar auditoria dos 5 critérios'
-                            : 'Ver detalhamento dos 5 critérios'}
+                            ? 'Ocultar critérios de comprador e vendedor'
+                            : 'Ver critérios de comprador e vendedor'}
                         </span>
                         {isDetalhesAberto ? (
                           <ChevronUp className="w-4 h-4" />
@@ -538,53 +585,130 @@ export function GestorMatchesTab({
                       </button>
                     </div>
                   )}
-                  {/* Painel Expansível de Critérios Auditáveis */}
+                  {/* Painel Expansível de Critérios Auditáveis (Visão Gestor: Comprador + Vendedor) */}
                   {isDetalhesAberto && (
-                    <div className="pt-3 border-t border-slate-800 space-y-3 animate-fade-in">
-                      <h6 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-                        Auditoria Determinística de Critérios (Total: 100 pontos)
-                      </h6>
-
+                    <div className="pt-3 border-t border-slate-800 space-y-4 animate-fade-in">
+                      {/* Bloco 1: Critérios da Visão do Comprador */}
                       <div className="space-y-2">
-                        {/* Critérios Atendidos */}
-                        {atendidos.map((crit, idx) => (
-                          <div
-                            key={`atendido-${idx}`}
-                            className="p-3 rounded-xl bg-emerald-950/20 border border-emerald-500/30 text-xs space-y-1"
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                                <span className="font-bold text-emerald-300">{crit.nome}</span>
-                              </div>
-                              <span className="font-mono font-bold text-emerald-400">
-                                +{crit.peso || crit.pontos} pts
-                              </span>
-                            </div>
-                            <p className="text-slate-300 pl-6 text-[11px] leading-relaxed">
-                              {crit.explicacao}
-                            </p>
-                          </div>
-                        ))}
+                        <div className="flex items-center justify-between">
+                          <h6 className="text-xs font-bold text-[#22C7E0] uppercase tracking-wider flex items-center gap-1.5">
+                            <Sparkles className="w-3.5 h-3.5" />
+                            <span>
+                              Critérios do Comprador (Nota:{' '}
+                              {match.nota_comprador ?? match.percentual} pts)
+                            </span>
+                          </h6>
+                          <span className="text-[11px] text-slate-400">
+                            {atendidos.length} atendidos • {naoAtendidos.length} não atendidos
+                          </span>
+                        </div>
 
-                        {/* Critérios Não Atendidos */}
-                        {naoAtendidos.map((crit, idx) => (
-                          <div
-                            key={`nao-atendido-${idx}`}
-                            className="p-3 rounded-xl bg-amber-950/15 border border-amber-500/25 text-xs space-y-1"
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
-                                <span className="font-bold text-amber-300">{crit.nome}</span>
+                        <div className="grid grid-cols-1 gap-2">
+                          {/* Lista Completa de Critérios do Comprador com Pontos, Pesos, Fatores e Explicação */}
+                          {(Array.isArray(match.criterios) && match.criterios.length > 0
+                            ? match.criterios
+                            : [...atendidos, ...naoAtendidos]
+                          ).map((crit: any, idx: number) => {
+                            const isAtendido = Boolean(crit.atendido)
+                            return (
+                              <div
+                                key={`crit-comprador-${idx}`}
+                                className={`p-3 rounded-xl border text-xs space-y-1 ${
+                                  isAtendido
+                                    ? 'bg-emerald-950/20 border-emerald-500/30'
+                                    : 'bg-slate-900/60 border-slate-800 text-slate-400'
+                                }`}
+                              >
+                                <div className="flex items-center justify-between flex-wrap gap-2">
+                                  <div className="flex items-center gap-2">
+                                    {isAtendido ? (
+                                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                                    ) : (
+                                      <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+                                    )}
+                                    <span className="font-bold text-white">{crit.nome}</span>
+                                    {typeof crit.fator === 'number' && (
+                                      <span className="text-[11px] text-slate-400 font-mono">
+                                        (fator {crit.fator.toFixed(2)})
+                                      </span>
+                                    )}
+                                    {crit.peso !== undefined && (
+                                      <span className="text-[11px] text-slate-500 font-normal">
+                                        peso {crit.peso}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <span
+                                    className={`font-mono font-bold ${
+                                      isAtendido ? 'text-emerald-400' : 'text-slate-400'
+                                    }`}
+                                  >
+                                    {crit.pontos ?? (isAtendido ? crit.peso : 0)} pts
+                                  </span>
+                                </div>
+                                <p className="text-slate-300 pl-6 text-[11px] leading-relaxed">
+                                  {crit.explicacao}
+                                </p>
                               </div>
-                              <span className="font-mono text-slate-400">0 / {crit.peso} pts</span>
-                            </div>
-                            <p className="text-slate-400 pl-6 text-[11px] leading-relaxed">
-                              {crit.explicacao}
+                            )
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Bloco 2: Critérios da Visão do Vendedor (Exclusivo Gestor) */}
+                      <div className="pt-3 border-t border-slate-800/80 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <h6 className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                            <Briefcase className="w-3.5 h-3.5" />
+                            <span>
+                              Critérios do Vendedor (Nota: {match.nota_vendedor ?? 0} pts)
+                            </span>
+                          </h6>
+                          <span className="text-[11px] text-slate-400">
+                            Visão interna do gestor
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-2">
+                          {Array.isArray(match.detalhamento_vendedor) &&
+                          match.detalhamento_vendedor.length > 0 ? (
+                            match.detalhamento_vendedor.map((item: any, idx: number) => {
+                              const pontos = item.pontos ?? 0
+                              const peso = item.peso ?? 0
+                              return (
+                                <div
+                                  key={`crit-vendedor-${idx}`}
+                                  className="p-3 rounded-xl bg-slate-900/70 border border-slate-800 text-xs space-y-1"
+                                >
+                                  <div className="flex items-center justify-between flex-wrap gap-2">
+                                    <div className="flex items-center gap-2">
+                                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                                      <span className="font-bold text-white">{item.nome}</span>
+                                      {typeof item.fator === 'number' && (
+                                        <span className="text-[11px] text-slate-400 font-mono">
+                                          (fator {item.fator.toFixed(2)})
+                                        </span>
+                                      )}
+                                      <span className="text-[11px] text-slate-500 font-normal">
+                                        peso {peso}
+                                      </span>
+                                    </div>
+                                    <span className="font-mono font-bold text-emerald-400">
+                                      {pontos} pts
+                                    </span>
+                                  </div>
+                                  <p className="text-slate-300 pl-6 text-[11px] leading-relaxed">
+                                    {item.explicacao}
+                                  </p>
+                                </div>
+                              )
+                            })
+                          ) : (
+                            <p className="text-slate-400 text-xs pl-2">
+                              Detalhamento do vendedor ainda não gravado para este par.
                             </p>
-                          </div>
-                        ))}
+                          )}
+                        </div>
                       </div>
                     </div>
                   )}

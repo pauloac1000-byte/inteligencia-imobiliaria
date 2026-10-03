@@ -104,46 +104,70 @@ export type Database = {
       compatibilidades: {
         Row: {
           atualizado_em: string
+          confianca_classificacao: string | null
+          confianca_detalhes: Json | null
+          confianca_percentual: number | null
           criado_em: string
           criterios: Json
           criterios_atendidos: Json
           criterios_nao_atendidos: Json
           detalhamento: Json
+          detalhamento_vendedor: Json | null
           eliminado: boolean
+          faixa_compatibilidade: string | null
           id: string
           lead_investidor_id: string
           lead_venda_id: string
           motivo_eliminacao: string | null
+          nota_comprador: number | null
+          nota_final: number | null
+          nota_vendedor: number | null
           percentual: number
           status: string
         }
         Insert: {
           atualizado_em?: string
+          confianca_classificacao?: string | null
+          confianca_detalhes?: Json | null
+          confianca_percentual?: number | null
           criado_em?: string
           criterios?: Json
           criterios_atendidos?: Json
           criterios_nao_atendidos?: Json
           detalhamento?: Json
+          detalhamento_vendedor?: Json | null
           eliminado?: boolean
+          faixa_compatibilidade?: string | null
           id?: string
           lead_investidor_id: string
           lead_venda_id: string
           motivo_eliminacao?: string | null
+          nota_comprador?: number | null
+          nota_final?: number | null
+          nota_vendedor?: number | null
           percentual?: number
           status?: string
         }
         Update: {
           atualizado_em?: string
+          confianca_classificacao?: string | null
+          confianca_detalhes?: Json | null
+          confianca_percentual?: number | null
           criado_em?: string
           criterios?: Json
           criterios_atendidos?: Json
           criterios_nao_atendidos?: Json
           detalhamento?: Json
+          detalhamento_vendedor?: Json | null
           eliminado?: boolean
+          faixa_compatibilidade?: string | null
           id?: string
           lead_investidor_id?: string
           lead_venda_id?: string
           motivo_eliminacao?: string | null
+          nota_comprador?: number | null
+          nota_final?: number | null
+          nota_vendedor?: number | null
           percentual?: number
           status?: string
         }
@@ -163,6 +187,30 @@ export type Database = {
             referencedColumns: ['id']
           },
         ]
+      }
+      configuracao_limiares_compatibilidade: {
+        Row: {
+          atualizado_em: string
+          descricao: string | null
+          nome: string
+          parametro: string
+          valor: number
+        }
+        Insert: {
+          atualizado_em?: string
+          descricao?: string | null
+          nome: string
+          parametro: string
+          valor: number
+        }
+        Update: {
+          atualizado_em?: string
+          descricao?: string | null
+          nome?: string
+          parametro?: string
+          valor?: number
+        }
+        Relationships: []
       }
       configuracao_pesos_compatibilidade: {
         Row: {
@@ -423,6 +471,7 @@ export type Database = {
           cidades_codigos_ibge: string[] | null
           cidades_interesse: string | null
           codigo_ibge_referencia: string | null
+          comprador_verificado: boolean | null
           criado_em: string | null
           diferenciais: Json | null
           email: string | null
@@ -465,6 +514,7 @@ export type Database = {
           tipos_imovel: string[] | null
           usa_fgts: boolean | null
           user_id: string | null
+          whatsapp_confirmado: boolean | null
           yield_minimo_mensal: number | null
         }
         Insert: {
@@ -477,6 +527,7 @@ export type Database = {
           cidades_codigos_ibge?: string[] | null
           cidades_interesse?: string | null
           codigo_ibge_referencia?: string | null
+          comprador_verificado?: boolean | null
           criado_em?: string | null
           diferenciais?: Json | null
           email?: string | null
@@ -519,6 +570,7 @@ export type Database = {
           tipos_imovel?: string[] | null
           usa_fgts?: boolean | null
           user_id?: string | null
+          whatsapp_confirmado?: boolean | null
           yield_minimo_mensal?: number | null
         }
         Update: {
@@ -531,6 +583,7 @@ export type Database = {
           cidades_codigos_ibge?: string[] | null
           cidades_interesse?: string | null
           codigo_ibge_referencia?: string | null
+          comprador_verificado?: boolean | null
           criado_em?: string | null
           diferenciais?: Json | null
           email?: string | null
@@ -573,6 +626,7 @@ export type Database = {
           tipos_imovel?: string[] | null
           usa_fgts?: boolean | null
           user_id?: string | null
+          whatsapp_confirmado?: boolean | null
           yield_minimo_mensal?: number | null
         }
         Relationships: []
@@ -618,6 +672,7 @@ export type Database = {
           precisao_localizacao: string | null
           preco_minimo: number | null
           preco_pedido: number | null
+          preco_revalidado_em: string | null
           procuracao_necessaria: boolean
           protocolo: string | null
           quartos: number | null
@@ -629,6 +684,7 @@ export type Database = {
           vagas: number | null
           valor_aluguel_atual: number | null
           valor_estimado: string | null
+          whatsapp_confirmado: boolean | null
         }
         Insert: {
           aceita_financiamento?: boolean | null
@@ -670,6 +726,7 @@ export type Database = {
           precisao_localizacao?: string | null
           preco_minimo?: number | null
           preco_pedido?: number | null
+          preco_revalidado_em?: string | null
           procuracao_necessaria?: boolean
           protocolo?: string | null
           quartos?: number | null
@@ -681,6 +738,7 @@ export type Database = {
           vagas?: number | null
           valor_aluguel_atual?: number | null
           valor_estimado?: string | null
+          whatsapp_confirmado?: boolean | null
         }
         Update: {
           aceita_financiamento?: boolean | null
@@ -722,6 +780,7 @@ export type Database = {
           precisao_localizacao?: string | null
           preco_minimo?: number | null
           preco_pedido?: number | null
+          preco_revalidado_em?: string | null
           procuracao_necessaria?: boolean
           protocolo?: string | null
           quartos?: number | null
@@ -733,6 +792,7 @@ export type Database = {
           vagas?: number | null
           valor_aluguel_atual?: number | null
           valor_estimado?: string | null
+          whatsapp_confirmado?: boolean | null
         }
         Relationships: []
       }
@@ -1082,6 +1142,14 @@ export type Database = {
           percentual: number
         }[]
       }
+      fn_calcular_confianca_compatibilidade: {
+        Args: { p_lead_investidor_id: string; p_lead_venda_id: string }
+        Returns: {
+          classificacao: string
+          detalhes: Json
+          percentual: number
+        }[]
+      }
       fn_compat_extrair_valor_numerico: {
         Args: { p_valor_texto: string }
         Returns: number
@@ -1187,11 +1255,16 @@ export type Database = {
         Returns: {
           atualizado_em: string
           compatibilidade_id: string
+          confianca_classificacao: string
+          confianca_detalhes: Json
+          confianca_percentual: number
           criado_em: string
           criterios: Json
           criterios_atendidos: Json
           criterios_nao_atendidos: Json
+          detalhamento_vendedor: Json
           eliminado: boolean
+          faixa_compatibilidade: string
           imovel_cidade: string
           imovel_motivo_venda: string
           imovel_prazo_desejado: string
@@ -1212,6 +1285,9 @@ export type Database = {
           lead_investidor_id: string
           lead_venda_id: string
           motivo_eliminacao: string
+          nota_comprador: number
+          nota_final: number
+          nota_vendedor: number
           percentual: number
           proprietario_email: string
           proprietario_nome: string
@@ -1233,16 +1309,23 @@ export type Database = {
         Returns: {
           cidade: string
           compatibilidade_id: string
+          confianca_classificacao: string
+          confianca_detalhes: Json
+          confianca_percentual: number
           criado_em_imovel: string
           criterios: Json
           criterios_atendidos: Json
           criterios_nao_atendidos: Json
+          faixa_compatibilidade: string
           faixa_valor: string
           interesse_id: string
           interesse_status: string
           ja_manifestou_interesse: boolean
           lead_investidor_id: string
           lead_venda_id: string
+          nota_comprador: number
+          nota_final: number
+          nota_vendedor: number
           percentual: number
           protocolo_imovel: string
           status_imovel: string

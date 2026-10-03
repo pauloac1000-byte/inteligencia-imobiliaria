@@ -9,6 +9,7 @@ export interface CriterioDetalhe {
   aplicavel?: boolean
   atendido: boolean
   explicacao: string
+  fator_classificacao?: 'dentro' | 'proximo' | 'acima' | string
 }
 
 export interface OportunidadeInvestidor {
