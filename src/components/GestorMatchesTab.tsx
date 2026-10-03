@@ -41,7 +41,7 @@ export function GestorMatchesTab({
   onRecarregar,
 }: GestorMatchesTabProps) {
   const [filtroStatus, setFiltroStatus] = useState<
-    'todos' | 'pendente' | 'aprovado' | 'descartado'
+    'todos' | 'pendente' | 'aprovado' | 'descartado' | 'eliminados'
   >('todos')
   const [ordenacao, setOrdenacao] = useState<'percentual_desc' | 'percentual_asc' | 'recentes'>(
     'percentual_desc',
@@ -69,7 +69,18 @@ export function GestorMatchesTab({
   }
 
   // Filtragem
+  // Regra do Usuário:
+  // "Pares eliminados NÃO aparecem para o investidor (área do investidor) nem na lista de matches do gestor
+  // — apenas num novo filtro "Eliminados" na aba Matches do /painel, que lista os pares eliminados com o motivo visível."
   const matchesFiltrados = matches.filter((m) => {
+    const isEliminado = Boolean(m.eliminado)
+    if (filtroStatus === 'eliminados') {
+      return isEliminado
+    }
+    // Na lista de matches padrão (todos, pendente, aprovado, descartado), pares eliminados NÃO aparecem
+    if (isEliminado) {
+      return false
+    }
     if (filtroStatus !== 'todos' && m.status_match !== filtroStatus) {
       return false
     }
@@ -91,11 +102,15 @@ export function GestorMatchesTab({
   })
 
   // Contadores para os filtros
+  const matchesValidos = matches.filter((m) => !m.eliminado)
+  const matchesEliminados = matches.filter((m) => Boolean(m.eliminado))
+
   const contadores = {
-    todos: matches.length,
-    pendente: matches.filter((m) => m.status_match === 'pendente').length,
-    aprovado: matches.filter((m) => m.status_match === 'aprovado').length,
-    descartado: matches.filter((m) => m.status_match === 'descartado').length,
+    todos: matchesValidos.length,
+    pendente: matchesValidos.filter((m) => m.status_match === 'pendente').length,
+    aprovado: matchesValidos.filter((m) => m.status_match === 'aprovado').length,
+    descartado: matchesValidos.filter((m) => m.status_match === 'descartado').length,
+    eliminados: matchesEliminados.length,
   }
 
   const getPercentualBadge = (pct: number) => {
@@ -162,6 +177,7 @@ export function GestorMatchesTab({
               { id: 'pendente', label: 'Pendentes', count: contadores.pendente },
               { id: 'aprovado', label: 'Aprovados', count: contadores.aprovado },
               { id: 'descartado', label: 'Descartados', count: contadores.descartado },
+              { id: 'eliminados', label: 'Eliminados', count: contadores.eliminados },
             ] as const
           ).map((item) => (
             <button
@@ -284,7 +300,12 @@ export function GestorMatchesTab({
 
                     {/* Ações Rápidas: APROVAR ou DESCARTAR */}
                     <div className="flex items-center gap-2 shrink-0">
-                      {isProcessando ? (
+                      {match.eliminado ? (
+                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-rose-500/15 text-rose-300 border border-rose-500/30">
+                          <AlertTriangle className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                          <span>Eliminado no pré-filtro</span>
+                        </div>
+                      ) : isProcessando ? (
                         <div className="flex items-center gap-2 text-xs text-[#22C7E0] px-3 py-2">
                           <Loader2 className="w-4 h-4 animate-spin" />
                           <span>Gravando...</span>
@@ -472,37 +493,51 @@ export function GestorMatchesTab({
                     </div>
                   </div>
 
-                  {/* Resumo Rápido dos Critérios */}
-                  <div className="pt-1 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                    <div className="flex items-center gap-4 flex-wrap">
-                      <span className="flex items-center gap-1.5 text-emerald-400 font-medium">
-                        <Check className="w-4 h-4" />
-                        <span>{atendidos.length} critérios atendidos</span>
-                      </span>
-                      <span className="flex items-center gap-1.5 text-amber-400 font-medium">
-                        <X className="w-4 h-4" />
-                        <span>{naoAtendidos.length} não atendidos</span>
-                      </span>
+                  {/* Bloco de Auditoria: Motivo da Eliminação (quando par eliminado) OU Resumo dos 5 critérios */}
+                  {match.eliminado ? (
+                    <div className="p-3.5 rounded-xl bg-rose-950/30 border border-rose-500/40 text-xs space-y-1">
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+                        <span className="font-bold text-rose-300 uppercase tracking-wider text-[11px]">
+                          Motivo da Eliminação Pré-Motor (Auditoria Korbix)
+                        </span>
+                      </div>
+                      <p className="text-slate-200 text-xs leading-relaxed pl-6 font-medium">
+                        {match.motivo_eliminacao ||
+                          'Par descartado automaticamente por não cumprir os requisitos objetivos de compatibilidade.'}
+                      </p>
                     </div>
+                  ) : (
+                    <div className="pt-1 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                      <div className="flex items-center gap-4 flex-wrap">
+                        <span className="flex items-center gap-1.5 text-emerald-400 font-medium">
+                          <Check className="w-4 h-4" />
+                          <span>{atendidos.length} critérios atendidos</span>
+                        </span>
+                        <span className="flex items-center gap-1.5 text-amber-400 font-medium">
+                          <X className="w-4 h-4" />
+                          <span>{naoAtendidos.length} não atendidos</span>
+                        </span>
+                      </div>
 
-                    <button
-                      type="button"
-                      onClick={() => toggleDetalhes(match.compatibilidade_id)}
-                      className="inline-flex items-center gap-1.5 text-[#22C7E0] hover:text-[#5eead4] font-semibold transition-colors cursor-pointer self-start sm:self-auto"
-                    >
-                      <span>
-                        {isDetalhesAberto
-                          ? 'Ocultar auditoria dos 5 critérios'
-                          : 'Ver detalhamento dos 5 critérios'}
-                      </span>
-                      {isDetalhesAberto ? (
-                        <ChevronUp className="w-4 h-4" />
-                      ) : (
-                        <ChevronDown className="w-4 h-4" />
-                      )}
-                    </button>
-                  </div>
-
+                      <button
+                        type="button"
+                        onClick={() => toggleDetalhes(match.compatibilidade_id)}
+                        className="inline-flex items-center gap-1.5 text-[#22C7E0] hover:text-[#5eead4] font-semibold transition-colors cursor-pointer self-start sm:self-auto"
+                      >
+                        <span>
+                          {isDetalhesAberto
+                            ? 'Ocultar auditoria dos 5 critérios'
+                            : 'Ver detalhamento dos 5 critérios'}
+                        </span>
+                        {isDetalhesAberto ? (
+                          <ChevronUp className="w-4 h-4" />
+                        ) : (
+                          <ChevronDown className="w-4 h-4" />
+                        )}
+                      </button>
+                    </div>
+                  )}
                   {/* Painel Expansível de Critérios Auditáveis */}
                   {isDetalhesAberto && (
                     <div className="pt-3 border-t border-slate-800 space-y-3 animate-fade-in">

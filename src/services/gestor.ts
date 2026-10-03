@@ -93,6 +93,8 @@ export interface GestorMatchItem {
   interesse_status: string
   criado_em: string
   atualizado_em: string
+  eliminado?: boolean
+  motivo_eliminacao?: string | null
 }
 
 /**

@@ -269,6 +269,7 @@ export type Database = {
       lead_arquivos: {
         Row: {
           criado_em: string
+          data_emissao: string | null
           id: string
           lead_id: string
           mime_type: string | null
@@ -282,6 +283,7 @@ export type Database = {
         }
         Insert: {
           criado_em?: string
+          data_emissao?: string | null
           id?: string
           lead_id: string
           mime_type?: string | null
@@ -295,6 +297,7 @@ export type Database = {
         }
         Update: {
           criado_em?: string
+          data_emissao?: string | null
           id?: string
           lead_id?: string
           mime_type?: string | null
@@ -310,6 +313,63 @@ export type Database = {
           {
             foreignKeyName: 'lead_arquivos_lead_id_fkey'
             columns: ['lead_id']
+            isOneToOne: false
+            referencedRelation: 'leads_venda'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      lead_documentos_conferencia: {
+        Row: {
+          arquivo_id: string | null
+          atualizado_em: string
+          conferido_em: string | null
+          conferido_por: string | null
+          criado_em: string
+          id: string
+          lead_venda_id: string
+          motivo_recusa: string | null
+          obrigatorio: boolean
+          status: string
+          tipo_documento: string
+        }
+        Insert: {
+          arquivo_id?: string | null
+          atualizado_em?: string
+          conferido_em?: string | null
+          conferido_por?: string | null
+          criado_em?: string
+          id?: string
+          lead_venda_id: string
+          motivo_recusa?: string | null
+          obrigatorio?: boolean
+          status?: string
+          tipo_documento: string
+        }
+        Update: {
+          arquivo_id?: string | null
+          atualizado_em?: string
+          conferido_em?: string | null
+          conferido_por?: string | null
+          criado_em?: string
+          id?: string
+          lead_venda_id?: string
+          motivo_recusa?: string | null
+          obrigatorio?: boolean
+          status?: string
+          tipo_documento?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'lead_documentos_conferencia_arquivo_id_fkey'
+            columns: ['arquivo_id']
+            isOneToOne: false
+            referencedRelation: 'lead_arquivos'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'lead_documentos_conferencia_lead_venda_id_fkey'
+            columns: ['lead_venda_id']
             isOneToOne: false
             referencedRelation: 'leads_venda'
             referencedColumns: ['id']
@@ -482,6 +542,10 @@ export type Database = {
         Row: {
           area_terreno: number | null
           area_util: number | null
+          autorizacao_assinada_em: string | null
+          autorizacao_comissao_percentual: number | null
+          autorizacao_prazo: string | null
+          autorizacao_quem_paga: string | null
           bairro: string | null
           calc_condominio_mensal: string | null
           calc_custo_acumulado_total: string | null
@@ -511,6 +575,7 @@ export type Database = {
           precisao_localizacao: string | null
           preco_minimo: number | null
           preco_pedido: number | null
+          procuracao_necessaria: boolean
           protocolo: string | null
           quartos: number | null
           rota: string
@@ -523,6 +588,10 @@ export type Database = {
         Insert: {
           area_terreno?: number | null
           area_util?: number | null
+          autorizacao_assinada_em?: string | null
+          autorizacao_comissao_percentual?: number | null
+          autorizacao_prazo?: string | null
+          autorizacao_quem_paga?: string | null
           bairro?: string | null
           calc_condominio_mensal?: string | null
           calc_custo_acumulado_total?: string | null
@@ -552,6 +621,7 @@ export type Database = {
           precisao_localizacao?: string | null
           preco_minimo?: number | null
           preco_pedido?: number | null
+          procuracao_necessaria?: boolean
           protocolo?: string | null
           quartos?: number | null
           rota?: string
@@ -564,6 +634,10 @@ export type Database = {
         Update: {
           area_terreno?: number | null
           area_util?: number | null
+          autorizacao_assinada_em?: string | null
+          autorizacao_comissao_percentual?: number | null
+          autorizacao_prazo?: string | null
+          autorizacao_quem_paga?: string | null
           bairro?: string | null
           calc_condominio_mensal?: string | null
           calc_custo_acumulado_total?: string | null
@@ -593,6 +667,7 @@ export type Database = {
           precisao_localizacao?: string | null
           preco_minimo?: number | null
           preco_pedido?: number | null
+          procuracao_necessaria?: boolean
           protocolo?: string | null
           quartos?: number | null
           rota?: string
@@ -951,6 +1026,15 @@ export type Database = {
         Args: { p_tel: string }
         Returns: string
       }
+      fn_gestor_ativar_imovel: {
+        Args: { p_lead_id: string }
+        Returns: {
+          atualizado_em: string
+          id: string
+          protocolo: string
+          status: string
+        }[]
+      }
       fn_gestor_atualizar_status_lead: {
         Args: { p_lead_id: string; p_novo_status: string }
         Returns: {
@@ -958,6 +1042,22 @@ export type Database = {
           id: string
           protocolo: string
           status: string
+        }[]
+      }
+      fn_gestor_decidir_documento: {
+        Args: {
+          p_decisao: string
+          p_lead_id: string
+          p_motivo_recusa?: string
+          p_tipo_documento: string
+        }
+        Returns: {
+          conferido_em: string
+          id: string
+          lead_venda_id: string
+          motivo_recusa: string
+          status: string
+          tipo_documento: string
         }[]
       }
       fn_gestor_decidir_match: {
@@ -984,8 +1084,12 @@ export type Database = {
         Returns: {
           alerta_motivo: string
           alerta_valor: string
+          apto_para_ativar: boolean
           area_terreno: number
           area_util: number
+          autorizacao_comissao_percentual: number
+          autorizacao_prazo: string
+          autorizacao_quem_paga: string
           cidade: string
           cidades_interesse: string
           criado_em: string
@@ -999,6 +1103,7 @@ export type Database = {
           prazo_decisao: string
           prazo_desejado: string
           preco_pedido: number
+          procuracao_necessaria: boolean
           protocolo: string
           quartos: number
           rota: string
@@ -1006,6 +1111,8 @@ export type Database = {
           telefone: string
           ticket: string
           tipo_imovel: string
+          total_docs_conferidos: number
+          total_docs_obrigatorios: number
           user_id: string
           valor_estimado: string
         }[]
@@ -1044,6 +1151,14 @@ export type Database = {
           proprietario_telefone: string
           status_match: string
         }[]
+      }
+      fn_gestor_toggle_procuracao: {
+        Args: { p_lead_id: string; p_necessaria: boolean }
+        Returns: boolean
+      }
+      fn_inicializar_checklist_documentos: {
+        Args: { p_lead_id: string }
+        Returns: undefined
       }
       fn_is_gestor: { Args: never; Returns: boolean }
       fn_listar_oportunidades_investidor: {
@@ -1087,6 +1202,23 @@ export type Database = {
         Args: { p_valor_estimado: string }
         Returns: string
       }
+      fn_obter_documentos_conferencia: {
+        Args: { p_lead_id: string }
+        Returns: {
+          arquivo_data_emissao: string
+          arquivo_id: string
+          arquivo_nome: string
+          arquivo_storage_path: string
+          atualizado_em: string
+          conferido_em: string
+          id: string
+          lead_venda_id: string
+          motivo_recusa: string
+          obrigatorio: boolean
+          status: string
+          tipo_documento: string
+        }[]
+      }
       fn_recalcular_compatibilidade_lead_investidor: {
         Args: { p_lead_investidor_id: string }
         Returns: number
@@ -1098,6 +1230,16 @@ export type Database = {
       fn_recalcular_compatibilidade_par: {
         Args: { p_lead_investidor_id: string; p_lead_venda_id: string }
         Returns: number
+      }
+      fn_salvar_dados_autorizacao_venda: {
+        Args: {
+          p_comissao_percentual: number
+          p_lead_id: string
+          p_prazo_autorizacao: string
+          p_procuracao_necessaria?: boolean
+          p_quem_paga: string
+        }
+        Returns: boolean
       }
       fn_submit_lead_calculadora: {
         Args: {
