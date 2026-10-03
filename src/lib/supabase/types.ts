@@ -1348,6 +1348,10 @@ export type Database = {
           status: string
         }[]
       }
+      fn_mascarar_detalhamento_investidor: {
+        Args: { p_detalhamento: Json }
+        Returns: Json
+      }
       fn_mascarar_faixa_valor: {
         Args: { p_valor_estimado: string }
         Returns: string

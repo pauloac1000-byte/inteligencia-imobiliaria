@@ -45,6 +45,7 @@ export default function Cadastro() {
   const [tipo, setTipo] = useState<UserRole>('proprietario')
   const [loading, setLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [alreadyRegisteredNotice, setAlreadyRegisteredNotice] = useState(false)
   const [confirmationNotice, setConfirmationNotice] = useState(false)
 
   // Redireciona se já estiver autenticado
@@ -58,6 +59,7 @@ export default function Cadastro() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setErrorMessage('')
+    setAlreadyRegisteredNotice(false)
 
     if (!email.trim() || !password || !confirmPassword) {
       setErrorMessage('Por favor, preencha todos os campos.')
@@ -75,13 +77,26 @@ export default function Cadastro() {
     }
 
     setLoading(true)
-    const { error, needsEmailConfirmation } = await signUp(email, password, tipo)
+    const { error, needsEmailConfirmation, isAlreadyRegistered } = await signUp(
+      email,
+      password,
+      tipo,
+    )
     setLoading(false)
+
+    if (isAlreadyRegistered) {
+      setAlreadyRegisteredNotice(true)
+      return
+    }
 
     if (error) {
       const rawMsg = error.message.toLowerCase()
-      if (rawMsg.includes('already registered') || rawMsg.includes('user already exists')) {
-        setErrorMessage('Este e-mail já está cadastrado. Tente entrar na página de login.')
+      if (
+        rawMsg.includes('already registered') ||
+        rawMsg.includes('user already exists') ||
+        rawMsg.includes('já possui cadastro')
+      ) {
+        setAlreadyRegisteredNotice(true)
       } else {
         setErrorMessage(error.message || 'Erro ao realizar cadastro. Tente novamente.')
       }
@@ -129,7 +144,40 @@ export default function Cadastro() {
 
         {/* Card de Cadastro */}
         <div className="bg-[#081226] border border-[#1A3A75] rounded-2xl p-6 sm:p-8 shadow-2xl backdrop-blur-md">
-          {confirmationNotice ? (
+          {alreadyRegisteredNotice ? (
+            <div className="text-center space-y-4 py-3 animate-fade-in">
+              <div className="w-14 h-14 rounded-full bg-amber-500/10 border border-amber-500/40 text-amber-400 flex items-center justify-center mx-auto shadow-[0_0_20px_rgba(245,158,11,0.2)]">
+                <AlertCircle className="w-8 h-8" />
+              </div>
+              <h2 className="text-xl font-bold text-white">E-mail já cadastrado</h2>
+              <p className="text-sm text-slate-300 leading-relaxed">
+                O e-mail <span className="text-[#22C7E0] font-semibold">{email}</span> já possui uma
+                conta ativa na KORBIX. Você não precisa criar uma nova conta nem aguardar link de
+                ativação.
+              </p>
+              <div className="pt-3 flex flex-col sm:flex-row items-center justify-center gap-3">
+                <Link
+                  to="/login"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 py-3 px-6 rounded-xl bg-[#1A3A75] hover:bg-[#142E5E] text-white font-semibold text-sm shadow-inner border border-white/10 transition-all"
+                >
+                  <span>Entrar com esta conta</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAlreadyRegisteredNotice(false)
+                    setEmail('')
+                    setPassword('')
+                    setConfirmPassword('')
+                  }}
+                  className="w-full sm:w-auto text-xs text-slate-400 hover:text-white py-2 px-3 transition-colors"
+                >
+                  Usar outro e-mail
+                </button>
+              </div>
+            </div>
+          ) : confirmationNotice ? (
             <div className="text-center space-y-4 py-3 animate-fade-in">
               <div className="w-14 h-14 rounded-full bg-[#22C7E0]/10 border border-[#22C7E0]/40 text-[#22C7E0] flex items-center justify-center mx-auto shadow-[0_0_20px_rgba(34,199,224,0.2)]">
                 <CheckCircle2 className="w-8 h-8" />

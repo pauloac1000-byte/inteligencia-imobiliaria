@@ -17,7 +17,11 @@ interface AuthContextType {
     email: string,
     password: string,
     tipo: UserRole,
-  ) => Promise<{ error: AuthError | Error | null; needsEmailConfirmation?: boolean }>
+  ) => Promise<{
+    error: AuthError | Error | null
+    needsEmailConfirmation?: boolean
+    isAlreadyRegistered?: boolean
+  }>
   signIn: (
     email: string,
     password: string,
@@ -128,6 +132,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     if (error) {
       return { error }
+    }
+
+    // Quando o e-mail já existe e está confirmado, o Supabase Auth (GoTrue) retorna data.user com identities: []
+    // sem erro (comportamento de segurança anti-enumeração) e NÃO envia novo e-mail nem cria nova conta.
+    const isAlreadyRegistered =
+      !!data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0
+
+    if (isAlreadyRegistered) {
+      return {
+        error: new Error(
+          'Este e-mail já possui cadastro na plataforma KORBIX. Acesse a página de login para entrar.',
+        ),
+        isAlreadyRegistered: true,
+      }
     }
 
     // Se a confirmação de e-mail estiver ligada no Supabase e não retornar session de imediato
