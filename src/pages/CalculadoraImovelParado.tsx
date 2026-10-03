@@ -240,7 +240,8 @@ export const CalculadoraImovelParado: React.FC = () => {
     setLeadLoading(false)
 
     if (!res.success) {
-      setLeadError(res.error || 'Não foi possível solicitar a análise no momento. Tente novamente.')
+      const err = res.error || 'Não foi possível solicitar a análise no momento. Tente novamente.'
+      setLeadError(err)
       return
     }
 
@@ -755,8 +756,18 @@ export const CalculadoraImovelParado: React.FC = () => {
                               if (leadError) setLeadError('')
                             }}
                             disabled={leadLoading}
-                            className="w-full px-3.5 py-2.5 rounded-lg bg-[#070B14] border border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0] text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
+                            className={`w-full px-3.5 py-2.5 rounded-lg bg-[#070B14] border text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px] ${
+                              leadError && leadError.toLowerCase().includes('cidade')
+                                ? 'border-red-500 focus:border-red-500'
+                                : 'border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0]'
+                            }`}
                           />
+                          {leadError && leadError.toLowerCase().includes('cidade') && (
+                            <p className="text-[11px] text-red-400 mt-1 flex items-center gap-1">
+                              <AlertCircle className="w-3 h-3 text-red-400 shrink-0" />
+                              <span>{leadError}</span>
+                            </p>
+                          )}
                         </div>
 
                         <div className="space-y-1.5">

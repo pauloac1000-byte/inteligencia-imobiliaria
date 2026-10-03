@@ -934,10 +934,27 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
                 onChange={(e) => {
                   setNome(e.target.value)
                   if (errorMsg) setErrorMsg('')
+                  if (fieldErrors.nome) {
+                    setFieldErrors((prev) => {
+                      const n = { ...prev }
+                      delete n.nome
+                      return n
+                    })
+                  }
                 }}
                 disabled={loading}
-                className="w-full px-3.5 py-2.5 rounded-lg bg-[#081226] border border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0] text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
+                className={`w-full px-3.5 py-2.5 rounded-lg bg-[#081226] border text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px] ${
+                  fieldErrors.nome
+                    ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500'
+                    : 'border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0]'
+                }`}
               />
+              {fieldErrors.nome && (
+                <p className="text-[11px] text-red-400 mt-1 flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3 text-red-400 shrink-0" />
+                  <span>{fieldErrors.nome}</span>
+                </p>
+              )}
             </div>
 
             <div className="space-y-1.5">
@@ -952,10 +969,27 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
                 onChange={(e) => {
                   setEmail(e.target.value)
                   if (errorMsg) setErrorMsg('')
+                  if (fieldErrors.email) {
+                    setFieldErrors((prev) => {
+                      const n = { ...prev }
+                      delete n.email
+                      return n
+                    })
+                  }
                 }}
                 disabled={loading}
-                className="w-full px-3.5 py-2.5 rounded-lg bg-[#081226] border border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0] text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
+                className={`w-full px-3.5 py-2.5 rounded-lg bg-[#081226] border text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px] ${
+                  fieldErrors.email
+                    ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500'
+                    : 'border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0]'
+                }`}
               />
+              {fieldErrors.email && (
+                <p className="text-[11px] text-red-400 mt-1 flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3 text-red-400 shrink-0" />
+                  <span>{fieldErrors.email}</span>
+                </p>
+              )}
             </div>
           </div>
 

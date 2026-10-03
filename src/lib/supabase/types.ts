@@ -9,6 +9,50 @@ export type Database = {
   }
   public: {
     Tables: {
+      alertas_gestor: {
+        Row: {
+          atualizado_em: string
+          criado_em: string
+          detalhes: Json | null
+          id: string
+          lead_venda_id: string
+          motivo: string
+          resolvido: boolean
+          rotulo: string
+          tipo_alerta: string
+        }
+        Insert: {
+          atualizado_em?: string
+          criado_em?: string
+          detalhes?: Json | null
+          id?: string
+          lead_venda_id: string
+          motivo: string
+          resolvido?: boolean
+          rotulo?: string
+          tipo_alerta?: string
+        }
+        Update: {
+          atualizado_em?: string
+          criado_em?: string
+          detalhes?: Json | null
+          id?: string
+          lead_venda_id?: string
+          motivo?: string
+          resolvido?: boolean
+          rotulo?: string
+          tipo_alerta?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'alertas_gestor_lead_venda_id_fkey'
+            columns: ['lead_venda_id']
+            isOneToOne: false
+            referencedRelation: 'leads_venda'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       compatibilidade_imovel_tese: {
         Row: {
           atualizado_em: string
@@ -436,6 +480,8 @@ export type Database = {
       }
       leads_venda: {
         Row: {
+          area_terreno: number | null
+          area_util: number | null
           bairro: string | null
           calc_condominio_mensal: string | null
           calc_custo_acumulado_total: string | null
@@ -463,7 +509,10 @@ export type Database = {
           numero: string | null
           prazo_desejado: string | null
           precisao_localizacao: string | null
+          preco_minimo: number | null
+          preco_pedido: number | null
           protocolo: string | null
+          quartos: number | null
           rota: string
           status: string
           telefone: string
@@ -472,6 +521,8 @@ export type Database = {
           valor_estimado: string | null
         }
         Insert: {
+          area_terreno?: number | null
+          area_util?: number | null
           bairro?: string | null
           calc_condominio_mensal?: string | null
           calc_custo_acumulado_total?: string | null
@@ -499,7 +550,10 @@ export type Database = {
           numero?: string | null
           prazo_desejado?: string | null
           precisao_localizacao?: string | null
+          preco_minimo?: number | null
+          preco_pedido?: number | null
           protocolo?: string | null
+          quartos?: number | null
           rota?: string
           status?: string
           telefone: string
@@ -508,6 +562,8 @@ export type Database = {
           valor_estimado?: string | null
         }
         Update: {
+          area_terreno?: number | null
+          area_util?: number | null
           bairro?: string | null
           calc_condominio_mensal?: string | null
           calc_custo_acumulado_total?: string | null
@@ -535,7 +591,10 @@ export type Database = {
           numero?: string | null
           prazo_desejado?: string | null
           precisao_localizacao?: string | null
+          preco_minimo?: number | null
+          preco_pedido?: number | null
           protocolo?: string | null
+          quartos?: number | null
           rota?: string
           status?: string
           telefone?: string
@@ -888,6 +947,10 @@ export type Database = {
         Returns: number
       }
       fn_compat_normalizar_texto: { Args: { p_input: string }; Returns: string }
+      fn_formatar_e_validar_whatsapp: {
+        Args: { p_tel: string }
+        Returns: string
+      }
       fn_gestor_atualizar_status_lead: {
         Args: { p_lead_id: string; p_novo_status: string }
         Returns: {
@@ -919,6 +982,10 @@ export type Database = {
       fn_gestor_listar_leads: {
         Args: never
         Returns: {
+          alerta_motivo: string
+          alerta_valor: string
+          area_terreno: number
+          area_util: number
           cidade: string
           cidades_interesse: string
           criado_em: string
@@ -931,7 +998,9 @@ export type Database = {
           perfil: string
           prazo_decisao: string
           prazo_desejado: string
+          preco_pedido: number
           protocolo: string
+          quartos: number
           rota: string
           status: string
           telefone: string
@@ -1114,6 +1183,8 @@ export type Database = {
       }
       fn_submit_lead_venda: {
         Args: {
+          p_area_terreno?: number
+          p_area_util?: number
           p_bairro?: string
           p_cep?: string
           p_cidade: string
@@ -1128,6 +1199,9 @@ export type Database = {
           p_nome?: string
           p_numero?: string
           p_prazo_desejado?: string
+          p_preco_minimo?: number
+          p_preco_pedido?: number
+          p_quartos?: number
           p_rota?: string
           p_telefone: string
           p_tipo_imovel: string
@@ -1140,6 +1214,8 @@ export type Database = {
       }
       fn_submit_lead_venda_etapa1: {
         Args: {
+          p_area_terreno?: number
+          p_area_util?: number
           p_bairro?: string
           p_cep?: string
           p_cidade: string
@@ -1148,6 +1224,9 @@ export type Database = {
           p_diferenciais?: Json
           p_logradouro?: string
           p_numero?: string
+          p_preco_minimo?: number
+          p_preco_pedido?: number
+          p_quartos?: number
           p_rota?: string
           p_telefone: string
           p_tipo_imovel: string
@@ -1159,6 +1238,8 @@ export type Database = {
       }
       fn_submit_lead_venda_etapa2: {
         Args: {
+          p_area_terreno?: number
+          p_area_util?: number
           p_bairro?: string
           p_cep?: string
           p_cidade?: string
@@ -1173,6 +1254,9 @@ export type Database = {
           p_nome: string
           p_numero?: string
           p_prazo_desejado: string
+          p_preco_minimo?: number
+          p_preco_pedido?: number
+          p_quartos?: number
           p_valor_estimado?: string
         }
         Returns: {

@@ -469,7 +469,11 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
       ) {
         setFieldErrors({ precoMinimo: err })
         setEtapa(2)
-      } else if (msgLow.includes('whatsapp') || msgLow.includes('+55')) {
+      } else if (
+        msgLow.includes('whatsapp') ||
+        msgLow.includes('+55') ||
+        msgLow.includes('telefone')
+      ) {
         setFieldErrors({ telefone: err })
         setEtapa(1)
       }
