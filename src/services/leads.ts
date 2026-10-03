@@ -6,6 +6,12 @@ export interface LeadVendaEtapa1Input {
   telefone: string
   rota?: 'proprietario' | string
   diferenciais?: string[] // Lista de códigos de diferenciais selecionados: ['PISCINA', 'PORTARIA', ...]
+  cep?: string
+  logradouro?: string
+  numero?: string
+  complemento?: string
+  bairro?: string
+  codigo_ibge?: string
 }
 
 export interface LeadVendaEtapa2Input {
@@ -23,6 +29,13 @@ export interface LeadVendaEtapa2Input {
   prazo_desejado: 'até 60 dias' | 'até 6 meses' | 'sem pressa' | string
   mensagem?: string
   diferenciais?: string[]
+  cep?: string
+  logradouro?: string
+  numero?: string
+  complemento?: string
+  bairro?: string
+  cidade?: string
+  codigo_ibge?: string
 }
 
 export interface LeadVendaInput {
@@ -38,6 +51,12 @@ export interface LeadVendaInput {
   mensagem?: string
   rota?: 'proprietario' | string
   diferenciais?: string[]
+  cep?: string
+  logradouro?: string
+  numero?: string
+  complemento?: string
+  bairro?: string
+  codigo_ibge?: string
 }
 
 export type TicketInvestidor = 'ate_300k' | '300_600k' | 'acima_600k' | string
@@ -85,6 +104,10 @@ export interface LeadInvestidorInput {
   bairros_preferidos?: string
   raio_km?: number
   ponto_referencia?: string
+  cep_referencia?: string
+  logradouro_referencia?: string
+  bairro_referencia?: string
+  codigo_ibge_referencia?: string
 }
 
 export interface LeadCalculadoraInput {
@@ -153,12 +176,38 @@ export async function salvarLeadVendaEtapa1(input: LeadVendaEtapa1Input): Promis
         p_telefone: input.telefone.trim(),
         p_rota: input.rota || 'proprietario',
         p_diferenciais: input.diferenciais || [],
+        p_cep: input.cep ? input.cep.trim() : null,
+        p_logradouro: input.logradouro ? input.logradouro.trim() : null,
+        p_numero: input.numero ? input.numero.trim() : null,
+        p_complemento: input.complemento ? input.complemento.trim() : null,
+        p_bairro: input.bairro ? input.bairro.trim() : null,
+        p_codigo_ibge: input.codigo_ibge ? input.codigo_ibge.trim() : null,
       },
     )
 
     if (!rpcError && rpcData) {
       const row = Array.isArray(rpcData) ? rpcData[0] : rpcData
-      return { success: true, id: row?.id, protocolo: row?.protocolo }
+      const leadCriadoId = row?.id
+
+      // Dispara a Edge Function de geocodificação server-side em segundo plano (não bloqueante)
+      if (leadCriadoId) {
+        supabase.functions
+          .invoke('geocodificar-endereco', {
+            body: {
+              tabela: 'leads_venda',
+              id: leadCriadoId,
+              cidade: input.cidade,
+              cep: input.cep,
+              logradouro: input.logradouro,
+              bairro: input.bairro,
+            },
+          })
+          .catch((fErr) => {
+            console.warn('Geocodificação em background:', fErr)
+          })
+      }
+
+      return { success: true, id: leadCriadoId, protocolo: row?.protocolo }
     }
 
     // Fallback defensivo com insert direto se RPC não estiver disponível (sem .select() para anônimos devido ao RLS)
@@ -171,6 +220,13 @@ export async function salvarLeadVendaEtapa1(input: LeadVendaEtapa1Input): Promis
         telefone: input.telefone.trim(),
         rota: input.rota || 'proprietario',
         diferenciais: input.diferenciais || [],
+        cep: input.cep ? input.cep.trim() : null,
+        logradouro: input.logradouro ? input.logradouro.trim() : null,
+        numero: input.numero ? input.numero.trim() : null,
+        complemento: input.complemento ? input.complemento.trim() : null,
+        bairro: input.bairro ? input.bairro.trim() : null,
+        codigo_ibge: input.codigo_ibge ? input.codigo_ibge.trim() : null,
+        precisao_localizacao: 'aproximada',
       },
     ])
 
@@ -211,12 +267,38 @@ export async function atualizarLeadVendaEtapa2(input: LeadVendaEtapa2Input): Pro
         p_valor_estimado: input.valor_estimado ? input.valor_estimado.trim() : null,
         p_mensagem: input.mensagem ? input.mensagem.trim() : null,
         p_diferenciais: input.diferenciais ?? null,
+        p_cep: input.cep ? input.cep.trim() : null,
+        p_logradouro: input.logradouro ? input.logradouro.trim() : null,
+        p_numero: input.numero ? input.numero.trim() : null,
+        p_complemento: input.complemento ? input.complemento.trim() : null,
+        p_bairro: input.bairro ? input.bairro.trim() : null,
+        p_cidade: input.cidade ? input.cidade.trim() : null,
+        p_codigo_ibge: input.codigo_ibge ? input.codigo_ibge.trim() : null,
       },
     )
 
     if (!rpcError && rpcData) {
       const row = Array.isArray(rpcData) ? rpcData[0] : rpcData
-      return { success: true, id: row?.id || input.id, protocolo: row?.protocolo }
+      const leadIdAtualizado = row?.id || input.id
+
+      if (leadIdAtualizado) {
+        supabase.functions
+          .invoke('geocodificar-endereco', {
+            body: {
+              tabela: 'leads_venda',
+              id: leadIdAtualizado,
+              cidade: input.cidade,
+              cep: input.cep,
+              logradouro: input.logradouro,
+              bairro: input.bairro,
+            },
+          })
+          .catch((fErr) => {
+            console.warn('Geocodificação em background etapa 2:', fErr)
+          })
+      }
+
+      return { success: true, id: leadIdAtualizado, protocolo: row?.protocolo }
     }
 
     // Fallback defensivo com update direto sem .select() (RLS não permite select para anônimos)
@@ -233,6 +315,13 @@ export async function atualizarLeadVendaEtapa2(input: LeadVendaEtapa2Input): Pro
     if (input.diferenciais !== undefined) {
       updatePayload.diferenciais = input.diferenciais
     }
+    if (input.cep) updatePayload.cep = input.cep.trim()
+    if (input.logradouro) updatePayload.logradouro = input.logradouro.trim()
+    if (input.numero) updatePayload.numero = input.numero.trim()
+    if (input.complemento) updatePayload.complemento = input.complemento.trim()
+    if (input.bairro) updatePayload.bairro = input.bairro.trim()
+    if (input.cidade) updatePayload.cidade = input.cidade.trim()
+    if (input.codigo_ibge) updatePayload.codigo_ibge = input.codigo_ibge.trim()
 
     const { error: updateError } = await (supabase.from as any)('leads_venda')
       .update(updatePayload)
@@ -277,11 +366,36 @@ export async function salvarLeadVenda(input: LeadVendaInput): Promise<LeadResult
       p_prazo_desejado: input.prazo_desejado || null,
       p_mensagem: input.mensagem ? input.mensagem.trim() : null,
       p_diferenciais: input.diferenciais || [],
+      p_cep: input.cep ? input.cep.trim() : null,
+      p_logradouro: input.logradouro ? input.logradouro.trim() : null,
+      p_numero: input.numero ? input.numero.trim() : null,
+      p_complemento: input.complemento ? input.complemento.trim() : null,
+      p_bairro: input.bairro ? input.bairro.trim() : null,
+      p_codigo_ibge: input.codigo_ibge ? input.codigo_ibge.trim() : null,
     })
 
     if (!rpcError && rpcData) {
       const row = Array.isArray(rpcData) ? rpcData[0] : rpcData
-      return { success: true, id: row?.id || input.id, protocolo: row?.protocolo }
+      const leadIdVenda = row?.id || input.id
+
+      if (leadIdVenda) {
+        supabase.functions
+          .invoke('geocodificar-endereco', {
+            body: {
+              tabela: 'leads_venda',
+              id: leadIdVenda,
+              cidade: input.cidade,
+              cep: input.cep,
+              logradouro: input.logradouro,
+              bairro: input.bairro,
+            },
+          })
+          .catch((fErr) => {
+            console.warn('Geocodificação em background salvarLeadVenda:', fErr)
+          })
+      }
+
+      return { success: true, id: leadIdVenda, protocolo: row?.protocolo }
     }
 
     // Fallback defensivo direto
@@ -299,6 +413,13 @@ export async function salvarLeadVenda(input: LeadVendaInput): Promise<LeadResult
     if (input.motivo_venda) payload.motivo_venda = input.motivo_venda
     if (input.prazo_desejado) payload.prazo_desejado = input.prazo_desejado
     if (input.mensagem) payload.mensagem = input.mensagem.trim()
+    if (input.cep) payload.cep = input.cep.trim()
+    if (input.logradouro) payload.logradouro = input.logradouro.trim()
+    if (input.numero) payload.numero = input.numero.trim()
+    if (input.complemento) payload.complemento = input.complemento.trim()
+    if (input.bairro) payload.bairro = input.bairro.trim()
+    if (input.codigo_ibge) payload.codigo_ibge = input.codigo_ibge.trim()
+    payload.precisao_localizacao = 'aproximada'
 
     let error: any
     let data: any
@@ -529,12 +650,39 @@ export async function salvarLeadInvestidor(input: LeadInvestidorInput): Promise<
         p_bairros_preferidos: input.bairros_preferidos || null,
         p_raio_km: input.raio_km ?? null,
         p_ponto_referencia: input.ponto_referencia || null,
+        p_cep_referencia: input.cep_referencia || null,
+        p_logradouro_referencia: input.logradouro_referencia || null,
+        p_bairro_referencia: input.bairro_referencia || null,
+        p_codigo_ibge_referencia: input.codigo_ibge_referencia || null,
       },
     )
 
     if (!rpcError && rpcData) {
       const row = Array.isArray(rpcData) ? rpcData[0] : rpcData
-      return { success: true, id: row?.id, protocolo: row?.protocolo }
+      const leadIdInvestidor = row?.id
+
+      if (leadIdInvestidor) {
+        supabase.functions
+          .invoke('geocodificar-endereco', {
+            body: {
+              tabela: 'leads_investidor',
+              id: leadIdInvestidor,
+              cidade:
+                input.ponto_referencia ||
+                (Array.isArray(input.cidades_interesse)
+                  ? input.cidades_interesse[0]
+                  : input.cidades_interesse),
+              cep: input.cep_referencia,
+              logradouro: input.logradouro_referencia,
+              bairro: input.bairro_referencia,
+            },
+          })
+          .catch((fErr) => {
+            console.warn('Geocodificação em background lead investidor:', fErr)
+          })
+      }
+
+      return { success: true, id: leadIdInvestidor, protocolo: row?.protocolo }
     }
 
     // Se a chamada RPC falhou, reportamos erro amigável ao usuário.
@@ -568,6 +716,11 @@ export async function salvarLeadInvestidor(input: LeadInvestidorInput): Promise<
       bairros_preferidos: input.bairros_preferidos || null,
       raio_km: input.raio_km ?? null,
       ponto_referencia: input.ponto_referencia || null,
+      cep_referencia: input.cep_referencia || null,
+      logradouro_referencia: input.logradouro_referencia || null,
+      bairro_referencia: input.bairro_referencia || null,
+      codigo_ibge_referencia: input.codigo_ibge_referencia || null,
+      precisao_localizacao: 'aproximada',
     }
 
     if (input.nome) payload.nome = input.nome.trim()

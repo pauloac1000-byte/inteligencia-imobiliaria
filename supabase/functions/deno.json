@@ -1,3 +1,5 @@
 {
-  "_versions": {}
+  "_versions": {
+    "geocodificar-endereco": 1
+  }
 }

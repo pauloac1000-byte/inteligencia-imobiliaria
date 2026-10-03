@@ -30,9 +30,10 @@ import {
   listarDiferenciais,
   filtrarDiferenciaisPorTiposInvestidor,
   DiferencialItem,
-  DIFERENCIAIS_PADRAO,
   PreferenciaDiferencial,
+  DIFERENCIAIS_PADRAO,
 } from '@/services/diferenciais'
+import { consultarViaCEP, formatarCEP, normalizarDigitosCEP } from '@/services/viacep'
 import {
   listarMunicipiosSP,
   listarRegioesAtalho,
@@ -168,6 +169,13 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
   const [bairrosPreferidos, setBairrosPreferidos] = useState<string>('')
   const [raioKm, setRaioKm] = useState<string>('')
   const [pontoReferencia, setPontoReferencia] = useState<string>('')
+
+  // Dados resolvidos a partir de CEP digitado no Ponto de Referência
+  const [cepReferencia, setCepReferencia] = useState<string>('')
+  const [logradouroReferencia, setLogradouroReferencia] = useState<string>('')
+  const [bairroReferencia, setBairroReferencia] = useState<string>('')
+  const [codigoIbgeReferencia, setCodigoIbgeReferencia] = useState<string>('')
+  const [buscandoCepReferencia, setBuscandoCepReferencia] = useState(false)
 
   // ==========================================
   // ETAPA 5: Diferenciais Desejados & Consentimento
@@ -418,6 +426,10 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
       bairros_preferidos: bairrosPreferidos || undefined,
       raio_km: raioKm ? parseInt(raioKm, 10) || undefined : undefined,
       ponto_referencia: pontoReferencia || undefined,
+      cep_referencia: cepReferencia || undefined,
+      logradouro_referencia: logradouroReferencia || undefined,
+      bairro_referencia: bairroReferencia || undefined,
+      codigo_ibge_referencia: codigoIbgeReferencia || undefined,
     })
 
     setLoading(false)
@@ -435,6 +447,36 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
       finalidade,
       total_cidades: cidadesCodigos.length,
     })
+  }
+
+  const handlePontoReferenciaChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value
+    setPontoReferencia(val)
+
+    const digitos = normalizarDigitosCEP(val)
+    if (digitos.length === 8 && /^\d{5}-?\d{3}$/.test(val.trim())) {
+      setBuscandoCepReferencia(true)
+      try {
+        const dados = await consultarViaCEP(digitos)
+        if (dados) {
+          setCepReferencia(dados.cep)
+          if (dados.logradouro) setLogradouroReferencia(dados.logradouro)
+          if (dados.bairro) {
+            setBairroReferencia(dados.bairro)
+            if (!bairrosPreferidos) setBairrosPreferidos(dados.bairro)
+          }
+          if (dados.codigo_ibge) {
+            setCodigoIbgeReferencia(dados.codigo_ibge)
+            // Se a cidade do CEP ainda não está no cidadesCodigos, adiciona automaticamente
+            setCidadesCodigos((prev) => Array.from(new Set([...prev, dados.codigo_ibge!])))
+          }
+        }
+      } catch (err) {
+        console.warn('Erro ao consultar ViaCEP no ponto de referência:', err)
+      } finally {
+        setBuscandoCepReferencia(false)
+      }
+    }
   }
 
   const handleReset = () => {
@@ -464,6 +506,10 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
     setBairrosPreferidos('')
     setRaioKm('')
     setPontoReferencia('')
+    setCepReferencia('')
+    setLogradouroReferencia('')
+    setBairroReferencia('')
+    setCodigoIbgeReferencia('')
     setDiferenciaisInvestidor({})
     setAutorizoContato(false)
     setAutorizoTouched(false)
@@ -1208,14 +1254,29 @@ export const FormInvestidor: React.FC<FormInvestidorProps> = ({
             </div>
 
             <div className="space-y-1">
-              <span className="text-[11px] font-semibold text-slate-300">Ponto de referência</span>
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-semibold text-slate-300">
+                  Ponto de referência
+                </span>
+                {buscandoCepReferencia && (
+                  <span className="text-[10px] text-[#22C7E0] flex items-center gap-1 font-mono">
+                    <Loader2 className="w-2.5 h-2.5 animate-spin" /> CEP...
+                  </span>
+                )}
+              </div>
               <input
                 type="text"
-                placeholder="Ex.: Shopping Iguatemi, UNICAMP..."
+                placeholder="Ex.: Shopping Iguatemi ou CEP 13092-500"
                 value={pontoReferencia}
-                onChange={(e) => setPontoReferencia(e.target.value)}
+                onChange={handlePontoReferenciaChange}
                 className="w-full px-3 py-2 rounded-lg bg-[#081226] border border-slate-700 focus:border-[#22C7E0] text-white text-xs outline-none"
               />
+              {logradouroReferencia && (
+                <span className="text-[10px] text-slate-400 block truncate">
+                  {logradouroReferencia}
+                  {bairroReferencia ? ` - ${bairroReferencia}` : ''}
+                </span>
+              )}
             </div>
 
             <div className="space-y-1">

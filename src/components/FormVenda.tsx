@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { salvarLeadVendaEtapa1, atualizarLeadVendaEtapa2 } from '@/services/leads'
+import { consultarViaCEP, formatarCEP, normalizarDigitosCEP } from '@/services/viacep'
 import {
   ArrowRight,
   ArrowLeft,
@@ -9,6 +10,7 @@ import {
   Building2,
   Check,
   Sparkles,
+  Search,
 } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ConfirmationProtocolo } from './ConfirmationProtocolo'
@@ -66,6 +68,13 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
   const [todosDiferenciais, setTodosDiferenciais] = useState<DiferencialItem[]>(DIFERENCIAIS_PADRAO)
   const [telefone, setTelefone] = useState('')
 
+  // Campos de endereço padronizados (preenchidos via CEP ou detecção)
+  const [cep, setCep] = useState('')
+  const [logradouro, setLogradouro] = useState('')
+  const [bairro, setBairro] = useState('')
+  const [codigoIbge, setCodigoIbge] = useState<string | null>(null)
+  const [buscandoCep, setBuscandoCep] = useState(false)
+
   // Carrega diferenciais do banco na inicialização
   React.useEffect(() => {
     listarDiferenciais().then((itens) => {
@@ -118,6 +127,57 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
     if (errorMsg) setErrorMsg('')
   }
 
+  // Consulta automática do ViaCEP ao digitar 8 dígitos
+  const handleCepChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatado = formatarCEP(e.target.value)
+    setCep(formatado)
+    const digitos = normalizarDigitosCEP(e.target.value)
+
+    if (digitos.length === 8) {
+      setBuscandoCep(true)
+      try {
+        const dados = await consultarViaCEP(digitos)
+        if (dados) {
+          if (dados.cidade) setCidade(dados.uf ? `${dados.cidade}, ${dados.uf}` : dados.cidade)
+          if (dados.logradouro) setLogradouro(dados.logradouro)
+          if (dados.bairro) setBairro(dados.bairro)
+          if (dados.codigo_ibge) setCodigoIbge(dados.codigo_ibge)
+        }
+      } catch (err) {
+        console.warn('Erro ao consultar ViaCEP no FormVenda:', err)
+      } finally {
+        setBuscandoCep(false)
+      }
+    }
+  }
+
+  // Também se o usuário digitar um CEP diretamente no campo Cidade / Estado
+  const handleCidadeChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value
+    setCidade(val)
+    if (errorMsg) setErrorMsg('')
+
+    // Se o usuário digitou ou colou um CEP no campo de cidade
+    const digitos = normalizarDigitosCEP(val)
+    if (digitos.length === 8 && /^\d{5}-?\d{3}$/.test(val.trim())) {
+      setBuscandoCep(true)
+      try {
+        const dados = await consultarViaCEP(digitos)
+        if (dados) {
+          setCep(dados.cep)
+          setCidade(dados.uf ? `${dados.cidade}, ${dados.uf}` : dados.cidade)
+          if (dados.logradouro) setLogradouro(dados.logradouro)
+          if (dados.bairro) setBairro(dados.bairro)
+          if (dados.codigo_ibge) setCodigoIbge(dados.codigo_ibge)
+        }
+      } catch (err) {
+        console.warn('Erro ao autocompletar via CEP no campo cidade:', err)
+      } finally {
+        setBuscandoCep(false)
+      }
+    }
+  }
+
   // Avançar da Etapa 1 para Etapa 2 (Persistência imediata no banco)
   const handleAvancarEtapa1 = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -152,6 +212,10 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
       telefone,
       rota: 'proprietario',
       diferenciais: diferenciaisFinal,
+      cep: cep || undefined,
+      logradouro: logradouro || undefined,
+      bairro: bairro || undefined,
+      codigo_ibge: codigoIbge || undefined,
     })
 
     setLoading(false)
@@ -225,6 +289,11 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
         prazo_desejado: prazoDesejado,
         mensagem: mensagem || undefined,
         diferenciais: diferenciaisFinal,
+        cep: cep || undefined,
+        logradouro: logradouro || undefined,
+        bairro: bairro || undefined,
+        cidade: cidade || undefined,
+        codigo_ibge: codigoIbge || undefined,
       })
 
       setLoading(false)
@@ -251,6 +320,10 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
         mensagem: mensagem || undefined,
         rota: 'proprietario',
         diferenciais: diferenciaisFinal,
+        cep: cep || undefined,
+        logradouro: logradouro || undefined,
+        bairro: bairro || undefined,
+        codigo_ibge: codigoIbge || undefined,
       })
 
       setLoading(false)
@@ -278,6 +351,10 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
     setLeadId(null)
     setProtocolo('')
     setCidade('')
+    setCep('')
+    setLogradouro('')
+    setBairro('')
+    setCodigoIbge(null)
     setTipoImovel('apartamento')
     setDiferenciaisSelecionados([])
     setTelefone('')
@@ -357,23 +434,47 @@ export const FormVenda: React.FC<FormVendaProps> = ({ onSuccess, onCancel, isInM
           ======================================================== */}
       {etapa === 1 && (
         <form onSubmit={handleAvancarEtapa1} className="space-y-4 animate-fade-in">
-          {/* Cidade */}
+          {/* Cidade / Estado com suporte a digitação do CEP ou busca por ViaCEP sem alterar layout */}
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wider text-slate-300">
-              Cidade / Estado *
-            </label>
-            <input
-              type="text"
-              required
-              placeholder="Ex.: São Paulo, SP"
-              value={cidade}
-              onChange={(e) => {
-                setCidade(e.target.value)
-                if (errorMsg) setErrorMsg('')
-              }}
-              disabled={loading}
-              className="w-full px-3.5 py-2.5 rounded-lg bg-[#081226] border border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0] text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
-            />
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-semibold uppercase tracking-wider text-slate-300">
+                Cidade / Estado ou CEP *
+              </label>
+              {buscandoCep && (
+                <span className="text-[11px] text-[#22C7E0] flex items-center gap-1 font-mono">
+                  <Loader2 className="w-3 h-3 animate-spin" /> Buscando endereço...
+                </span>
+              )}
+              {codigoIbge && !buscandoCep && (
+                <span className="text-[10px] text-emerald-400 font-mono">IBGE: {codigoIbge}</span>
+              )}
+            </div>
+            <div className="relative">
+              <input
+                type="text"
+                required
+                placeholder="Ex.: São Paulo, SP ou digite o CEP (01310-100)"
+                value={cidade}
+                onChange={handleCidadeChange}
+                disabled={loading}
+                className="w-full px-3.5 py-2.5 rounded-lg bg-[#081226] border border-slate-700 focus:border-[#22C7E0] focus:ring-1 focus:ring-[#22C7E0] text-white placeholder-slate-500 text-base sm:text-sm outline-none transition-all disabled:opacity-50 min-h-[44px]"
+              />
+              {buscandoCep && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <Loader2 className="w-4 h-4 text-[#22C7E0] animate-spin" />
+                </div>
+              )}
+            </div>
+
+            {/* Se logradouro ou bairro foram identificados pelo CEP, exibe discretamente sem alterar estrutura */}
+            {(bairro || logradouro) && (
+              <p className="text-[11px] text-slate-400 pl-0.5 truncate">
+                Localizado:{' '}
+                <span className="text-slate-200">
+                  {[logradouro, bairro].filter(Boolean).join(', ')}
+                </span>
+              </p>
+            )}
           </div>
 
           {/* Grid: Tipo de imóvel e WhatsApp */}
