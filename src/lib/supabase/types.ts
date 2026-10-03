@@ -108,9 +108,11 @@ export type Database = {
           criterios: Json
           criterios_atendidos: Json
           criterios_nao_atendidos: Json
+          eliminado: boolean
           id: string
           lead_investidor_id: string
           lead_venda_id: string
+          motivo_eliminacao: string | null
           percentual: number
           status: string
         }
@@ -120,9 +122,11 @@ export type Database = {
           criterios?: Json
           criterios_atendidos?: Json
           criterios_nao_atendidos?: Json
+          eliminado?: boolean
           id?: string
           lead_investidor_id: string
           lead_venda_id: string
+          motivo_eliminacao?: string | null
           percentual?: number
           status?: string
         }
@@ -132,9 +136,11 @@ export type Database = {
           criterios?: Json
           criterios_atendidos?: Json
           criterios_nao_atendidos?: Json
+          eliminado?: boolean
           id?: string
           lead_investidor_id?: string
           lead_venda_id?: string
+          motivo_eliminacao?: string | null
           percentual?: number
           status?: string
         }
@@ -380,6 +386,7 @@ export type Database = {
         Row: {
           aceita_reforma: boolean | null
           atalhos_regiao: string[] | null
+          ativo: boolean | null
           bairro_referencia: string | null
           bairros_preferidos: string | null
           cep_referencia: string | null
@@ -433,6 +440,7 @@ export type Database = {
         Insert: {
           aceita_reforma?: boolean | null
           atalhos_regiao?: string[] | null
+          ativo?: boolean | null
           bairro_referencia?: string | null
           bairros_preferidos?: string | null
           cep_referencia?: string | null
@@ -486,6 +494,7 @@ export type Database = {
         Update: {
           aceita_reforma?: boolean | null
           atalhos_regiao?: string[] | null
+          ativo?: boolean | null
           bairro_referencia?: string | null
           bairros_preferidos?: string | null
           cep_referencia?: string | null
@@ -540,6 +549,7 @@ export type Database = {
       }
       leads_venda: {
         Row: {
+          aceita_financiamento: boolean | null
           area_terreno: number | null
           area_util: number | null
           autorizacao_assinada_em: string | null
@@ -558,6 +568,8 @@ export type Database = {
           cidade: string | null
           codigo_ibge: string | null
           complemento: string | null
+          condicao: string | null
+          contrato_aluguel_termino: string | null
           criado_em: string | null
           diferenciais: Json | null
           email: string | null
@@ -571,6 +583,7 @@ export type Database = {
           motivo_venda: string | null
           nome: string | null
           numero: string | null
+          ocupacao: string | null
           prazo_desejado: string | null
           precisao_localizacao: string | null
           preco_minimo: number | null
@@ -586,6 +599,7 @@ export type Database = {
           valor_estimado: string | null
         }
         Insert: {
+          aceita_financiamento?: boolean | null
           area_terreno?: number | null
           area_util?: number | null
           autorizacao_assinada_em?: string | null
@@ -604,6 +618,8 @@ export type Database = {
           cidade?: string | null
           codigo_ibge?: string | null
           complemento?: string | null
+          condicao?: string | null
+          contrato_aluguel_termino?: string | null
           criado_em?: string | null
           diferenciais?: Json | null
           email?: string | null
@@ -617,6 +633,7 @@ export type Database = {
           motivo_venda?: string | null
           nome?: string | null
           numero?: string | null
+          ocupacao?: string | null
           prazo_desejado?: string | null
           precisao_localizacao?: string | null
           preco_minimo?: number | null
@@ -632,6 +649,7 @@ export type Database = {
           valor_estimado?: string | null
         }
         Update: {
+          aceita_financiamento?: boolean | null
           area_terreno?: number | null
           area_util?: number | null
           autorizacao_assinada_em?: string | null
@@ -650,6 +668,8 @@ export type Database = {
           cidade?: string | null
           codigo_ibge?: string | null
           complemento?: string | null
+          condicao?: string | null
+          contrato_aluguel_termino?: string | null
           criado_em?: string | null
           diferenciais?: Json | null
           email?: string | null
@@ -663,6 +683,7 @@ export type Database = {
           motivo_venda?: string | null
           nome?: string | null
           numero?: string | null
+          ocupacao?: string | null
           prazo_desejado?: string | null
           precisao_localizacao?: string | null
           preco_minimo?: number | null
@@ -1000,6 +1021,13 @@ export type Database = {
         }
         Returns: boolean
       }
+      fn_avaliar_descarte_pre_motor: {
+        Args: { p_lead_investidor_id: string; p_lead_venda_id: string }
+        Returns: {
+          eliminado: boolean
+          motivo: string
+        }[]
+      }
       fn_calcular_compatibilidade: {
         Args: { p_lead_investidor_id: string; p_lead_venda_id: string }
         Returns: {
@@ -1126,6 +1154,7 @@ export type Database = {
           criterios: Json
           criterios_atendidos: Json
           criterios_nao_atendidos: Json
+          eliminado: boolean
           imovel_cidade: string
           imovel_motivo_venda: string
           imovel_prazo_desejado: string
@@ -1145,6 +1174,7 @@ export type Database = {
           ja_tem_interesse: boolean
           lead_investidor_id: string
           lead_venda_id: string
+          motivo_eliminacao: string
           percentual: number
           proprietario_email: string
           proprietario_nome: string

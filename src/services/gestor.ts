@@ -5,9 +5,20 @@ export interface CriterioCompatibilidadeItem {
   criterio: string
   nome: string
   peso: number
+  fator?: number
   atendido: boolean
   pontos: number
+  aplicavel?: boolean
   explicacao: string
+}
+
+export interface ConfiguracaoPesoItem {
+  criterio: string
+  nome: string
+  peso: number
+  descricao?: string | null
+  ordem: number
+  atualizado_em?: string
 }
 
 export interface GestorLeadItem {

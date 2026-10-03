@@ -4,7 +4,9 @@ export interface CriterioDetalhe {
   criterio: string
   nome: string
   peso: number
+  fator?: number
   pontos: number
+  aplicavel?: boolean
   atendido: boolean
   explicacao: string
 }
