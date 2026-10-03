@@ -274,17 +274,33 @@ export type Database = {
       }
       leads_investidor: {
         Row: {
+          aceita_reforma: boolean | null
+          atalhos_regiao: string[] | null
+          bairros_preferidos: string | null
+          cidades_codigos_ibge: string[] | null
           cidades_interesse: string | null
           criado_em: string | null
           diferenciais: Json | null
           email: string | null
           faixa_valor: string | null
+          finalidade: string | null
+          forma_pagamento: string | null
           id: string
+          min_area_m2: number | null
+          min_area_terreno_m2: number | null
+          min_quartos: number | null
+          min_vagas: number | null
           nome: string | null
           objetivo: string | null
           perfil: string | null
+          ponto_referencia: string | null
           prazo_decisao: string | null
+          prazo_mudanca: string | null
+          preco_maximo: number | null
+          preco_minimo: number | null
+          preco_teto_absoluto: number | null
           protocolo: string | null
+          raio_km: number | null
           rota: string
           sim_aluguel_mensal: string | null
           sim_capital_investido: string | null
@@ -297,20 +313,38 @@ export type Database = {
           telefone: string
           ticket: string | null
           tipos_imovel: string[] | null
+          usa_fgts: boolean | null
           user_id: string | null
+          yield_minimo_mensal: number | null
         }
         Insert: {
+          aceita_reforma?: boolean | null
+          atalhos_regiao?: string[] | null
+          bairros_preferidos?: string | null
+          cidades_codigos_ibge?: string[] | null
           cidades_interesse?: string | null
           criado_em?: string | null
           diferenciais?: Json | null
           email?: string | null
           faixa_valor?: string | null
+          finalidade?: string | null
+          forma_pagamento?: string | null
           id?: string
+          min_area_m2?: number | null
+          min_area_terreno_m2?: number | null
+          min_quartos?: number | null
+          min_vagas?: number | null
           nome?: string | null
           objetivo?: string | null
           perfil?: string | null
+          ponto_referencia?: string | null
           prazo_decisao?: string | null
+          prazo_mudanca?: string | null
+          preco_maximo?: number | null
+          preco_minimo?: number | null
+          preco_teto_absoluto?: number | null
           protocolo?: string | null
+          raio_km?: number | null
           rota?: string
           sim_aluguel_mensal?: string | null
           sim_capital_investido?: string | null
@@ -323,20 +357,38 @@ export type Database = {
           telefone: string
           ticket?: string | null
           tipos_imovel?: string[] | null
+          usa_fgts?: boolean | null
           user_id?: string | null
+          yield_minimo_mensal?: number | null
         }
         Update: {
+          aceita_reforma?: boolean | null
+          atalhos_regiao?: string[] | null
+          bairros_preferidos?: string | null
+          cidades_codigos_ibge?: string[] | null
           cidades_interesse?: string | null
           criado_em?: string | null
           diferenciais?: Json | null
           email?: string | null
           faixa_valor?: string | null
+          finalidade?: string | null
+          forma_pagamento?: string | null
           id?: string
+          min_area_m2?: number | null
+          min_area_terreno_m2?: number | null
+          min_quartos?: number | null
+          min_vagas?: number | null
           nome?: string | null
           objetivo?: string | null
           perfil?: string | null
+          ponto_referencia?: string | null
           prazo_decisao?: string | null
+          prazo_mudanca?: string | null
+          preco_maximo?: number | null
+          preco_minimo?: number | null
+          preco_teto_absoluto?: number | null
           protocolo?: string | null
+          raio_km?: number | null
           rota?: string
           sim_aluguel_mensal?: string | null
           sim_capital_investido?: string | null
@@ -349,7 +401,9 @@ export type Database = {
           telefone?: string
           ticket?: string | null
           tipos_imovel?: string[] | null
+          usa_fgts?: boolean | null
           user_id?: string | null
+          yield_minimo_mensal?: number | null
         }
         Relationships: []
       }
@@ -431,6 +485,33 @@ export type Database = {
         }
         Relationships: []
       }
+      municipios_sp: {
+        Row: {
+          codigo_ibge: string
+          criado_em: string
+          mesorregiao: string | null
+          microrregiao: string | null
+          nome: string
+          nome_normalizado: string
+        }
+        Insert: {
+          codigo_ibge: string
+          criado_em?: string
+          mesorregiao?: string | null
+          microrregiao?: string | null
+          nome: string
+          nome_normalizado: string
+        }
+        Update: {
+          codigo_ibge?: string
+          criado_em?: string
+          mesorregiao?: string | null
+          microrregiao?: string | null
+          nome?: string
+          nome_normalizado?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -449,6 +530,39 @@ export type Database = {
           email?: string
           id?: string
           tipo?: string
+        }
+        Relationships: []
+      }
+      regioes_atalho: {
+        Row: {
+          ativa: boolean
+          atualizado_em: string
+          cidades: Json
+          criado_em: string
+          descricao: string | null
+          id: string
+          nome: string
+          ordem: number
+        }
+        Insert: {
+          ativa?: boolean
+          atualizado_em?: string
+          cidades?: Json
+          criado_em?: string
+          descricao?: string | null
+          id?: string
+          nome: string
+          ordem?: number
+        }
+        Update: {
+          ativa?: boolean
+          atualizado_em?: string
+          cidades?: Json
+          criado_em?: string
+          descricao?: string | null
+          id?: string
+          nome?: string
+          ordem?: number
         }
         Relationships: []
       }
@@ -642,19 +756,37 @@ export type Database = {
       }
       fn_submit_lead_investidor: {
         Args: {
+          p_aceita_reforma?: boolean
+          p_atalhos_regiao?: string[]
+          p_bairros_preferidos?: string
+          p_cidades_codigos_ibge?: string[]
           p_cidades_interesse: string
           p_diferenciais?: Json
           p_email?: string
           p_faixa_valor?: string
+          p_finalidade?: string
+          p_forma_pagamento?: string
+          p_min_area_m2?: number
+          p_min_area_terreno_m2?: number
+          p_min_quartos?: number
+          p_min_vagas?: number
           p_nome?: string
           p_objetivo: string
           p_perfil?: string
+          p_ponto_referencia?: string
           p_prazo_decisao: string
+          p_prazo_mudanca?: string
+          p_preco_maximo?: number
+          p_preco_minimo?: number
+          p_preco_teto_absoluto?: number
+          p_raio_km?: number
           p_rota?: string
           p_telefone: string
           p_ticket: string
           p_tipos_imovel?: string[]
+          p_usa_fgts?: boolean
           p_user_id?: string
+          p_yield_minimo_mensal?: number
         }
         Returns: {
           id: string

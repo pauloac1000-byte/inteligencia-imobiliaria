@@ -321,7 +321,7 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
     <div className="space-y-6">
       {/* ============================================================ */}
       {/* 3. BLOCO "PRÓXIMA AÇÃO" EM DESTAQUE NO TOPO                  */}
-      {/* Card destacado com ciano, glow e prazo prometido (até 48h)     */}
+      {/* Card destacado com ciano, glow e prazo prometido (até 5 dias úteis) */}
       {/* ============================================================ */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#081226] via-[#0d2146] to-[#081226] border-2 border-[#22C7E0]/60 p-5 sm:p-6 shadow-[0_0_35px_rgba(34,199,224,0.18)]">
         {/* Glow de fundo */}
@@ -337,7 +337,7 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
               </span>
               <span className="inline-flex items-center gap-1 text-xs text-amber-300 font-medium bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded-full">
                 <Clock className="w-3 h-3" />
-                <span>Análise técnica em até 48 horas</span>
+                <span>Análise técnica em até 5 dias úteis</span>
               </span>
             </div>
 
@@ -352,7 +352,7 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
             <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
               {temFotos
                 ? `Você já enviou ${fotos.length} foto(s). Quanto mais documentos (Matrícula, IPTU) você enviar pelo painel, mais rápida e precisa será a precificação e a proposta com investidores.`
-                : 'Nossa equipe já recebeu o cadastro do seu imóvel. Envie as fotos (fachada e cômodos principais) diretamente pelo painel para que os peritos finalizem a análise de liquidez dentro de até 48 horas.'}
+                : 'Nossa equipe já recebeu o cadastro do seu imóvel. Envie as fotos (fachada e cômodos principais) diretamente pelo painel para que os peritos finalizem a análise de liquidez dentro de até 5 dias úteis.'}
             </p>
           </div>
 

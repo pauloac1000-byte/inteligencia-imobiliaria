@@ -22,7 +22,7 @@ const PASSOS_PROPRIETARIO: PassoItem[] = [
   {
     numero: 1,
     titulo: 'Análise técnica do seu imóvel',
-    prazo: 'Até 48 horas',
+    prazo: 'Até 5 dias úteis',
     descricao: 'Nossa mecânica analisa metragem, precificação e liquidez de mercado da sua região.',
   },
   {
@@ -45,7 +45,7 @@ const PASSOS_INVESTIDOR: PassoItem[] = [
   {
     numero: 1,
     titulo: 'Curadoria das oportunidades compatíveis com a sua tese',
-    prazo: 'Até 48 horas',
+    prazo: 'Até 5 dias úteis',
     descricao:
       'Nossa inteligência filtra a carteira e identifica imóveis com os retornos e regiões solicitados.',
   },

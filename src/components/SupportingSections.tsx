@@ -249,7 +249,7 @@ export const SupportingSections: React.FC<SupportingSectionsProps> = ({ onOpenMo
                   <h3 className="text-lg sm:text-xl font-bold text-white mb-2 tracking-tight">
                     <span>Análise técnica com dados</span>
                     <span className="text-[#22C7E0] font-medium text-sm sm:text-base ml-2 inline-block">
-                      — até 48 horas
+                      — até 5 dias úteis
                     </span>
                   </h3>
                   <p className="text-sm text-slate-300 leading-relaxed">

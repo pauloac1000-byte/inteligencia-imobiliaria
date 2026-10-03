@@ -143,7 +143,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenModal }) => {
               </div>
               <div className="space-y-0.5 min-w-0">
                 <div className="text-white font-bold text-base sm:text-xl lg:text-2xl font-mono drop-shadow-sm">
-                  48h
+                  5 dias úteis
                 </div>
                 <div className="text-[10px] sm:text-xs text-slate-300 sm:text-slate-300 leading-snug break-words">
                   Prazo da análise técnica
