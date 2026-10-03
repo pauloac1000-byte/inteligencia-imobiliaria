@@ -73,9 +73,49 @@ export interface GestorFunilEtapaItem {
   total_eventos: number
 }
 
+export type FaixaCompatibilidade = 'excelente' | 'alta' | 'media' | 'oculta'
+export type ClassificacaoConfianca = 'alta' | 'media' | 'baixa'
+
+export interface DetalheConfiancaPar {
+  classificacao?: ClassificacaoConfianca
+  score_confianca?: number
+  pct_completude_geral?: number
+  pct_completude_vendedor?: number
+  campos_venda_preenchidos?: number
+  total_campos_venda?: number
+  pct_completude_comprador?: number
+  campos_comprador_preenchidos?: number
+  total_campos_comprador?: number
+  verificacoes?: {
+    whatsapp_vendedor_confirmado?: boolean
+    whatsapp_comprador_confirmado?: boolean
+    qtd_fotos_imovel?: number
+    fotos_suficientes_6_ou_mais?: boolean
+    dias_desde_revalidacao_preco?: number
+    preco_revalidado_recente?: boolean
+  }
+  explicacao?: string
+}
+
+export interface ConfiguracaoLimiarItem {
+  parametro: string
+  nome: string
+  valor: number
+  descricao?: string | null
+  atualizado_em?: string
+}
+
 export interface GestorMatchItem {
   compatibilidade_id: string
   percentual: number
+  nota_comprador?: number
+  nota_vendedor?: number
+  nota_final?: number
+  faixa_compatibilidade?: FaixaCompatibilidade | string
+  confianca_classificacao?: ClassificacaoConfianca | string
+  confianca_percentual?: number
+  confianca_detalhes?: DetalheConfiancaPar | any
+  detalhamento_vendedor?: any[]
   status_match: StatusMatch
   criterios: CriterioCompatibilidadeItem[] | any
   criterios_atendidos: CriterioCompatibilidadeItem[] | any

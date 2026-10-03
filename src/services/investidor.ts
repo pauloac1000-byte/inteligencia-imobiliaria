@@ -16,6 +16,13 @@ export interface OportunidadeInvestidor {
   lead_venda_id: string
   lead_investidor_id: string
   percentual: number
+  nota_comprador?: number
+  nota_vendedor?: number
+  nota_final?: number
+  faixa_compatibilidade?: string
+  confianca_classificacao?: string
+  confianca_percentual?: number
+  confianca_detalhes?: any
   criterios: CriterioDetalhe[]
   criterios_atendidos: CriterioDetalhe[]
   criterios_nao_atendidos: CriterioDetalhe[]
@@ -94,6 +101,13 @@ export async function buscarOportunidadesInvestidor(): Promise<OportunidadeInves
       lead_venda_id: item.lead_venda_id,
       lead_investidor_id: item.lead_investidor_id,
       percentual: Number(item.percentual || 0),
+      nota_comprador: Number(item.nota_comprador ?? item.percentual ?? 0),
+      nota_vendedor: Number(item.nota_vendedor ?? 0),
+      nota_final: Number(item.nota_final ?? item.percentual ?? 0),
+      faixa_compatibilidade: item.faixa_compatibilidade || 'oculta',
+      confianca_classificacao: item.confianca_classificacao || 'baixa',
+      confianca_percentual: Number(item.confianca_percentual || 0),
+      confianca_detalhes: item.confianca_detalhes || {},
       criterios: Array.isArray(item.criterios) ? item.criterios : [],
       criterios_atendidos: Array.isArray(item.criterios_atendidos) ? item.criterios_atendidos : [],
       criterios_nao_atendidos: Array.isArray(item.criterios_nao_atendidos)

@@ -108,6 +108,7 @@ export type Database = {
           criterios: Json
           criterios_atendidos: Json
           criterios_nao_atendidos: Json
+          detalhamento: Json
           eliminado: boolean
           id: string
           lead_investidor_id: string
@@ -122,6 +123,7 @@ export type Database = {
           criterios?: Json
           criterios_atendidos?: Json
           criterios_nao_atendidos?: Json
+          detalhamento?: Json
           eliminado?: boolean
           id?: string
           lead_investidor_id: string
@@ -136,6 +138,7 @@ export type Database = {
           criterios?: Json
           criterios_atendidos?: Json
           criterios_nao_atendidos?: Json
+          detalhamento?: Json
           eliminado?: boolean
           id?: string
           lead_investidor_id?: string
@@ -160,6 +163,33 @@ export type Database = {
             referencedColumns: ['id']
           },
         ]
+      }
+      configuracao_pesos_compatibilidade: {
+        Row: {
+          atualizado_em: string
+          criterio: string
+          descricao: string | null
+          nome: string
+          ordem: number
+          peso: number
+        }
+        Insert: {
+          atualizado_em?: string
+          criterio: string
+          descricao?: string | null
+          nome: string
+          ordem?: number
+          peso: number
+        }
+        Update: {
+          atualizado_em?: string
+          criterio?: string
+          descricao?: string | null
+          nome?: string
+          ordem?: number
+          peso?: number
+        }
+        Relationships: []
       }
       diferenciais: {
         Row: {
@@ -596,6 +626,8 @@ export type Database = {
           telefone: string
           tipo_imovel: string | null
           user_id: string | null
+          vagas: number | null
+          valor_aluguel_atual: number | null
           valor_estimado: string | null
         }
         Insert: {
@@ -646,6 +678,8 @@ export type Database = {
           telefone: string
           tipo_imovel?: string | null
           user_id?: string | null
+          vagas?: number | null
+          valor_aluguel_atual?: number | null
           valor_estimado?: string | null
         }
         Update: {
@@ -696,6 +730,8 @@ export type Database = {
           telefone?: string
           tipo_imovel?: string | null
           user_id?: string | null
+          vagas?: number | null
+          valor_aluguel_atual?: number | null
           valor_estimado?: string | null
         }
         Relationships: []
@@ -1042,6 +1078,7 @@ export type Database = {
           criterios: Json
           criterios_atendidos: Json
           criterios_nao_atendidos: Json
+          detalhamento: Json
           percentual: number
         }[]
       }
@@ -1261,6 +1298,7 @@ export type Database = {
         Args: { p_lead_investidor_id: string; p_lead_venda_id: string }
         Returns: number
       }
+      fn_recalcular_todas_compatibilidades: { Args: never; Returns: number }
       fn_salvar_dados_autorizacao_venda: {
         Args: {
           p_comissao_percentual: number
