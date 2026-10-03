@@ -9,7 +9,19 @@ export interface UserProfile {
   created_at: string
 }
 
-export type StatusImovelLead = 'Recebido' | 'Em análise' | 'Com compatibilidade' | 'Em negociação'
+export type StatusImovelLead =
+  | 'rascunho'
+  | 'em análise'
+  | 'ativo'
+  | 'em negociação'
+  | 'vendido'
+  | 'retirado'
+  | 'expirado'
+  // Compatibilidade com valores legados exibidos
+  | 'Recebido'
+  | 'Em análise'
+  | 'Com compatibilidade'
+  | 'Em negociação'
 
 export interface LeadVinculado {
   id: string
@@ -26,6 +38,10 @@ export interface LeadVinculado {
   status?: StatusImovelLead | string | null
   criado_em?: string | null
   user_id?: string | null
+  autorizacao_comissao_percentual?: number | null
+  autorizacao_quem_paga?: string | null
+  autorizacao_prazo?: string | null
+  procuracao_necessaria?: boolean | null
 }
 
 export interface TeseInvestidorVinculada {
@@ -112,7 +128,7 @@ export async function buscarLeadsVinculados(userId: string): Promise<LeadVincula
     const { data, error } = await supabase
       .from('leads_venda' as any)
       .select(
-        'id, protocolo, tipo_imovel, cidade, telefone, nome, email, valor_estimado, motivo_venda, prazo_desejado, mensagem, status, criado_em, user_id',
+        'id, protocolo, tipo_imovel, cidade, telefone, nome, email, valor_estimado, motivo_venda, prazo_desejado, mensagem, status, criado_em, user_id, autorizacao_comissao_percentual, autorizacao_quem_paga, autorizacao_prazo, procuracao_necessaria',
       )
       .eq('user_id', userId)
       .order('criado_em', { ascending: false })

@@ -37,6 +37,13 @@ export interface GestorLeadItem {
   area_util?: number | null
   area_terreno?: number | null
   quartos?: number | null
+  autorizacao_comissao_percentual?: number | null
+  autorizacao_quem_paga?: string | null
+  autorizacao_prazo?: string | null
+  procuracao_necessaria?: boolean | null
+  total_docs_obrigatorios?: number | null
+  total_docs_conferidos?: number | null
+  apto_para_ativar?: boolean | null
 }
 export type StatusMatch = 'pendente' | 'aprovado' | 'descartado'
 
@@ -148,6 +155,148 @@ export async function gestorAtualizarStatusLead(
     console.error('Falha na persistência do status do lead:', err)
     throw err
   }
+}
+
+/**
+ * Gestor ativa o imóvel no motor de compatibilidade (validação estrita)
+ */
+export async function gestorAtivarImovel(
+  leadId: string,
+): Promise<{ id: string; status: string; protocolo: string }> {
+  try {
+    const { data, error } = await (supabase.rpc as any)('fn_gestor_ativar_imovel', {
+      p_lead_id: leadId,
+    })
+
+    if (error) {
+      throw new Error(error.message)
+    }
+
+    if (Array.isArray(data) && data.length > 0) {
+      return data[0]
+    }
+    return { id: leadId, status: 'ativo', protocolo: '' }
+  } catch (err: any) {
+    console.error('Falha ao ativar imóvel:', err)
+    throw err
+  }
+}
+
+/**
+ * Busca o checklist de documentos de conferência de um imóvel
+ */
+export async function gestorObterDocumentosConferencia(
+  leadId: string,
+): Promise<import('./arquivos').DocumentoConferenciaItem[]> {
+  try {
+    const { data, error } = await (supabase.rpc as any)('fn_obter_documentos_conferencia', {
+      p_lead_id: leadId,
+    })
+
+    if (error) {
+      console.error('Erro ao buscar documentos de conferência:', error.message)
+      throw new Error(error.message)
+    }
+
+    const docs = (data || []) as import('./arquivos').DocumentoConferenciaItem[]
+
+    // Gera URL assinada para visualização rápida caso tenha storage_path
+    const comUrls = await Promise.all(
+      docs.map(async (doc) => {
+        if (!doc.arquivo_storage_path) return doc
+        try {
+          const { data: signedData } = await supabase.storage
+            .from('imoveis')
+            .createSignedUrl(doc.arquivo_storage_path, 3600)
+          return {
+            ...doc,
+            urlAssinada: signedData?.signedUrl,
+          }
+        } catch {
+          return doc
+        }
+      }),
+    )
+
+    return comUrls
+  } catch (err: any) {
+    console.error('Falha ao carregar checklist de conferência:', err)
+    throw err
+  }
+}
+
+/**
+ * Gestor decide sobre documento (conferir ou recusar com motivo)
+ */
+export async function gestorDecidirDocumento({
+  leadId,
+  tipoDocumento,
+  decisao,
+  motivoRecusa,
+}: {
+  leadId: string
+  tipoDocumento: string
+  decisao: 'conferido' | 'recusado'
+  motivoRecusa?: string
+}): Promise<void> {
+  const { error } = await (supabase.rpc as any)('fn_gestor_decidir_documento', {
+    p_lead_id: leadId,
+    p_tipo_documento: tipoDocumento,
+    p_decisao: decisao,
+    p_motivo_recusa: motivoRecusa || null,
+  })
+
+  if (error) {
+    throw new Error(error.message)
+  }
+}
+
+/**
+ * Altera se procuração é necessária
+ */
+export async function gestorToggleProcuracao(
+  leadId: string,
+  necessaria: boolean,
+): Promise<boolean> {
+  const { data, error } = await (supabase.rpc as any)('fn_gestor_toggle_procuracao', {
+    p_lead_id: leadId,
+    p_necessaria: necessaria,
+  })
+
+  if (error) {
+    throw new Error(error.message)
+  }
+  return Boolean(data)
+}
+
+/**
+ * Salva os dados contratuais da autorização de venda (comissão 6-8%, pagador, prazo)
+ */
+export async function salvarDadosAutorizacaoVenda({
+  leadId,
+  comissaoPercentual,
+  quemPaga,
+  prazoAutorizacao,
+  procuracaoNecessaria,
+}: {
+  leadId: string
+  comissaoPercentual: number
+  quemPaga: 'vendedor' | 'comprador' | 'dividido' | string
+  prazoAutorizacao?: string | null
+  procuracaoNecessaria?: boolean
+}): Promise<boolean> {
+  const { data, error } = await (supabase.rpc as any)('fn_salvar_dados_autorizacao_venda', {
+    p_lead_id: leadId,
+    p_comissao_percentual: comissaoPercentual,
+    p_quem_paga: quemPaga,
+    p_prazo_autorizacao: prazoAutorizacao || null,
+    p_procuracao_necessaria: procuracaoNecessaria ?? false,
+  })
+
+  if (error) {
+    throw new Error(error.message)
+  }
+  return Boolean(data)
 }
 
 /**

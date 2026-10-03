@@ -24,6 +24,8 @@ interface UploadDocumentosProps {
   documentos: LeadArquivo[]
   onDocumentosChange: (documentos: LeadArquivo[]) => void
   filtroRotulo?: RotuloDocumento // Se fornecido, exibe/gerencia apenas este rótulo (para encaixar nas pendências individuais)
+  onDataEmissaoChange?: (data: string) => void
+  dataEmissaoAtual?: string
 }
 
 interface ConfigRotulo {
@@ -33,36 +35,52 @@ interface ConfigRotulo {
 }
 
 const ROTULOS: Record<RotuloDocumento, ConfigRotulo> = {
+  autorizacao_venda: {
+    id: 'autorizacao_venda',
+    label: 'Autorização de Venda',
+    desc: 'Instrumento assinado concedendo exclusividade e autorização de intermediação',
+  },
+  rg_cpf: {
+    id: 'rg_cpf',
+    label: 'RG e CPF dos Proprietários',
+    desc: 'Documento oficial com foto e CPF de cada um dos proprietários do imóvel',
+  },
+  estado_civil: {
+    id: 'estado_civil',
+    label: 'Certidão de Estado Civil',
+    desc: 'Certidão de casamento com regime de bens, divórcio averbado ou certidão de óbito',
+  },
   matricula: {
     id: 'matricula',
-    label: 'Matrícula',
-    desc: 'Certidão atualizada de inteiro teor do imóvel',
+    label: 'Matrícula Atualizada',
+    desc: 'Certidão de inteiro teor com a data de emissão cartorária',
   },
   iptu: {
     id: 'iptu',
-    label: 'IPTU',
-    desc: 'Espelho do carnê vigente ou certidão de dados cadastrais',
+    label: 'Espelho do IPTU',
+    desc: 'Cópia da folha de identificação do carnê ou certidão de cadastro municipal',
+  },
+  procuracao: {
+    id: 'procuracao',
+    label: 'Procuração',
+    desc: 'Necessária apenas quando outra pessoa assina pelo titular do imóvel',
   },
   certidao: {
     id: 'certidao',
-    label: 'Certidão',
+    label: 'Certidão Complementar',
     desc: 'Certidões negativas, ônus reais ou formal de partilha',
   },
 }
 
-export function UploadDocumentos({
-  leadId,
-  userId,
-  documentos,
-  onDocumentosChange,
-  filtroRotulo,
-}: UploadDocumentosProps) {
+export function UploadDocumentos(props: UploadDocumentosProps) {
+  const { leadId, userId, documentos, onDocumentosChange, filtroRotulo } = props
   const [rotuloSelecionado, setRotuloSelecionado] = useState<RotuloDocumento>(
-    filtroRotulo || 'matricula',
+    filtroRotulo || 'autorizacao_venda',
   )
   const [enviando, setEnviando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
   const [sucessoMsg, setSucessoMsg] = useState<string | null>(null)
+  const [dataEmissao, setDataEmissao] = useState<string>(props.dataEmissaoAtual || '')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Encontra se já há documento para o rótulo
@@ -85,6 +103,12 @@ export function UploadDocumentos({
       return
     }
 
+    // Se for matrícula, valida se data de emissão foi preenchida
+    if (rotuloEfetivo === 'matricula' && !dataEmissao) {
+      setErro('Informe a data de emissão da certidão da matrícula antes de enviar o arquivo.')
+      return
+    }
+
     setEnviando(true)
 
     try {
@@ -93,6 +117,7 @@ export function UploadDocumentos({
         userId,
         file,
         rotulo: rotuloEfetivo,
+        dataEmissao: rotuloEfetivo === 'matricula' ? dataEmissao : undefined,
       })
 
       if (res.sucesso && res.arquivo) {
@@ -129,7 +154,7 @@ export function UploadDocumentos({
 
   const rotulosParaExibir: RotuloDocumento[] = filtroRotulo
     ? [filtroRotulo]
-    : ['matricula', 'iptu', 'certidao']
+    : ['autorizacao_venda', 'rg_cpf', 'estado_civil', 'matricula', 'iptu', 'procuracao', 'certidao']
 
   return (
     <div className="space-y-4 pt-2">
@@ -165,18 +190,37 @@ export function UploadDocumentos({
         </div>
       )}
 
-      {/* Caixa de Upload do PDF */}
+      {/* Campo extra de Data de Emissão para Matrícula */}
+      {(filtroRotulo === 'matricula' || rotuloSelecionado === 'matricula') && (
+        <div className="bg-[#070B14] p-3 rounded-xl border border-indigo-500/30 space-y-1.5">
+          <label className="text-xs font-semibold text-slate-200 block">
+            Data de emissão da certidão de matrícula *
+          </label>
+          <input
+            type="date"
+            value={dataEmissao}
+            onChange={(e) => {
+              setDataEmissao(e.target.value)
+              props.onDataEmissaoChange?.(e.target.value)
+            }}
+            className="w-full bg-[#081226] border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-[#22C7E0]"
+          />
+          <p className="text-[11px] text-slate-400">
+            A certidão deve ser recente para fins de conferência jurídica e liberação no motor.
+          </p>
+        </div>
+      )}
+
+      {/* Caixa de Upload do PDF ou Imagem */}
       <div className="relative border-2 border-dashed border-indigo-500/40 hover:border-indigo-400 bg-[#070B14]/80 rounded-2xl p-4 sm:p-5 transition-all text-center">
         <input
           ref={fileInputRef}
           type="file"
-          accept="application/pdf,.pdf"
+          accept="application/pdf,.pdf,image/jpeg,image/png,image/webp,image/jpg"
           disabled={enviando}
           onChange={handleUpload}
           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed z-10"
-          aria-label={`Upload de PDF para ${
-            ROTULO_DOCUMENTO_LABELS[filtroRotulo || rotuloSelecionado]
-          }`}
+          aria-label={`Upload para ${ROTULO_DOCUMENTO_LABELS[filtroRotulo || rotuloSelecionado]}`}
         />
 
         <div className="flex flex-col items-center justify-center gap-2">
@@ -194,7 +238,7 @@ export function UploadDocumentos({
                 'Enviando documento...'
               ) : (
                 <span>
-                  Enviar PDF para{' '}
+                  Enviar documento em PDF ou imagem para{' '}
                   <strong className="text-[#22C7E0]">
                     "{ROTULO_DOCUMENTO_LABELS[filtroRotulo || rotuloSelecionado]}"
                   </strong>
@@ -202,7 +246,8 @@ export function UploadDocumentos({
               )}
             </p>
             <p className="text-[11px] text-slate-400">
-              Apenas arquivos <strong>.PDF</strong> • Limite máximo de <strong>10 MB</strong>
+              Aceito em <strong>PDF</strong> ou <strong>Imagem (JPG/PNG)</strong> • Limite de{' '}
+              <strong>10 MB</strong>
             </p>
           </div>
 
@@ -212,9 +257,7 @@ export function UploadDocumentos({
             className="mt-1 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 text-xs font-semibold pointer-events-none"
           >
             <FileText className="w-3.5 h-3.5" />
-            <span>
-              {enviando ? 'Processando envio...' : 'Selecionar PDF no computador / celular'}
-            </span>
+            <span>{enviando ? 'Processando envio...' : 'Selecionar arquivo (PDF ou foto)'}</span>
           </button>
         </div>
       </div>

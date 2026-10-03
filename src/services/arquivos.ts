@@ -1,7 +1,14 @@
 import { supabase } from '@/lib/supabase/client'
 
 export type TipoArquivo = 'foto' | 'documento'
-export type RotuloDocumento = 'matricula' | 'iptu' | 'certidao'
+export type RotuloDocumento =
+  | 'autorizacao_venda'
+  | 'rg_cpf'
+  | 'estado_civil'
+  | 'matricula'
+  | 'iptu'
+  | 'procuracao'
+  | 'certidao'
 
 export interface LeadArquivo {
   id: string
@@ -15,20 +22,47 @@ export interface LeadArquivo {
   mime_type: string | null
   ordem: number
   criado_em: string
+  data_emissao?: string | null
+  urlAssinada?: string
+}
+
+export interface DocumentoConferenciaItem {
+  id: string
+  lead_venda_id: string
+  tipo_documento: RotuloDocumento
+  status: 'pendente' | 'enviado' | 'conferido' | 'recusado'
+  obrigatorio: boolean
+  motivo_recusa: string | null
+  arquivo_id: string | null
+  arquivo_nome: string | null
+  arquivo_storage_path: string | null
+  arquivo_data_emissao: string | null
+  conferido_em: string | null
+  atualizado_em: string | null
   urlAssinada?: string
 }
 
 export const ROTULO_DOCUMENTO_LABELS: Record<RotuloDocumento, string> = {
-  matricula: 'Matrícula',
-  iptu: 'IPTU',
-  certidao: 'Certidão',
+  autorizacao_venda: 'Autorização de Venda',
+  rg_cpf: 'RG e CPF dos Proprietários',
+  estado_civil: 'Certidão de Estado Civil',
+  matricula: 'Certidão de Matrícula Atualizada',
+  iptu: 'Espelho do IPTU / Cadastro Municipal',
+  procuracao: 'Procuração (quando aplicável)',
+  certidao: 'Certidão Complementar',
 }
 
 export const MAX_FOTO_BYTES = 5 * 1024 * 1024 // 5 MB
 export const MAX_DOC_BYTES = 10 * 1024 * 1024 // 10 MB
 
 export const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg']
-export const ALLOWED_DOC_TYPES = ['application/pdf']
+export const ALLOWED_DOC_TYPES = [
+  'application/pdf',
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/jpg',
+]
 
 /**
  * Valida tipo e tamanho de arquivo de foto
@@ -51,20 +85,23 @@ export function validarArquivoFoto(file: File): { valido: boolean; erro?: string
 }
 
 /**
- * Valida tipo e tamanho de arquivo de documento
+ * Valida tipo e tamanho de arquivo de documento (aceita PDF ou imagem conforme especificação)
  */
 export function validarArquivoDocumento(file: File): { valido: boolean; erro?: string } {
-  if (!ALLOWED_DOC_TYPES.includes(file.type) && !file.name.toLowerCase().endsWith('.pdf')) {
+  const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')
+  const isImage = ALLOWED_IMAGE_TYPES.includes(file.type) || /\.(jpe?g|png|webp)$/i.test(file.name)
+
+  if (!isPdf && !isImage) {
     return {
       valido: false,
-      erro: `Formato inválido (${file.name}). Apenas documentos em PDF são aceitos.`,
+      erro: `Formato inválido (${file.name}). Aceitamos documentos em PDF ou imagens (JPG/PNG).`,
     }
   }
   if (file.size > MAX_DOC_BYTES) {
     const mb = (file.size / (1024 * 1024)).toFixed(1)
     return {
       valido: false,
-      erro: `Arquivo "${file.name}" tem ${mb} MB e excede o limite máximo de 10 MB por PDF.`,
+      erro: `Arquivo "${file.name}" tem ${mb} MB e excede o limite máximo de 10 MB.`,
     }
   }
   return { valido: true }
@@ -199,11 +236,13 @@ export async function uploadDocumentoImovel({
   userId,
   file,
   rotulo,
+  dataEmissao,
 }: {
   leadId: string
   userId: string
   file: File
   rotulo: RotuloDocumento
+  dataEmissao?: string
 }): Promise<{ sucesso: boolean; arquivo?: LeadArquivo; erro?: string }> {
   const validacao = validarArquivoDocumento(file)
   if (!validacao.valido) {
@@ -223,12 +262,15 @@ export async function uploadDocumentoImovel({
       .eq('tipo', 'documento')
       .eq('rotulo', rotulo)
 
+    const mime =
+      file.type || (file.name.toLowerCase().endsWith('.pdf') ? 'application/pdf' : 'image/jpeg')
+
     const { error: uploadError } = await supabase.storage
       .from('imoveis')
       .upload(storagePath, file, {
         cacheControl: '3600',
         upsert: false,
-        contentType: 'application/pdf',
+        contentType: mime,
       })
 
     if (uploadError) {
@@ -246,8 +288,9 @@ export async function uploadDocumentoImovel({
         storage_path: storagePath,
         nome_original: file.name,
         tamanho_bytes: file.size,
-        mime_type: 'application/pdf',
+        mime_type: mime,
         ordem: 0,
+        data_emissao: dataEmissao || null,
       })
       .select()
       .single()

@@ -18,7 +18,13 @@ import {
 import { LeadVinculado, StatusImovelLead } from '@/services/profiles'
 import { KORBIX_WHATSAPP_NUMBER } from '@/services/leads'
 import { registrarEvento } from '@/services/eventos'
-import { LeadArquivo, listarArquivosDoLead, RotuloDocumento } from '@/services/arquivos'
+import {
+  LeadArquivo,
+  listarArquivosDoLead,
+  RotuloDocumento,
+  DocumentoConferenciaItem,
+} from '@/services/arquivos'
+import { gestorObterDocumentosConferencia, salvarDadosAutorizacaoVenda } from '@/services/gestor'
 import { UploadFotos } from './UploadFotos'
 import { UploadDocumentos } from './UploadDocumentos'
 
@@ -28,7 +34,7 @@ interface ImovelCardProps {
 
 // Configuração visual para cada status
 const STATUS_CONFIG: Record<
-  StatusImovelLead,
+  string,
   {
     label: string
     badgeClass: string
@@ -36,26 +42,55 @@ const STATUS_CONFIG: Record<
     descricao: string
   }
 > = {
-  Recebido: {
-    label: 'Recebido',
+  rascunho: {
+    label: 'Rascunho',
+    badgeClass: 'bg-slate-500/15 text-slate-300 border-slate-500/40',
+    dotClass: 'bg-slate-400',
+    descricao: 'Cadastro iniciado. Complete as informações para envio à análise.',
+  },
+  'em análise': {
+    label: 'Em análise',
     badgeClass:
-      'bg-cyan-500/15 text-[#22C7E0] border-[#22C7E0]/40 shadow-[0_0_12px_rgba(34,199,224,0.2)]',
-    dotClass: 'bg-[#22C7E0] animate-pulse',
-    descricao: 'Cadastro recebido em nossa base. Triagem inicial em andamento.',
+      'bg-amber-500/15 text-amber-300 border-amber-500/40 shadow-[0_0_12px_rgba(245,158,11,0.2)]',
+    dotClass: 'bg-amber-400 animate-pulse',
+    descricao:
+      'Documentação e autorização em conferência pelo gestor KORBIX (prazo de até 5 dias úteis).',
   },
   'Em análise': {
     label: 'Em análise',
     badgeClass:
       'bg-amber-500/15 text-amber-300 border-amber-500/40 shadow-[0_0_12px_rgba(245,158,11,0.2)]',
     dotClass: 'bg-amber-400 animate-pulse',
-    descricao: 'Nossa equipe técnica está analisando a documentação e métricas do imóvel.',
+    descricao: 'Documentação e autorização em conferência pelo gestor KORBIX.',
+  },
+  Recebido: {
+    label: 'Em análise',
+    badgeClass:
+      'bg-amber-500/15 text-amber-300 border-amber-500/40 shadow-[0_0_12px_rgba(245,158,11,0.2)]',
+    dotClass: 'bg-amber-400 animate-pulse',
+    descricao: 'Triagem e conferência de documentos em andamento.',
+  },
+  ativo: {
+    label: 'Ativo no Motor',
+    badgeClass:
+      'bg-emerald-500/15 text-emerald-300 border-emerald-500/40 shadow-[0_0_12px_rgba(16,185,129,0.2)]',
+    dotClass: 'bg-emerald-400 animate-pulse',
+    descricao:
+      'Autorização e documentos 100% conferidos! Imóvel ativo e gerando matches em tempo real.',
   },
   'Com compatibilidade': {
-    label: 'Com compatibilidade',
+    label: 'Ativo no Motor',
     badgeClass:
       'bg-emerald-500/15 text-emerald-300 border-emerald-500/40 shadow-[0_0_12px_rgba(16,185,129,0.2)]',
     dotClass: 'bg-emerald-400',
-    descricao: 'Encontramos investidores qualificados com tese compatível com seu imóvel.',
+    descricao: 'Imóvel ativo gerando compatibilidade com investidores.',
+  },
+  'em negociação': {
+    label: 'Em negociação',
+    badgeClass:
+      'bg-indigo-500/15 text-indigo-300 border-indigo-500/40 shadow-[0_0_12px_rgba(99,102,241,0.2)]',
+    dotClass: 'bg-indigo-400',
+    descricao: 'Proposta em estruturação e negociação direta conduzida pela KORBIX.',
   },
   'Em negociação': {
     label: 'Em negociação',
@@ -63,6 +98,24 @@ const STATUS_CONFIG: Record<
       'bg-indigo-500/15 text-indigo-300 border-indigo-500/40 shadow-[0_0_12px_rgba(99,102,241,0.2)]',
     dotClass: 'bg-indigo-400',
     descricao: 'Proposta em estruturação e negociação direta conduzida pela KORBIX.',
+  },
+  vendido: {
+    label: 'Vendido',
+    badgeClass: 'bg-purple-500/15 text-purple-300 border-purple-500/40',
+    dotClass: 'bg-purple-400',
+    descricao: 'Transação concluída com sucesso pela KORBIX.',
+  },
+  retirado: {
+    label: 'Retirado',
+    badgeClass: 'bg-zinc-600/15 text-zinc-400 border-zinc-600/40',
+    dotClass: 'bg-zinc-500',
+    descricao: 'Imóvel pausado ou retirado pelo proprietário.',
+  },
+  expirado: {
+    label: 'Expirado',
+    badgeClass: 'bg-rose-500/15 text-rose-300 border-rose-500/40',
+    dotClass: 'bg-rose-400',
+    descricao: 'Prazo da autorização de venda expirou.',
   },
 }
 
@@ -96,32 +149,104 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
   // Arquivos reais persistidos no Supabase Storage e na tabela lead_arquivos
   const [arquivos, setArquivos] = useState<LeadArquivo[]>([])
   const [carregandoArquivos, setCarregandoArquivos] = useState(false)
+  const [checklistDocs, setChecklistDocs] = useState<DocumentoConferenciaItem[]>([])
 
-  // Carregar arquivos vinculados ao lead
-  useEffect(() => {
-    if (lead.id) {
-      setCarregandoArquivos(true)
-      listarArquivosDoLead(lead.id)
-        .then((data) => setArquivos(data))
-        .catch(() => setArquivos([]))
-        .finally(() => setCarregandoArquivos(false))
+  // Formulário de autorização de venda
+  const [comissaoPercentual, setComissaoPercentual] = useState<number>(
+    lead.autorizacao_comissao_percentual ? Number(lead.autorizacao_comissao_percentual) : 6.0,
+  )
+  const [quemPaga, setQuemPaga] = useState<'vendedor' | 'comprador' | 'dividido'>(
+    (lead.autorizacao_quem_paga as any) || 'vendedor',
+  )
+  const [prazoAutorizacao, setPrazoAutorizacao] = useState<string>(lead.autorizacao_prazo || '')
+  const [procuracaoNecessaria, setProcuracaoNecessaria] = useState<boolean>(
+    Boolean(lead.procuracao_necessaria),
+  )
+  const [salvandoAutorizacao, setSalvandoAutorizacao] = useState(false)
+  const [autorizacaoSalvaMsg, setAutorizacaoSalvaMsg] = useState<string | null>(null)
+  const [autorizacaoErro, setAutorizacaoErro] = useState<string | null>(null)
+
+  // Carregar arquivos e checklist de conferência vinculados ao lead
+  const carregarDadosImovel = async () => {
+    if (!lead.id) return
+    setCarregandoArquivos(true)
+    try {
+      const [arqs, conf] = await Promise.all([
+        listarArquivosDoLead(lead.id).catch(() => []),
+        gestorObterDocumentosConferencia(lead.id).catch(() => []),
+      ])
+      setArquivos(arqs)
+      setChecklistDocs(conf)
+    } finally {
+      setCarregandoArquivos(false)
     }
+  }
+
+  useEffect(() => {
+    carregarDadosImovel()
   }, [lead.id])
+
+  // Handler para salvar dados da autorização
+  const handleSalvarAutorizacao = async () => {
+    setAutorizacaoErro(null)
+    setAutorizacaoSalvaMsg(null)
+
+    if (comissaoPercentual < 6.0 || comissaoPercentual > 8.0) {
+      setAutorizacaoErro('O percentual de comissão deve ficar entre 6% e 8%.')
+      return
+    }
+
+    if (!prazoAutorizacao) {
+      setAutorizacaoErro('Informe a data de validade/prazo da autorização de venda.')
+      return
+    }
+
+    setSalvandoAutorizacao(true)
+    try {
+      await salvarDadosAutorizacaoVenda({
+        leadId: lead.id,
+        comissaoPercentual,
+        quemPaga,
+        prazoAutorizacao,
+        procuracaoNecessaria,
+      })
+      setAutorizacaoSalvaMsg('Termos da autorização de venda registrados com sucesso!')
+      carregarDadosImovel()
+      setTimeout(() => setAutorizacaoSalvaMsg(null), 4000)
+    } catch (err: any) {
+      setAutorizacaoErro(err.message || 'Falha ao salvar autorização.')
+    } finally {
+      setSalvandoAutorizacao(false)
+    }
+  }
 
   // Fotos e Documentos segregados
   const fotos = arquivos.filter((a) => a.tipo === 'foto')
   const docs = arquivos.filter((a) => a.tipo === 'documento')
 
+  const docAutorizacao = docs.find((d) => d.rotulo === 'autorizacao_venda')
+  const docRgCpf = docs.find((d) => d.rotulo === 'rg_cpf')
+  const docEstadoCivil = docs.find((d) => d.rotulo === 'estado_civil')
   const docMatricula = docs.find((d) => d.rotulo === 'matricula')
   const docIptu = docs.find((d) => d.rotulo === 'iptu')
+  const docProcuracao = docs.find((d) => d.rotulo === 'procuracao')
   const docCertidao = docs.find((d) => d.rotulo === 'certidao')
+
+  // Status de conferência de cada documento vindo do gestor
+  const statusDoc = (tipo: RotuloDocumento) => {
+    const item = checklistDocs.find((c) => c.tipo_documento === tipo)
+    return item || null
+  }
 
   // Verificação de completude de arquivos
   const temFotos = fotos.length > 0
+  const temAutorizacao = Boolean(docAutorizacao)
+  const temRgCpf = Boolean(docRgCpf)
+  const temEstadoCivil = Boolean(docEstadoCivil)
   const temMatricula = Boolean(docMatricula)
   const temIptu = Boolean(docIptu)
+  const temProcuracao = Boolean(docProcuracao)
   const temCertidao = Boolean(docCertidao)
-  const temAlgumDoc = docs.length > 0
 
   // Cálculo da completude do cadastro
   // Campos etapa 1: cidade, tipo_imovel, telefone
@@ -156,6 +281,18 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
       preenchido: temFotos,
     },
     {
+      label: 'Autorização Venda',
+      preenchido: temAutorizacao,
+    },
+    {
+      label: 'RG/CPF Donos',
+      preenchido: temRgCpf,
+    },
+    {
+      label: 'Estado Civil',
+      preenchido: temEstadoCivil,
+    },
+    {
       label: `Matrícula`,
       preenchido: temMatricula,
     },
@@ -163,10 +300,14 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
       label: `IPTU`,
       preenchido: temIptu,
     },
-    {
-      label: `Certidão`,
-      preenchido: temCertidao,
-    },
+    ...(procuracaoNecessaria
+      ? [
+          {
+            label: 'Procuração',
+            preenchido: temProcuracao,
+          },
+        ]
+      : []),
   ]
 
   const todosCampos = [...camposEtapa1, ...camposEtapa2, ...camposArquivos]
@@ -175,8 +316,8 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
   const percentualCompletude = Math.round((camposPreenchidos / totalCampos) * 100)
 
   // Status visual
-  const statusAtual: StatusImovelLead = (lead.status as StatusImovelLead) || 'Recebido'
-  const configStatus = STATUS_CONFIG[statusAtual] || STATUS_CONFIG['Recebido']
+  const statusAtual: string = lead.status || 'em análise'
+  const configStatus = STATUS_CONFIG[statusAtual] || STATUS_CONFIG['em análise']
 
   const protocolo = lead.protocolo || 'KX-0000'
 
@@ -216,52 +357,94 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
     },
     {
       id: 'documentos',
-      titulo: 'Documentos',
+      titulo: 'Documentos Mandatórios para Ativação no Motor',
       icone: FileText,
       corIcone: 'text-indigo-400',
       badgeCor: 'bg-indigo-500/10 text-indigo-300 border-indigo-500/30',
       itens: [
         {
-          id: 'doc_matricula',
-          titulo: 'Matrícula atualizada do imóvel',
-          subtitulo:
-            'Certidão de matrícula de inteiro teor emitida pelo Cartório de Registro de Imóveis',
+          id: 'doc_autorizacao',
+          titulo: '1. Autorização de Venda Assinada',
+          subtitulo: 'Instrumento contratual com percentual de comissão, pagador e prazo',
           descricao:
-            'A matrícula comprova a titularidade, metragem real averbada e existência de eventuais gravames, ônus ou usufrutos.',
+            'Requisito mandatório para o imóvel ingressar no motor de compatibilidade. O gestor só ativa o imóvel após conferir a autorização assinada.',
           exemplos: [
-            'Certidão de inteiro teor (preferencialmente emitida nos últimos 30 a 90 dias)',
-            'Pode ser versão digital em PDF baixada do registrador do imóvel',
+            'Documento assinado digitalmente (Gov.br, DocuSign, etc.) ou assinado à caneta e digitalizado',
+            'Comissão padrão de 6% (permitida de 6% a 8%) e definição de quem paga (vendedor, comprador ou dividido)',
           ],
-          dica: 'Caso esteja em processo de inventário ou partilha, a cópia simples do formal também é aceita.',
+          dica: 'Preencha abaixo os parâmetros contratuais antes ou ao anexar o PDF ou foto da autorização.',
+          mensagemWhatsApp: 'Autorização de venda assinada',
+          statusPadrao: 'pendente',
+        },
+        {
+          id: 'doc_rg_cpf',
+          titulo: '2. RG e CPF de cada proprietário',
+          subtitulo: 'Documento de identificação com foto e CPF de todos os titulares',
+          descricao:
+            'Comprova a identidade civil de quem possui direitos sobre a matrícula. Se houver mais de um titular, envie o arquivo com os documentos reunidos.',
+          exemplos: [
+            'RG e CPF, CNH ou documento de identidade digital (PDF ou foto nítida)',
+            'Documento de todos os cônjuges coproprietários quando aplicável',
+          ],
+          dica: 'Certifique-se de que o número do CPF e a foto estejam 100% legíveis.',
+          mensagemWhatsApp: 'RG e CPF dos proprietários',
+          statusPadrao: 'pendente',
+        },
+        {
+          id: 'doc_estado_civil',
+          titulo: '3. Documento de Estado Civil',
+          subtitulo: 'Certidão de casamento com regime de bens, divórcio ou certidão de óbito',
+          descricao:
+            'Essencial para confirmar a legitimidade de venda e a necessidade de anuência do cônjuge conforme o regime de bens (comunhão parcial, universal, separação total).',
+          exemplos: [
+            'Certidão de casamento com anotação do pacto antenupcial ou regime de bens',
+            'Certidão de casamento com averbação de divórcio',
+            'Certidão de óbito do cônjuge (quando viúvo/inventário)',
+          ],
+          dica: 'Envie em PDF ou foto completa da folha da certidão.',
+          mensagemWhatsApp: 'Documento de estado civil',
+          statusPadrao: 'pendente',
+        },
+        {
+          id: 'doc_matricula',
+          titulo: '4. Certidão atualizada da Matrícula',
+          subtitulo: 'Certidão de inteiro teor com a data de emissão cartorária recente',
+          descricao:
+            'A matrícula comprova a titularidade, metragem real averbada e inexistência de gravames impeditivos. Informe a data de emissão no envio.',
+          exemplos: [
+            'Certidão de inteiro teor emitida pelo Cartório de Registro de Imóveis',
+            'PDF expedido pelos registradores (ex: Registradores.org / ONR)',
+          ],
+          dica: 'Certidões recentes (últimos 30 a 90 dias) agilizam a aprovação pelo gestor.',
           mensagemWhatsApp: 'Matrícula atualizada do imóvel',
           statusPadrao: 'pendente',
         },
         {
           id: 'doc_iptu',
-          titulo: 'Espelho do IPTU / Carnê anual',
-          subtitulo: 'Folha de rosto do carnê do ano vigente ou certidão de dados cadastrais',
+          titulo: '5. Espelho do IPTU ou Cadastro Municipal',
+          subtitulo: 'Folha de rosto do carnê do ano vigente ou certidão cadastral municipal',
           descricao:
-            'Permite à KORBIX validar a inscrição municipal, área construída cadastrada e valor venal de referência.',
+            'Permite validar a inscrição municipal, área construída averbada na prefeitura e situação de cadastro.',
           exemplos: [
-            'Página com número de inscrição/cadastro do imóvel',
-            'Valor venal e demonstrativo de parcelas em PDF',
+            'Folha com número do contribuinte / inscrição do IPTU',
+            'Espelho cadastral emitido no portal da Prefeitura',
           ],
-          dica: 'Você encontra a segunda via em PDF facilmente no portal da Prefeitura da sua cidade.',
-          mensagemWhatsApp: 'Cópia ou espelho do IPTU',
+          dica: 'A segunda via digital em PDF é emitida gratuitamente pelo site da sua prefeitura.',
+          mensagemWhatsApp: 'Espelho do IPTU',
           statusPadrao: 'pendente',
         },
         {
-          id: 'doc_certidao',
-          titulo: 'Certidão adicional (ônus / negativas)',
-          subtitulo: 'Certidão de ações reipersecutórias, débitos ou formal de partilha',
+          id: 'doc_procuracao',
+          titulo: '6. Procuração Pública (se aplicável)',
+          subtitulo: 'Obrigatória apenas quando outra pessoa assina pelo titular',
           descricao:
-            'Validação jurídica complementar para atestar regularidade da titularidade perante os compradores.',
+            'Quando o signatário não for o próprio titular constante na matrícula, é indispensável anexar a procuração por instrumento público com poderes específicos para alienação do imóvel.',
           exemplos: [
-            'Certidão negativa de ônus reais',
-            'Certidão conjunta de tributos municipais/federais ou escritura de inventário',
+            'Procuração pública lavrada em Cartório de Notas',
+            'Com poderes para assinar autorização de venda e negociar o imóvel',
           ],
-          dica: 'Envie em formato PDF para análise imediata pelo corpo jurídico da KORBIX.',
-          mensagemWhatsApp: 'Certidões do imóvel',
+          dica: 'Se você mesmo for o proprietário que assina, marque que não é necessária.',
+          mensagemWhatsApp: 'Procuração do imóvel',
           statusPadrao: 'pendente',
         },
       ],
@@ -445,16 +628,24 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
             {(
               [
-                { key: 'Recebido', rotulo: '1. Recebido' },
-                { key: 'Em análise', rotulo: '2. Em análise' },
-                { key: 'Com compatibilidade', rotulo: '3. Compatibilidade' },
-                { key: 'Em negociação', rotulo: '4. Negociação' },
+                { key: 'em análise', rotulo: '1. Em Análise' },
+                { key: 'ativo', rotulo: '2. Ativo no Motor' },
+                { key: 'em negociação', rotulo: '3. Negociação' },
+                { key: 'vendido', rotulo: '4. Concluído' },
               ] as const
             ).map((etapa, idx) => {
-              const etapasOrdem = ['Recebido', 'Em análise', 'Com compatibilidade', 'Em negociação']
-              const statusIdx = etapasOrdem.indexOf(statusAtual)
+              const etapasOrdem = ['em análise', 'ativo', 'em negociação', 'vendido']
+              const statusNormalizado =
+                statusAtual === 'Recebido'
+                  ? 'em análise'
+                  : statusAtual === 'Com compatibilidade'
+                    ? 'ativo'
+                    : statusAtual === 'Em negociação'
+                      ? 'em negociação'
+                      : statusAtual
+              const statusIdx = etapasOrdem.indexOf(statusNormalizado)
               const etapaIdx = idx
-              const isActive = etapa.key === statusAtual
+              const isActive = etapa.key === statusNormalizado
               const isPast = statusIdx > etapaIdx
 
               return (
@@ -611,36 +802,39 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
                     let isEfetivamenteFeito = concluidos[item.id] || false
                     let tagComplementar: string | null = null
 
+                    const rotuloDocMap: Record<string, RotuloDocumento> = {
+                      doc_autorizacao: 'autorizacao_venda',
+                      doc_rg_cpf: 'rg_cpf',
+                      doc_estado_civil: 'estado_civil',
+                      doc_matricula: 'matricula',
+                      doc_iptu: 'iptu',
+                      doc_procuracao: 'procuracao',
+                    }
+                    const rotuloDocItem = rotuloDocMap[item.id]
+                    const confItem = rotuloDocItem ? statusDoc(rotuloDocItem) : null
+
                     if (item.id === 'fotos_comodos') {
                       if (temFotos) {
                         isEfetivamenteFeito = true
                         tagComplementar = `${fotos.length} foto${fotos.length > 1 ? 's' : ''}`
                       }
-                    } else if (item.id === 'doc_matricula') {
-                      if (temMatricula) {
+                    } else if (rotuloDocItem) {
+                      const docDoRotulo = docs.find((d) => d.rotulo === rotuloDocItem)
+                      if (docDoRotulo) {
                         isEfetivamenteFeito = true
-                        tagComplementar = 'PDF enviado'
-                      }
-                    } else if (item.id === 'doc_iptu') {
-                      if (temIptu) {
-                        isEfetivamenteFeito = true
-                        tagComplementar = 'PDF enviado'
-                      }
-                    } else if (item.id === 'doc_certidao') {
-                      if (temCertidao) {
-                        isEfetivamenteFeito = true
-                        tagComplementar = 'PDF enviado'
+                        if (confItem?.status === 'conferido') {
+                          tagComplementar = 'Conferido pelo gestor'
+                        } else if (confItem?.status === 'recusado') {
+                          tagComplementar = 'Recusado - Reenviar'
+                        } else {
+                          tagComplementar = 'Enviado para conferência'
+                        }
                       }
                     }
 
                     // Determina se é área de fotos ou de documentos
                     const isItemFotos = item.id === 'fotos_comodos'
-                    const rotuloDocMap: Record<string, RotuloDocumento> = {
-                      doc_matricula: 'matricula',
-                      doc_iptu: 'iptu',
-                      doc_certidao: 'certidao',
-                    }
-                    const rotuloDocItem = rotuloDocMap[item.id]
+                    const isItemAutorizacao = item.id === 'doc_autorizacao'
 
                     return (
                       <div
@@ -723,6 +917,123 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
                           <div className="px-3.5 sm:px-4 pb-4 pt-1 border-t border-slate-800/80 space-y-4 text-xs text-slate-300 animate-fade-in">
                             <p className="leading-relaxed text-slate-200">{item.descricao}</p>
 
+                            {/* Feedback de conferência do gestor */}
+                            {confItem && confItem.status === 'recusado' && (
+                              <div className="bg-rose-500/10 border border-rose-500/30 rounded-xl p-3 text-xs text-rose-300 space-y-1">
+                                <p className="font-semibold flex items-center gap-1.5">
+                                  <span>⚠️ Documento recusado pelo gestor</span>
+                                </p>
+                                <p className="text-slate-300">
+                                  Motivo:{' '}
+                                  <strong className="text-rose-200">
+                                    {confItem.motivo_recusa ||
+                                      'Necessário reenviar documento legível.'}
+                                  </strong>
+                                </p>
+                              </div>
+                            )}
+                            {confItem && confItem.status === 'conferido' && (
+                              <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-2.5 text-xs text-emerald-300 flex items-center gap-2">
+                                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                                <span>Documento conferido e aprovado pelo gestor!</span>
+                              </div>
+                            )}
+
+                            {/* Formulário de Autorização de Venda integrado */}
+                            {isItemAutorizacao && (
+                              <div className="bg-[#070B14] rounded-xl p-4 border border-indigo-500/30 space-y-3">
+                                <h5 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                                  <FileText className="w-3.5 h-3.5 text-[#22C7E0]" />
+                                  Parâmetros da Autorização de Venda
+                                </h5>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                  {/* Comissão */}
+                                  <div>
+                                    <label className="text-[11px] font-semibold text-slate-300 block mb-1">
+                                      Comissão % (padrão 6%, entre 6% e 8%) *
+                                    </label>
+                                    <input
+                                      type="number"
+                                      step="0.1"
+                                      min="6"
+                                      max="8"
+                                      value={comissaoPercentual}
+                                      onChange={(e) =>
+                                        setComissaoPercentual(parseFloat(e.target.value) || 6)
+                                      }
+                                      className="w-full bg-[#081226] border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-[#22C7E0]"
+                                    />
+                                  </div>
+
+                                  {/* Quem paga */}
+                                  <div>
+                                    <label className="text-[11px] font-semibold text-slate-300 block mb-1">
+                                      Quem paga a comissão *
+                                    </label>
+                                    <select
+                                      value={quemPaga}
+                                      onChange={(e) => setQuemPaga(e.target.value as any)}
+                                      className="w-full bg-[#081226] border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-[#22C7E0]"
+                                    >
+                                      <option value="vendedor">Vendedor (padrão)</option>
+                                      <option value="comprador">Comprador</option>
+                                      <option value="dividido">Dividido (50% / 50%)</option>
+                                    </select>
+                                  </div>
+
+                                  {/* Prazo */}
+                                  <div>
+                                    <label className="text-[11px] font-semibold text-slate-300 block mb-1">
+                                      Prazo da autorização *
+                                    </label>
+                                    <input
+                                      type="date"
+                                      value={prazoAutorizacao}
+                                      onChange={(e) => setPrazoAutorizacao(e.target.value)}
+                                      className="w-full bg-[#081226] border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-[#22C7E0]"
+                                    />
+                                  </div>
+                                </div>
+
+                                {/* Procuração flag */}
+                                <div className="pt-2 border-t border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                  <label className="text-xs text-slate-300 flex items-center gap-2 cursor-pointer">
+                                    <input
+                                      type="checkbox"
+                                      checked={procuracaoNecessaria}
+                                      onChange={(e) => setProcuracaoNecessaria(e.target.checked)}
+                                      className="rounded bg-[#081226] border-slate-700 text-[#22C7E0] focus:ring-0"
+                                    />
+                                    <span>
+                                      Outra pessoa assina pelo proprietário (exige Procuração
+                                      Pública)
+                                    </span>
+                                  </label>
+
+                                  <button
+                                    type="button"
+                                    onClick={handleSalvarAutorizacao}
+                                    disabled={salvandoAutorizacao}
+                                    className="px-3.5 py-1.5 rounded-lg bg-[#22C7E0] hover:bg-[#1fb3ca] text-slate-950 text-xs font-bold transition-all disabled:opacity-50 shrink-0"
+                                  >
+                                    {salvandoAutorizacao ? 'Salvando...' : 'Salvar termos'}
+                                  </button>
+                                </div>
+
+                                {autorizacaoErro && (
+                                  <p className="text-xs text-rose-400 font-medium">
+                                    {autorizacaoErro}
+                                  </p>
+                                )}
+                                {autorizacaoSalvaMsg && (
+                                  <p className="text-xs text-emerald-400 font-medium">
+                                    {autorizacaoSalvaMsg}
+                                  </p>
+                                )}
+                              </div>
+                            )}
+
                             {/* O que enviar / exemplos */}
                             <div className="bg-[#081226] border border-slate-800 rounded-xl p-3 space-y-2">
                               <span className="font-semibold text-slate-200 block text-[11px] uppercase tracking-wider">
@@ -770,19 +1081,17 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
                               </div>
                             )}
 
-                            {/* MÓDULO DE UPLOAD INTEGRADO: DOCUMENTO (PDF com rótulo) */}
+                            {/* MÓDULO DE UPLOAD INTEGRADO: DOCUMENTO (PDF com rótulo ou Imagem) */}
                             {rotuloDocItem && lead.id && (
                               <div className="bg-[#081226] border border-indigo-500/30 rounded-2xl p-4 space-y-3">
                                 <div className="flex items-center justify-between pb-2 border-b border-slate-800">
                                   <div className="flex items-center gap-2">
                                     <FileText className="w-4 h-4 text-indigo-400" />
                                     <span className="font-bold text-white text-xs sm:text-sm">
-                                      Upload de Documento (PDF)
+                                      Upload de Documento (PDF ou Imagem)
                                     </span>
                                   </div>
-                                  <span className="text-[11px] text-indigo-300">
-                                    Rótulo: {item.titulo.split(' ')[0]}
-                                  </span>
+                                  <span className="text-[11px] text-indigo-300">{item.titulo}</span>
                                 </div>
 
                                 <UploadDocumentos
@@ -790,11 +1099,8 @@ export function ImovelDetalhes({ lead }: ImovelCardProps) {
                                   userId={lead.user_id || ''}
                                   documentos={docs}
                                   filtroRotulo={rotuloDocItem}
-                                  onDocumentosChange={(novosDocs) => {
-                                    const fotosExistentes = arquivos.filter(
-                                      (a) => a.tipo === 'foto',
-                                    )
-                                    setArquivos([...fotosExistentes, ...novosDocs])
+                                  onDocumentosChange={(_novosDocs) => {
+                                    carregarDadosImovel()
                                   }}
                                 />
                               </div>
